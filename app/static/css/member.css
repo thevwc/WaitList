@@ -1,0 +1,153 @@
+:root {
+    --main-body-bg-color:white;
+    --main-body-txt-color:navy;
+    --main-hdg-bg-color: navy;
+    --main-hdg-txt-color: white;
+    --main-panel-bg-color: lightgray;  
+    --main-panel-txt-color: navy;  
+    --main-panel-border:1px solid navy;
+
+    --main-padding: 10px; 
+    --main-bg-fade:rgba(0,0,0,0.2);
+     
+  }  
+.parent {
+    display: grid;
+    grid-template-columns:1fr 1fr 1fr;
+    grid-template-rows:50px 1fr 1fr;
+    grid-template-areas: "hdgArea           hdgArea             hdgArea"
+                         "localInfo         altInfo             emergInfo"
+                         "memberStatus      certInfo            monitorDuty"
+                         ;
+    gap:10px;
+    background-color:var(--main-body-bg-color);
+    padding-left:5px;
+    padding-right:5px;
+    margin:0px; 
+}
+.hdg {
+    grid-area: hdgArea; 
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    grid-template-areas: ". hdgTitle         searchArea";
+    height:50px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    align-items:center;
+    justify-content:center; 
+    text-align: center;
+    background-color: var(--main-hdg-bg-color); 
+    color:var(--main-hdg-txt-color);
+    border-bottom:1px solid red;
+}
+
+.hdgTitle {
+    grid-area:hdgTitle; 
+}
+.hdgSearch {
+    grid-area:searchArea;
+    padding-top:5px;
+    padding-bottom: 5px;
+    align-items: right;
+}
+.panel h5 {
+    text-align: center;
+    color:var(--main-panel-txt-color);
+}
+input {
+    color:blue;
+}
+.localContactInfo {
+    grid-area:localInfo;
+    background-color: var(--main-panel-bg-color);
+    color:var(--main-panel-txt-color);
+    border:var(--main-panel-border);
+    border-radius: 10px;
+}
+
+.alternateContactInfo {
+    grid-area:altInfo;
+    background-color: var(--main-panel-bg-color);
+    color:var(--main-panel-txt-color);
+    border:var(--main-panel-border);
+    border-radius: 10px;
+}
+
+
+.emergencyInfo {
+    grid-area:emergInfo;
+    background-color:var(--main-panel-bg-color);
+    color:var(--main-panel-txt-color);
+    border:var(--main-panel-border);
+    border-radius: 10px;
+}
+
+.monthInputs li {
+    display:inline;
+    text-decoration: none;
+    color:var(--main-txt-color);
+    margin-right:20px;
+}
+.membershipInfo {
+    grid-area:memberStatus;
+    background-color:var(--main-panel-bg-color);
+    color: var(--main-panel-txt-color);
+    border:var(--main-panel-border);
+    border-radius: 10px;
+}
+.membershipInfo, form {
+    padding-left:50px;
+    padding-top:10px;
+}
+
+.certificationInfo {
+    grid-area:certInfo;
+    background-color:var(--main-panel-bg-color);
+    color: var(--main-panel-txt-color);
+    border:var(--main-panel-border);
+    border-radius: 10px;
+}
+.monitorDutyInfo {
+    grid-area:monitorDuty;
+    background-color:var(--main-panel-bg-color);
+    color:var(--main-panel-txt-color);
+    border:var(--main-panel-border);
+    border-radius: 10px;
+}
+
+.monthNames li {
+    display:inline;
+    text-decoration: none;
+    font-size:13px;
+    margin-right:8px;
+    color:var(--main-txt-color);
+}
+
+.monthCheckboxes li {
+    display:inline;
+    text-decoration: none;
+    font-size:13px;
+    margin-right:18px;
+    color:var(--main-txt-color);
+}
+table {
+    padding-left:20px;
+    padding-right:20px;
+}
+table th {
+    color:var(--main-txt-color);
+}
+.monitorDuty {
+    border:1px solid black;
+    text-align: center;
+}
+.monitorDuty td {
+    border:1px solid black;
+}
+.futureDuty td {
+    color:green;
+}
+.pastDuty td {
+    color:red;
+}

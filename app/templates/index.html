@@ -1,0 +1,81 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block styles %}
+    {{super()}}
+    <!-- external index.css not loading ?????????? -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+
+<!-- <style>
+:root {
+    --main-body-bg-color:white;
+    --main-body-txt-color:navy;
+    --main-hdg-bg-color: navy;
+    --main-hdg-txt-color: white;
+    --main-panel-bg-color: lightgray;  
+    --main-panel-txt-color: blue;  
+    --main-panel-border:1px solid navy;
+}
+   
+.parent {
+    display: grid;
+    grid-template-columns:1fr;
+    grid-template-areas: "hdgArea"
+                         "bodyArea";
+    background-color:lightgray;                   
+}
+
+.hdg {
+    grid-area: hdgArea; 
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    grid-template-areas: ". hdgTitle         searchArea";
+    height:50px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    align-items:center;
+    justify-content:center; 
+    text-align: center;
+    background-color: var(--main-hdg-bg-color); 
+    color:var(--main-hdg-txt-color);
+    border-bottom:1px solid red;
+}
+
+.hdgTitle {
+    grid-area:hdgTitle; 
+}
+
+.hdgSearch {
+    grid-area:searchArea;
+    padding-top:5px;
+    padding-bottom: 5px;
+}
+</style>
+ -->
+
+{% block content %}
+    <div class="parent">
+        <div class="hdg">
+            <div class="hdgTitle">
+                <h2>MEMBER LOOKUP</h2> 
+            </div> 
+
+            <div class="hdgSearch">
+                <div id="memberList">
+                    <select id="selectpicker" class='selectpicker' title='Find a  member ...' data-live-search=true data-live-search-style="contains" data-width='auto'>
+                        {% for nme in nameArray %}
+                            <option  class="optName" value='{{nme}}'>{{nme}}</option>
+                        {% endfor %}
+                    </select>
+                    <a id="linkToMember" style="display:none" href=""></a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{super()}}
+    <script src="{{ url_for('static', filename='js/index.js') }}"> </script>
+{% endblock %}
