@@ -314,7 +314,6 @@ def saveCertification():
     return redirect(url_for('index',villageID=memberID))
 
 
-
 @app.route('/saveMonitorDuty', methods=['POST'])
 def saveMonitorDuty():
     # GET DATA FROM FORM

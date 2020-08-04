@@ -114,6 +114,8 @@ function memberSelectedRtn() {
     lastEight = selectedMember.slice(-8)
     currentMemberID= lastEight.slice(1,7)
     document.getElementById('selectpicker').value=''
+    imgLink = document.getElementById('memberImgID')
+    imgLink.link = "{{ url_for('static', filename='memberPhotos/" + currentMemberID + ".jpg') }}"
 
     // SET UP LINK TO MEMBER FORM 
     var linkToMemberBtn = document.getElementById('linkToMember');

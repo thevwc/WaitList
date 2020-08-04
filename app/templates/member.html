@@ -31,6 +31,13 @@
         <!-- PRIMARY CONTACT INFORMATION -->
         <div id="localContactID" class="localContactInfo panel">
             <h5>LOCAL INFORMATION</h5>
+            <div class="row">
+                <div class="col-sm-2" >
+                    <div class="thumbnail center" style="margin-left: 200px;">
+                        <img id="memberImgID" src="{{ url_for('static', filename='memberPhotos/604875.jpg') }}" alt="No photo" width="100%">
+                    </div>
+                </div>
+            </div>
             <form method='POST' style="padding-left:50px;padding-top:20px" action="/saveAddress">
                 <div class="row">
                     <label class="control-label col-sm-2 col-form-label-sm" for="memberID">ID</label>
@@ -39,7 +46,7 @@
                         <label class="control-label col-form-label-sm" style="color:red;font-size:18px" >{{ expireMsg }}</label>
                     </div>
                 </div>
-
+                
                 <div class="row">
                     <label class="control-label col-sm-2 col-form-label-sm" for="street">Street</label>
                     <div class="col-sm-10">
@@ -169,9 +176,10 @@
                 <div class="row">
                     <label class="control-label col-sm-2 col-form-label-sm" >Notes</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control-sm" style="width:250px;height:200px" name="emergNotes" value="{{emergNotes}}">
+                        <input type="text" class="form-control-sm" style="width:250px;height:50px" name="emergNotes" value="{{emergNotes}}">
                     </div>
                 </div>
+                  
                 <br>
                 <div style=padding-left:100px>
                     <input type="hidden" class="memberID" name="memberID" value={{member.Member_ID}}>
