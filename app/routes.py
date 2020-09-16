@@ -8,7 +8,7 @@ from flask_bootstrap import Bootstrap
 
 from werkzeug.urls import url_parse
 from app.models import ShopName, Member, MemberActivity, MonitorSchedule, MonitorScheduleTransaction,\
-MonitorWeekNote, CoordinatorsSchedule, ControlVariables
+MonitorWeekNote, CoordinatorsSchedule, ControlVariables, NotesToMembers
 from app import app
 from app import db
 from sqlalchemy import func, case, desc, extract, select, update, text
@@ -17,11 +17,14 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError, DBAPIError
 import datetime as dt
 from datetime import date, datetime, timedelta
 
+from flask_mail import Mail, Message
+mail=Mail(app)
 
 @app.route('/', defaults={'villageID':None})
 @app.route('/index/', defaults={'villageID':None})
 @app.route('/index/<villageID>/')
 def index(villageID):
+
     # PREPARE LIST OF MEMBER NAMES AND VILLAGE IDs
     # BUILD ARRAY OF NAMES FOR DROPDOWN LIST OF MEMBERS
     nameArray=[]
@@ -143,8 +146,8 @@ def saveAddress():
     homePhone = request.form['homePhone']
     cellPhone = request.form['cellPhone']
     eMail = request.form['eMail']
-    
-    if request.form['action'] == 'CANCEL':
+    print('localAction cancelled - ',request.form['localAction'])
+    if request.form['localAction'] == 'CANCEL':
         return redirect(url_for('index',villageID=memberID))
 
     # GET MEMBER RECORD 
@@ -197,7 +200,7 @@ def saveAltAddress():
     zipcode = request.form['altZip']
     phone = request.form['altPhone']
     
-    if request.form['action'] == 'CANCEL':
+    if request.form['altAction'] == 'CANCEL':
         return redirect(url_for('index',villageID=memberID))
 
     # INITIALIZE COUNTER FOR NUMBER OF FIELDS CHANGED
@@ -237,16 +240,22 @@ def saveAltAddress():
 
 @app.route('/saveEmergency', methods=['POST'])
 def saveEmergency():
+    print ('saveEmergency .................................................')
+    print('emergAction cancelled - ',request.form['emergAction'])
+
     # GET DATA FROM FORM
     memberID = request.form['memberID']
     contact = request.form['emergContact']
     phone = request.form['emergPhone']
+    defibrillator = request.form['defibrillator']
+    #noEmergData = request.form['emergNoData']
+
+    if request.form['emergAction'] == 'CANCEL':
+        return redirect(url_for('index',villageID=memberID))
 
      # GET MEMBER RECORD 
     member = db.session.query(Member).filter(Member.Member_ID == memberID).first()
-    if request.form['action'] == 'CANCEL':
-        return redirect(url_for('index',villageID=memberID))
-
+    
     fieldsChanged = 0
     if member.Emerg_Name != contact:
         member.Emerg_Name = contact
@@ -255,14 +264,24 @@ def saveEmergency():
     if member.Emerg_Phone != phone:
         member.Emerg_Phone = phone
         fieldsChanged += 1     
+    print(member.Defibrillator_Trained,defibrillator)
+    if member.Defibrillator_Trained !=  defibrillator:
+        member.Defibrillator_Trained = defibrillator
+        fieldsChanged += 1
+
+    # if member.Emerg_No_Data_Provided !=  noEmergData:
+    #     member.Emerg_No_Data_Provided = noEmergData
+    #     fieldsChanged += 1
 
     #  add code for bit fields
 
     if fieldsChanged > 0:
         try:
             db.session.commit()
+            print('Changes successful')
             flash("Changes successful","success")
         except Exception as e:
+            print('Could not update emergency data')
             flash("Could not update member data.","danger")
             db.session.rollback()
 
@@ -273,7 +292,7 @@ def saveMemberStatus():
     print('saveMemberStatus routine')
     # GET DATA FROM FORM
     memberID = request.form['memberID']
-    if request.form['action'] == 'CANCEL':
+    if request.form['memberAction'] == 'CANCEL':
         return redirect(url_for('index',villageID=memberID))
 
      # GET MEMBER RECORD 
@@ -296,7 +315,7 @@ def saveMemberStatus():
 def saveCertification():
     # GET DATA FROM FORM
     memberID = request.form['memberID']
-    if request.form['action'] == 'CANCEL':
+    if request.form['certificationAction'] == 'CANCEL':
         return redirect(url_for('index',villageID=memberID))
 
     # GET MEMBER RECORD 
@@ -331,7 +350,7 @@ def saveMonitorDuty():
     nov=request.form['nov']
     dec=request.form['dec']
     
-    if request.form['action'] == 'CANCEL':
+    if request.form['monitorAction'] == 'CANCEL':
         return redirect(url_for('index',villageID=memberID))
 
     member = db.session.query(Member).filter(Member.Member_ID == memberID).first()
@@ -393,3 +412,64 @@ def saveMonitorDuty():
         db.session.rollback()
     
     return redirect(url_for('index',villageID=memberID))
+
+@app.route("/getNoteToMember")
+def getNoteToMember():
+    memberID = request.args.get('memberID')
+    currentNote = db.session.query(NotesToMembers).filter(NotesToMembers.memberID == memberID).first()
+    if (currentNote):
+        msg = currentNote.noteToMember
+        msg += '\n-----------------------------------------------\n'
+        return jsonify(msg=msg)
+    return make_response('Nothing')
+
+@app.route("/processNoteToMember")
+def processNoteToMember():
+    todays_date = datetime.today()
+    todaySTR = todays_date.strftime('%m-%d-%Y')
+    
+    showAtCheckIn=request.args.get('showAtCheckIn')
+    sendEmail=request.args.get('sendEmail')
+    memberID=request.args.get('memberID')
+    emailAddress = request.args.get('emailAddress')
+    msg = request.args.get('msg')
+    response = ""
+
+    # PREPARE A NOTE TO DISPLAY AT CHECK-IN, IF REQUESTED
+    if (showAtCheckIn == 'true'):
+        currentNote = db.session.query(NotesToMembers).filter(NotesToMembers.memberID == memberID).first()
+        if (currentNote != None):
+            db.session.delete(currentNote)
+            db.session.commit()
+
+        # CREATE A NEW MSG RECORD; ANY OLD DATA WILL REMAIN AT BEGINNING OF MESSAGE.
+        try:
+            newNote = NotesToMembers(
+                memberID = memberID, 
+                noteToMember = msg)
+            db.session.add(newNote)
+            db.session.commit()
+            response = "New note successfully created!"
+            
+        except SQLAlchemyError as e:
+            newNote.rollback()
+            return make_response(f"ERROR - Could not add a new note.")
+ 
+    # PREPARE AN EMAIL, IF REQUESTED
+    if (sendEmail == 'true'):
+        # PREPARE AN EMAIL
+        recipient = eMailAddress
+        #recipient = ("Richard Hartley", "hartl1r@gmail.com")
+        #bcc=("Woodshop","villagesWoodShop@embarqmail.com")
+        recipientList = []
+        recipientList.append(recipient)
+        message = Message('Hello', sender = 'hartl1r@gmail.com', recipients = recipientList)
+        message.subject = "Note from front desk"
+        message.body = msg
+        mail.send(message)
+        response += "/nEmail sent."
+
+    return make_response (f"{response}")
+    
+
+    

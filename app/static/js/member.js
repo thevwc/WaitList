@@ -29,7 +29,7 @@ const colors = {
 var clientLocation = ''
 var todaysDate = new Date();
 var shopNames = ['Rolling Acres', 'Brownwood']
-
+var currentMemberID = ''
 var curShopNumber = ''
 
 // ASSIGN PANELS TO VARIABLES
@@ -47,6 +47,11 @@ emergencyInfo.addEventListener('change',emergencyDataChanged);
 membershipInfo.addEventListener('change',membershipDataChanged);
 certificationInfo.addEventListener('change',certificationDataChanged);
 monitorDutyInfo.addEventListener('change',monitorDutyDataChanged);
+
+// MODAL EVENT LISTENERS
+document.getElementById("cancelNoteID").addEventListener("click",cancelNote)
+document.getElementById("processMsgID").addEventListener("click",processNote)
+document.getElementById("medicalModalBtn").addEventListener("click",showMedicalInfo)
 
 document.getElementById("selectpicker").addEventListener("change",memberSelectedRtn)
 document.getElementById("selectpicker").addEventListener("click",memberSelectedRtn)
@@ -69,7 +74,17 @@ document.querySelector('#dues').onclick = function(ev) {
         document.getElementById(inputID).value = 'False'
     }
 }
-
+// CHECK BOX LISTENERS
+document.getElementById('defibrillatorID').onclick = function(ev) {
+    alert('defibrillator clicked ')
+    console.log('checked - ' + ev.target.checked)
+    if (ev.target.checked) {
+        document.getElementById('defibrillatorID').value='True'
+    }
+    else {
+        document.getElementById('defibrillatorID').value='False' 
+    }
+}
 
 // RETRIEVE LOCAL STORAGE VALUES
 if (!localStorage.getItem('staffID')) {
@@ -116,7 +131,8 @@ function memberSelectedRtn() {
     document.getElementById('selectpicker').value=''
     imgLink = document.getElementById('memberImgID')
     imgLink.link = "{{ url_for('static', filename='memberPhotos/" + currentMemberID + ".jpg') }}"
-
+    localStorage.setItem('currentMemberID',currentMemberID)
+    
     // SET UP LINK TO MEMBER FORM 
     var linkToMemberBtn = document.getElementById('linkToMember');
     link='/index/' + currentMemberID 
@@ -243,3 +259,124 @@ function findAllVariables() {
     } 
     alert(msg)
 } 
+
+/* When the user clicks on the button, 
+toggle between hiding and showing the dropdown content */
+function myFunction() {
+    //alert('myFunction')
+    document.getElementById("myDropdown").classList.toggle("show");
+  }
+  
+  // Close the dropdown if the user clicks outside of it
+  window.onclick = function(event) {
+    //alert('window.onclick')
+    if (!event.target.matches('.dropbtn')) {
+      var dropdowns = document.getElementsByClassName("dropdown-content");
+      var i;
+      for (i = 0; i < dropdowns.length; i++) {
+        var openDropdown = dropdowns[i];
+        if (openDropdown.classList.contains('show')) {
+          openDropdown.classList.remove('show');
+        }
+      }
+    }
+  }
+
+function noteRoutine() {
+    // CHECK FOR EXISTING NOTE
+    // IF FOUND, DISPLAY IN MSG
+    memberID = document.getElementById('memberID').value
+    //memberName = document.getElementById('modal-title').value
+
+    $.ajax({
+        url : "/getNoteToMember",
+        type: "GET",
+        data : {
+            memberID:memberID,
+            },
+ 
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.msg) {
+                msg = data.msg
+                msgElement = document.getElementById('msgID')
+                msgElement.value = msg
+            }
+            //alert("SUCCESS"+ data)
+        },
+        error: function(result){
+            alert("Error ..."+result)
+        }
+    })    
+    $('#noteModalID').modal('show')
+}
+
+// $('#noteModalID').on('hide.bs.modal', function () {
+//     alert('modal was hidden')
+// })
+
+function cancelNote() {
+    $('#noteModalID').modal('hide')
+}
+
+function processNote() {
+    console.log('processNote')
+    memberID = document.getElementById('memberID').value
+    show = document.getElementById('showAtCheckIn')
+    send = document.getElementById('sendEmail')
+    msg = document.getElementById('msgID').value
+    eMailAddr = document.getElementById('eMailID').value
+    console.log('memberID - '+memberID + '\nshow - '+show.checked+'\nsend - '
+    +send.checked+'\nmsg - '+msg+'\neMailAddr - '+eMailAddr)
+    
+    if (show.checked) {
+        showAtCheckIn='true'
+    }
+    else {
+        showAtCheckIn='false'
+    }
+    if (send.checked) {
+        console.log('send routine ...')
+        sendEmail = 'true'
+        
+        console.log ('eMailAddr - ' + eMailAddr)
+        alert ('emailAddress - '+eMailAddr)
+    }
+    else {
+        sendEmail = 'false' 
+    } 
+      
+    $.ajax({
+        url : "/processNoteToMember",
+        type: "GET",
+        data : {
+            showAtCheckIn: showAtCheckIn,
+            sendEmail: sendEmail,
+            memberID:memberID,
+            eMailAddr:'hartl1r@gmail.com',
+            msg:msg},
+
+        success: function(data, textStatus, jqXHR)
+        {
+            alert(data)
+        },
+        error: function(result){
+            alert("Error ..."+result)
+        }
+    }) 
+    
+    $('#noteModalID').modal('hide')
+
+}
+// $('#noteModalID').on('shown.bs.modal', function () {
+//     $('#msgID').focus();
+// }) 
+function showMedicalInfo() {
+    alert('show emergModalID')
+    $('#emergModalID').modal('show')
+}
+
+// $("#emergCancelBtn").click(function () {
+//     alert('emergCancelBtn clicked')
+//     $("#emergencyID").modal("hide");
+// });

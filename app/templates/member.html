@@ -26,45 +26,48 @@
                     <a id="linkToMember" style="display:none" href=""></a>
                 </div>
             </div>
+            <div class="memberMenu">
+                <div class="dropdown">
+                    <button onclick="myFunction()" class="dropbtn">MEMBER MENU</button>
+                    <div id="myDropdown" class="dropdown-content">
+                      <a  onclick='noteRoutine()'>Note to Member</a>
+                      <a class='dropdown-item disabled'href="#dues">Pay Dues</a>
+                      <a class='dropdown-item disabled'href="#classes">Class Signup</a>
+                    </div>
+                </div>
+            </div> 
         </div>
 
         <!-- PRIMARY CONTACT INFORMATION -->
         <div id="localContactID" class="localContactInfo panel">
             <h5>LOCAL INFORMATION</h5>
-            <div class="row">
-                <div class="col-sm-2" >
-                    <div class="thumbnail center" style="margin-left: 200px;">
-                        <img id="memberImgID" src="{{ url_for('static', filename='memberPhotos/604875.jpg') }}" alt="No photo" width="100%">
-                    </div>
-                </div>
-            </div>
-            <form method='POST' style="padding-left:50px;padding-top:20px" action="/saveAddress">
+            <form method='POST' action="/saveAddress">
                 <div class="row">
-                    <label class="control-label col-sm-2 col-form-label-sm" for="memberID">ID</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control-sm" style="width:75px" name="memberID" readonly value="{{member.Member_ID}}">
+                    <label class="control-label col-md-3 col-form-label-sm" for="memberID">ID</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control-md" style="width:75px" name="memberID" readonly value="{{member.Member_ID}}">
                         <label class="control-label col-form-label-sm" style="color:red;font-size:18px" >{{ expireMsg }}</label>
                     </div>
                 </div>
                 
                 <div class="row">
-                    <label class="control-label col-sm-2 col-form-label-sm" for="street">Street</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control-sm" style="width:250px" name="street" value="{{member.Address}}">
+                    <label class="control-label col-md-3 col-form-label-sm" for="street">Street</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control-md" style="width:250px" name="street" value="{{member.Address}}">
                     </div>
                 </div>
 
                 <div class="row">
-                    <label class="control-label col-sm-2 col-form-label-sm" for="cityStateZip">City/St/Zip</label>   
+                    <label class="control-label col-sm-3 col-form-label-sm" for="cityStateZip">City/St/Zip</label>   
                     <div class="col-sm-4">
-                        <input type="text" class="form-control-sm" name="city" value='{{member.City}}'>
+                        <input type="text" class="form-control-md" name="city" value='{{member.City}}'>
                     </div>
                     <div class="col-sm-1">
-                        <input type="text" class="form-control-sm" style=width:40px id="state" placeholder="FL" name="state" value='{{member.State}}'>
+                        <input type="text" class="form-control-md" style=width:40px id="state" placeholder="FL" name="state" value='{{member.State}}'>
                     </div>
                     <div class="col-sm-1">
-                        <input type="text" class="form-control-sm" style=width:100px id="zip" placeholder="" name="zip" value='{{member.Zip}}'>
-                        <!-- <select class="form-control-sm" name="zip" id="zip" >
+                        <input type="text" class="form-control-md" style=width:100px id="zip" placeholder="" name="zip" value='{{member.Zip}}'>
+                        <!-- <select class="form-control-md" name="zip" id="zip" >
                             <option value='32159'{{ "selected='selected'" if member.zip == '32159' else "" }}>32159</option>
                             <option value='32160'{{ "selected='selected'" if member.zip == '32160' else "" }}>32160</option>
                             <option value='32161'{{ "selected='selected'" if member.zip == '32161' else "" }}>32161</option>
@@ -75,76 +78,77 @@
                 </div>
 
                 <div class="row">
-                    <label class="control-label col-sm-2 col-form-label-sm" for="village">Village</label>
+                    <label class="control-label col-sm-3 col-form-label-sm" for="village">Village</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control-sm" placeholder="Enter village" name="village"value="{{ member.Village }}">
+                        <input type="text" class="form-control-md" placeholder="Enter village" name="village"value="{{ member.Village }}">
                     </div>
                 </div>
                 <br>
                 <div class="row">
-                    <label class="control-label col-sm-2 col-form-label-sm" for="homePhone">Home</label>
+                    <label class="control-label col-sm-3 col-form-label-sm" for="homePhone">Home</label>
                     <div class="col-sm-2">
-                        <input type="text" class="form-control-sm" style=width:130px id="homePhone" placeholder="Enter home phone" name="homePhone"value="{{ member.Home_Phone }}">
+                        <input type="text" class="form-control-md" style=width:130px id="homePhone" placeholder="Enter home phone" name="homePhone"value="{{ member.Home_Phone }}">
                     </div>
                 </div>
                 <div class="row">
-                    <label class="control-label col-sm-2 col-form-label-sm" for="cellPhone">Cell</label>
+                    <label class="control-label col-sm-3 col-form-label-sm" for="cellPhone">Cell</label>
                     <div class="col-sm-2">
-                        <input type="text" class="form-control-sm" style=width:130px id="cellPhone" placeholder="Enter cell phone" name="cellPhone"value="{{ member.Cell_Phone }}">
+                        <input type="text" class="form-control-md" style=width:130px id="cellPhone" placeholder="Enter cell phone" name="cellPhone"value="{{ member.Cell_Phone }}">
                     </div>
                 </div>
                 <div class="row">
-                    <label class="control-label col-sm-2 col-form-label-sm" for="eMail">E-Mail</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control-sm" style=width:250px id="eMail" placeholder="Enter email" name="eMail"value="{{ member.eMail }}">
+                    <label class="control-label col-sm-3 col-form-label-sm" for="eMail">E-Mail</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control-md" style=width:250px id="eMailID" placeholder="Enter email" name="eMail"value="{{ member.eMail }}">
                     </div>
                 </div>
                 <br>
                 <div style=padding-left:100px>
-                    <input type="hidden" class="memberID" name="memberID" value={{member.Member_ID}}>
-                    <button id="localSaveBtn" type="submit" name="action" class="btn-primary" style=float:right;display:none value="SAVE">SAVE</button>
-                    <button id="localCancelBtn" type="submit" name="action" class="btn-default" style=float:right;margin-right:20px;display:none value="CANCEL">CANCEL</button>
-                     
+                    <input id='memberID' type="hidden" class="memberID" name="memberID" value={{member.Member_ID}}>
+                    <button id="localSaveBtn" type="submit" name="localAction" class="btn-primary" style=float:right;display:none value="SAVE">SAVE</button>
+                    <button id="localCancelBtn" type="submit" name="localAction" class="btn-default" style=float:right;margin-right:20px;display:none value="CANCEL">CANCEL</button>
+                    <br>
                 </div>
             </form>     
         </div>
+        
 
         <!-- ALTERNATE CONTACT INFORMATION -->
         <div id='altContactID' class="alternateContactInfo panel">
             <h5>ALTERNATE ADDRESS</h5>
             <form method='POST'  action="/saveAltAddress" style="padding-left:50px;padding-top:20px">
                 <div class="row">
-                    <label class="control-label col-sm-2 col-form-label-sm" for="altStreet">Street</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control-sm" style="width:250px" id="altStreet" name="altStreet" value="{{member.Alt_Adddress}}">
+                    <label class="control-label col-sm-3 col-form-label-sm" for="altStreet">Street</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control-md" style="width:250px" id="altStreet" name="altStreet" value="{{member.Alt_Adddress}}">
                     </div>
                 </div>
 
                 <div class="row">
-                    <label class="control-label col-sm-2 col-form-label-sm">City/State</label>   
+                    <label class="control-label col-sm-3 col-form-label-sm">City/State</label>   
                     <div class="col-sm-4">
-                        <input type="text" class="form-control-sm" id="altCity" name="altCity" value='{{member.Alt_City}}'>
+                        <input type="text" class="form-control-md" id="altCity" name="altCity" value='{{member.Alt_City}}'>
                     </div>
                     <div class="col-sm-1">
-                        <input type="text" class="form-control-sm" style=width:40px name="altState" value='{{member.Alt_State}}'>
+                        <input type="text" class="form-control-md" style=width:40px name="altState" value='{{member.Alt_State}}'>
                     </div>
                 </div>
                 <div class="row">
-                    <label class="control-label col-sm-2 col-form-label-sm" >Zip</label>   
+                    <label class="control-label col-sm-3 col-form-label-sm" >Zip</label>   
                     <div class="col-sm-2">
                         <input type="text" class="form-control-sm" style=width:150px name="altZip" value='{{member.Alt_Zip}}'>
                     </div>
                 </div>
 
                 <div class="row">
-                    <label class="control-label col-sm-2 col-form-label-sm" >Country</label>
+                    <label class="control-label col-sm-3 col-form-label-sm" >Country</label>
                     <div class="col-sm-4">
                         <input type="text" class="form-control-sm" name="altCountry" value="{{ member.Alt_Country }}">
                     </div>
                 </div>
                 <br>
                 <div class="row">
-                    <label class="control-label col-sm-2 col-form-label-sm" >Phone</label>
+                    <label class="control-label col-sm-3 col-form-label-sm" >Phone</label>
                     <div class="col-sm-3">
                         <input type="text" class="form-control-sm" style=width:130px  name="altPhone"value="{{ member.Alt_Phone }}">
                     </div>
@@ -152,48 +156,70 @@
                 
                 <div style=padding-left:100px>
                     <input type="hidden" class="memberID" name="memberID" value={{member.Member_ID}}>
-                    <button id="altSaveBtn" type="submit" name="action" class="btn-primary" style=float:right;display:none value="SAVE">SAVE</button>
-                    <button id="altCancelBtn" type="submit" name="action" class="btn-default" style=float:right;margin-right:20px;display:none value="CANCEL">CANCEL</button>
+                    <button id="altSaveBtn" type="submit" name="altAction" class="btn-primary" style=float:right;display:none value="SAVE">SAVE</button>
+                    <button id="altCancelBtn" type="text" name="altAction" class="btn-default" style=float:right;margin-right:20px;display:none value="CANCEL">CANCEL</button>
                     
                 </div>
             </form>
         </div>
 
         <!-- EMERGENCY INFORMATION -->
-        <div id="emergencyID" class="emergencyInfo panel">
+        <div id="emergencyID" class="emergencyInfo panel" style="padding-left:50px;padding-top:20px">
             <h5>EMERGENCY INFORMATION</h5>
-            <form method='POST'  action="/saveEmergency" style="padding-left:50px;padding-top:20px">
+            <form method='POST' action="/saveEmergency" >
+                
                 <div class="row">
-                    <label class="control-label col-sm-2 col-form-label-sm">Contact</label>
-                    <div class="col-sm-10">
+                    <label class="control-label col-sm-3 col-form-label-sm">Contact</label>
+                    <div class="col-sm-9">
                         <input type="text" class="form-control-sm" style="width:250px" name="emergContact" value="{{member.Emerg_Name}}">
                     </div>
-                    <label class="control-label col-sm-2 col-form-label-sm">Phone</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control-sm" style="width:130px" name="emergPhone" value="{{member.Emerg_Phone}}">
-                    </div>
                 </div>
+        
                 <div class="row">
-                    <label class="control-label col-sm-2 col-form-label-sm" >Notes</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control-sm" style="width:250px;height:50px" name="emergNotes" value="{{emergNotes}}">
+                    <label class="control-label col-sm-3 col-form-label-sm">Phone</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control-sm" style="width:150px" name="emergPhone" value="{{member.Emerg_Phone}}">
                     </div>
                 </div>
-                  
                 <br>
+
+                <div class="row">
+                    <div class='col-sm-7'>
+                        <!-- <label class="control-label col-sm-3 col-form-label-sm" for="defibrillator">Defibrillator trained </label>  -->
+                        <!-- <label for="defibrillator">  Defibrillator trained</label> -->
+                        <input id='defibrillatorID' name="defibrillator" type="checkbox"  {% if member.Defibrillator_Trained %} checked {% endif %} value="{{member.Defibrillator_Trained}}">
+                        <span> Defibrillator trained</span>
+                        <!-- <input id='noEmergDataID' name="emergNoData" type="checkbox"  {% if member.Emerg_No_Data_Provided %} checked {% endif %}value="{{member.Emerg_No_Data_Provided}}"> 
+                        <label for="noEmergDataID">  No data provided</label> -->
+                    </div>
+                    <div class='col-sm-6'>
+                        <button id="medicalModalBtn" class="btn-primary" style=float:right>MEDICAL INFO</button>
+                    </div> 
+                </div>
+                
                 <div style=padding-left:100px>
                     <input type="hidden" class="memberID" name="memberID" value={{member.Member_ID}}>
-                    <button id="emergSaveBtn" type="submit" name="action" class="btn-primary" style=float:right;display:none value="SAVE">SAVE</button>
-                    <button id="emergCancelBtn" type="submit" name="action" class="btn-default" style=float:right;margin-right:20px;display:none value="CANCEL">CANCEL</button>
-                    
+                    <button id="emergSaveBtn" type="submit" name="emergAction" class="btn-primary" style=float:right;display:none value="SAVE">SAVE</button>
+                    <button id="emergCancelBtn" type="submit" name="emergAction" class="btn-default" style=float:right;margin-right:20px;display:none value="CANCEL">CANCEL</button>
+                    <!-- <button id="cancelBtn" type="text" >Cancel</button> -->
+                    <!-- redirect(url_for('index',villageID=memberID)) -->
+                    below submit buttons
                 </div>
             </form>
+            <hr>
         </div>
+        <!-- <div class="row">
+            <div class="col-sm-3" >
+                <div class="thumbnail center" style="margin-left: 200px;">
+                    <img id="memberImgID" src="{{ url_for('static', filename='memberPhotos/604875.jpg') }}" alt="No photo" width="100%">
+                </div>
+            </div>
+        </div> -->
 
         <!-- MEMBERSHIP STATUS -->
         <div id="membershipID" class="membershipInfo panel">
             <h5>MEMBERSHIP STATUS</h5> 
-            <form method='POST'  action="/saveMemberStatus" style="padding-left:50px;padding-top:20px"></form>  
+            <form method='POST'  action="/saveMemberStatus" style="padding-left:50px;padding-top:20px">
                 <div class="row">
                     <label class="control-label col-sm-4 col-form-label-sm">Dues Paid</label>
                     <input id="dues" type="checkbox" class="form-control-sm" name="duesPaidChk" {% if member.Dues_Paid %} checked {% endif %} value={{member.Dues_Paid}}>
@@ -238,8 +264,8 @@
                
                 <div style=padding-left:100px>
                     <input type="hidden" class="memberID" name="memberID" value={{member.Member_ID}}>
-                    <button id="memberSaveBtn" type="submit" name="action" class="btn-primary" style=float:right;display:none value="SAVE">SAVE</button>
-                    <button id="memberCancelBtn" type="submit" name="action" class="btn-default" style=float:right;margin-right:20px;display:none value="CANCEL">CANCEL</button>
+                    <button id="memberSaveBtn" type="submit" name="memberAction" class="btn-primary" style=float:right;display:none value="SAVE">SAVE</button>
+                    <button id="memberCancelBtn" type="submit" name="memberAction" class="btn-default" style=float:right;margin-right:20px;display:none value="CANCEL">CANCEL</button>
                     
                 </div>
             </form>
@@ -249,7 +275,7 @@
         <!-- CERTIFICATION INFORMATION -->
         <div id="certificationID" class="certificationInfo panel">
             <h5>CERTIFICATION</h5>
-            <form action="/saveCertification" style="padding-left:50px;padding-top:20px">
+            <form method='POST' action="/saveCertification" style="padding-left:50px;padding-top:20px">
                 <div class="row">
                     <label class="control-label col-sm-6 col-form-label-sm">Certified - Rolling Acres</label>
                     <input type="hidden" class="form-control-sm" style="width:130px" readonly name="certifiedRAhidden value="{{member.Certified}}">
@@ -291,12 +317,12 @@
                 </div>
                 <div style=padding-left:100px>
                     <input type="hidden" class="memberID" name="memberID" value={{member.Member_ID}}>
-                    <button id="certificationSaveBtn" type="submit" name="action" class="btn-primary" style=float:right;display:none value="SAVE">SAVE</button>
-                    <button id="certificationCancelBtn" type="submit" name="action" class="btn-default" style=float:right;margin-right:20px;display:none value="CANCEL">CANCEL</button>
-                    
+                    <button id="certificationSaveBtn" type="submit" name="certificationAction" class="btn-primary" style=float:right;display:none value="SAVE">SAVE</button>
+                    <button id="certificationCancelBtn" type="submit" name="certificationAction" class="btn-default" style=float:right;margin-right:20px;display:none value="CANCEL">CANCEL</button>  
                 </div>    
             </form>
         </div>
+
         <!-- MONITOR DUTY -->
         <div id="monitorDutyID" class="monitorDutyInfo panel">
             <h5>MONITOR DUTY</h5>
@@ -414,8 +440,8 @@
                 
                 <div style=padding-left:100px>
                     <input type="hidden" class="memberID" name="memberID" value={{member.Member_ID}}>
-                    <button id="monitorDutySaveBtn" type="submit" name="action" class="btn-primary" style=float:right;display:none value="SAVE">SAVE</button>
-                    <button id="monitorDutyCancelBtn" type="submit" name="action" class="btn-default" style=float:right;margin-right:20px;display:none value="CANCEL">CANCEL</button>
+                    <button id="monitorDutySaveBtn" type="submit" name="monitorAction" class="btn-primary" style=float:right;display:none value="SAVE">SAVE</button>
+                    <button id="monitorDutyCancelBtn" type="submit" name="monitorAction" class="btn-default" style=float:right;margin-right:20px;display:none value="CANCEL">CANCEL</button>
                     
 
                 </div> 
@@ -423,6 +449,76 @@
         </div>      
        
     </div>
+    <!-- MODAL FORM FOR NOTE TO MEMBER (BOOTSTRAP) -->
+<div id="noteModalID" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="modalTitle">Note to {{hdgName}}</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<span>Message:</span><br>
+				<textarea id="msgID" style=font-size:14px rows="10"" cols="90" ></textarea>
+                <br><br>
+                
+                <div class="modal-footer">
+                    <div class='footer-left-col'>
+                        <input id='showAtCheckIn' type="checkbox" checked value="checkIn">  Show at check-in<br>
+                        <input id='sendEmail' type="checkbox" value="email" style=margin-bottom:40px>  Send email<br><br>
+                    </div> 
+                    <div class='footer-right-col'> 
+                        <button id='cancelNoteID' type='button' class='btn btn-primary'style=margin-bottom:50px>Cancel</button>
+                        <button id='processMsgID' type="button" class="btn btn-primary"style=margin-bottom:50px>Done</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+
+    <!-- MODAL FORM FOR MEDICAL DATA -->
+    <div id="emergModalID" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="emergModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">MEDICAL INFORMATION</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body medicalInfo">
+                    <div id="emergInfoColumn1">
+                        <input id='emergPacemaker' type="checkbox" value="">  Pacemaker<br>
+                        <input id='emergStent' type="checkbox" value="" >  Stent<br><br>
+                        <input id='emergCABG' type="checkbox" value="" >  CABG<br><br>
+                        <input id='emergMI' type="checkbox" value="" >  MI<br><br>
+                        <input id='emergDiabetes1' type="checkbox" value="" >  Diabetes Type 1<br><br>
+                        <input id='emergDiabetes2' type="checkbox" value="" >  Diabetes Type 2<br><br>
+                    </div>
+                    <div id="emergInfoColumn2">
+                        <span>Other:</span><br>
+                        <textarea id="emergOtherDiagnosis" style=font-size:14px rows="3"" cols="60" ></textarea>
+                        <br>
+                        <span>Diabetes:</span><br>
+                        <textarea id="emergDiabetesOther" style=font-size:14px rows="3"" cols="60" ></textarea>
+                        <br>
+                        <span>Medical Allergies:</span><br>
+                        <textarea id="emergAlergies" style=font-size:14px rows="3"" cols="60" ></textarea>
+                        <br>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <div class='footer-right-col'> 
+                            <button id='cancelEmergID' type='button' class='btn btn-primary'style=margin-bottom:50px>Cancel</button>
+                            <button id='processEmergID' type="button" class="btn btn-primary"style=margin-bottom:50px>Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+    </div>
+    
 {% endblock %}
 
 {% block scripts %}

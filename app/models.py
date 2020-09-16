@@ -99,7 +99,7 @@ class Member(db.Model):
     Emerg_Diabetes_Other = db.Column(db.String(50))
     Emerg_Medical_Alergies = db.Column(db.String(255))
     Emerg_No_Data_Provided = db.Column(db.Boolean)
-
+    Defibrillator_Trained = db.Column(db.Boolean)
     Monitor_Duty_Notes = db.Column(db.String(255))
     Requires_Tool_Crib_Duty = db.Column(db.Boolean)
     Member_Notes = db.Column(db.String(255))
@@ -192,3 +192,9 @@ class CoordinatorsSchedule(db.Model):
     Start_Date = db.Column(db.DateTime, primary_key=True)
     End_Date = db.Column(db.DateTime)
     Coordinator_ID = db.Column(db.String(6))
+
+class NotesToMembers(db.Model):
+    __tablename__ = "notesToMembers"
+    __table_args__={"schema":"dbo"}
+    memberID = db.Column(db.String(6), primary_key=True)
+    noteToMember = db.Column(db.String(255))

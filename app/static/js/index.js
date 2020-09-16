@@ -6,10 +6,12 @@ function memberSelectedRtn() {
     lastEight = selectedMember.slice(-8)
     currentMemberID= lastEight.slice(1,7)
     document.getElementById('selectpicker').value=''
-
+    
     // SET UP LINK TO MEMBER FORM 
     var linkToMemberBtn = document.getElementById('linkToMember');
     link='/index/' + currentMemberID 
     linkToMemberBtn.setAttribute('href', link)
     linkToMemberBtn.click()
 }
+
+
