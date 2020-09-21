@@ -66,7 +66,8 @@ class Member(db.Model):
     Deceased = db.Column(db.Boolean)
     Inactive = db.Column(db.Boolean)
     Inactive_Date = db.Column(db.DateTime)
-
+    Villages_Waiver_Signed = db.Column(db.Boolean)
+    Villages_Waiver_Date_Signed = db.Column(db.DateTime)
     Jan_resident = db.Column(db.Boolean)
     Feb_resident = db.Column(db.Boolean)
     Mar_resident = db.Column(db.Boolean)

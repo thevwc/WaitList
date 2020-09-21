@@ -130,7 +130,9 @@ input {
     border: 1px solid black;
     font-size:16px;
 }
-
+.emergencyInfo hr {
+    border: 2px solid black;
+}
 .monthInputs li {
     display:inline;
     text-decoration: none;
@@ -275,3 +277,12 @@ table th {
   /* body {
       line-height: .50 !important;
   } */
+  #memberImgID {
+      border:1px solid black;
+  }
+  #imagemodal {
+      border: 1px solid red;
+  }
+  .showPhoto {
+      text-align: center;
+  }

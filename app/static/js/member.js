@@ -47,7 +47,7 @@ emergencyInfo.addEventListener('change',emergencyDataChanged);
 membershipInfo.addEventListener('change',membershipDataChanged);
 certificationInfo.addEventListener('change',certificationDataChanged);
 monitorDutyInfo.addEventListener('change',monitorDutyDataChanged);
-
+// showPhotoBtn.addEventListener('click','setPhotoSrc');
 // MODAL EVENT LISTENERS
 document.getElementById("cancelNoteID").addEventListener("click",cancelNote)
 document.getElementById("processMsgID").addEventListener("click",processNote)
@@ -76,8 +76,6 @@ document.querySelector('#dues').onclick = function(ev) {
 }
 // CHECK BOX LISTENERS
 document.getElementById('defibrillatorID').onclick = function(ev) {
-    alert('defibrillator clicked ')
-    console.log('checked - ' + ev.target.checked)
     if (ev.target.checked) {
         document.getElementById('defibrillatorID').value='True'
     }
@@ -85,6 +83,16 @@ document.getElementById('defibrillatorID').onclick = function(ev) {
         document.getElementById('defibrillatorID').value='False' 
     }
 }
+
+document.getElementById('noEmergDataID').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('noEmergDataID').value='True'
+    }
+    else {
+        document.getElementById('noEmergDataID').value='False' 
+    }
+}
+
 
 // RETRIEVE LOCAL STORAGE VALUES
 if (!localStorage.getItem('staffID')) {
@@ -380,3 +388,20 @@ function showMedicalInfo() {
 //     alert('emergCancelBtn clicked')
 //     $("#emergencyID").modal("hide");
 // });
+// function setPhotoSrc() {
+//     photo = document.getElementsByClassName('memberImgID')
+//     photo.src = "{{ url_for('static', filename='memberPhotos/" + currentMemberID + ".jpg') }}"
+// }
+function showHidePhoto(objBtn) {
+    photo = document.getElementById('memberImgID')
+    memberID = document.getElementById('memberID').value
+    if (objBtn.innerHTML == 'SHOW PHOTO'){
+        objBtn.innerHTML = 'HIDE PHOTO'
+        photo.src = "/static/memberPhotos/" + memberID + ".jpg "
+        photo.style.display='inline'
+    }
+    else {
+        objBtn.innerHTML = 'SHOW PHOTO'
+        photo.style.display='none'
+    }
+}

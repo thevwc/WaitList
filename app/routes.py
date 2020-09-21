@@ -42,7 +42,8 @@ def index(villageID):
     
     # IF A VILLAGE ID WAS NOT PASSED IN DISPLAY THE INDEX.HTML FORM TO PROMPT FOR AN ID
     if villageID == None:
-        return render_template("index.html",nameArray=nameArray)
+        return render_template("member.html",member="",nameArray=nameArray)
+        # return render_template("index.html",nameArray=nameArray)
 
 
     # IF A VILLAGE ID WAS PASSED IN ...
@@ -128,10 +129,8 @@ def index(villageID):
     sqlPastDuty += "WHERE Member_ID = '" + villageID + "' and Date_Scheduled BETWEEN '" + beginDateSTR + "' and '" + todaySTR + "' "
     sqlPastDuty += "ORDER BY Date_Scheduled DESC"
     pastDuty = db.engine.execute(sqlPastDuty)
-    # print('')
-    # print('PAST DUTY')
-    # for p in pastDuty:
-    #     print(p.DateScheduled,p.AM_PM,p.Duty,p.Shop_Abbr)
+   
+    print('date joined type and value - ',type(member.Date_Joined),member.Date_Joined)
 
     return render_template("member.html",member=member,hdgName=hdgName,nameArray=nameArray,emergNotes=emergNotes,expireMsg=expireMsg,futureDuty=futureDuty,pastDuty=pastDuty)
     
@@ -240,16 +239,21 @@ def saveAltAddress():
 
 @app.route('/saveEmergency', methods=['POST'])
 def saveEmergency():
-    print ('saveEmergency .................................................')
-    print('emergAction cancelled - ',request.form['emergAction'])
-
     # GET DATA FROM FORM
     memberID = request.form['memberID']
     contact = request.form['emergContact']
     phone = request.form['emergPhone']
-    defibrillator = request.form['defibrillator']
-    #noEmergData = request.form['emergNoData']
+    if request.form.get('emergDefib') == 'True':
+        defibrillatorStatus = True
+    else:
+        defibrillatorStatus = False
 
+    if request.form.get('emergNoData') == 'True':
+        noEmergData = True
+    else:
+        noEmergData = False
+
+    #  DID USER CANCEL?
     if request.form['emergAction'] == 'CANCEL':
         return redirect(url_for('index',villageID=memberID))
 
@@ -263,17 +267,15 @@ def saveEmergency():
 
     if member.Emerg_Phone != phone:
         member.Emerg_Phone = phone
-        fieldsChanged += 1     
-    print(member.Defibrillator_Trained,defibrillator)
-    if member.Defibrillator_Trained !=  defibrillator:
-        member.Defibrillator_Trained = defibrillator
+        fieldsChanged += 1    
+
+    if defibrillatorStatus != member.Defibrillator_Trained:
+        member.Defibrillator_Trained = defibrillatorStatus
         fieldsChanged += 1
 
-    # if member.Emerg_No_Data_Provided !=  noEmergData:
-    #     member.Emerg_No_Data_Provided = noEmergData
-    #     fieldsChanged += 1
-
-    #  add code for bit fields
+    if noEmergData != member.Emerg_No_Data_Provided:
+        member.Emerg_No_Data_Provided = noEmergData
+        fieldsChanged += 1
 
     if fieldsChanged > 0:
         try:
@@ -292,19 +294,136 @@ def saveMemberStatus():
     print('saveMemberStatus routine')
     # GET DATA FROM FORM
     memberID = request.form['memberID']
+    print('duesPaid',request.form.get('duesPaid'))
+    print('dateJoined',request.form.get('dateJoined'))
+    print('volunteer',request.form.get('volunteer'))
+    print('inactive',request.form.get('inactive'))
+    print('inactiveDate',request.form.get('inactiveDate'))
+    print('deceased',request.form.get('deceased'))
+    print('restricted',request.form.get('restricted'))
+    print('reasonRestricted',request.form.get('reasonRestricted'))
+    print('villagesWaiverSigned',request.form.get('villagesWaiverSigned'))
+    print('waiverDateSigned',request.form.get('waiverDateSigned'))
+
     if request.form['memberAction'] == 'CANCEL':
         return redirect(url_for('index',villageID=memberID))
+    
+    if request.form.get('duesPaid') == 'True':
+        duesPaid = True
+    else:
+        duesPaid = False 
+
+    dateJoined = request.form.get('dateJoined')
+
+    if request.form.get('restricted') == 'True':
+        restricted = True
+    else:
+        reasonRestricted = False
+    
+    if request.form.get('volunteer') == 'True':
+        volunteer = True
+    else:
+        volunteer = False
+
+    if request.form.get('inactive') == 'True':
+        inactive = True
+    else:
+        inactive = False
+
+    inactiveDate = request.form.get('inactiveDate')
+
+    if request.form.get('deceased') == 'True':
+        deceased = True
+    else:
+        deceased = False
+    
+    if request.form.get('restricted') == 'True':
+        restricted = True
+    else:
+        restricted = False
+    
+    reasonRestricted = request.form.get('reasonRestricted')
+
+    if request.form.get('villagesWaiverSigned') == 'True':
+        villagesWaiverSigned = True
+    else:
+        villagesWaiverSigned = False
+    
+    waiverDateSigned = request.form.get('waiverDateSigned')
+
 
      # GET MEMBER RECORD 
     member = db.session.query(Member).filter(Member.Member_ID == memberID).first()
-    
-
     fieldsChanged = 0
+
+    if duesPaid != member.Dues_Paid:
+        logChange('Dues Paid',memberID,duesPaid,member.Dues_Paid)
+        member.Dues_Paid = duesPaid
+        fieldsChanged += 1
+
+    if dateJoined != member.Date_Joined:
+        logChange('Date Joined',memberID,dateJoined,member.Date_Joined)
+        member.Date_Joined = dateJoined
+        fieldsChanged += 1
+
+    if volunteer != None:
+        if volunteer != member.NonMember_Volunteer:
+            logChange('Volunteer',memberID,volunteer,member.NonMember_Volunteer)
+            member.NonMember_Volunteer = volunteer
+            fieldsChanged += 1
+
+    if inactive != None:
+        if inactive != member.Inactive:
+            logChange('Inactive',memberID,inactive,member.Inactive)
+            member.Inactive = inactive
+            fieldsChanged += 1   
+
+    if inactiveDate != None:
+        if inactiveDate != member.Inactive_Date:
+            logChange('Inactive Date',memberID,inactiveDate,member.Inactive_Date)
+            member.Inactive_Date = inactiveDate
+            fieldsChanged += 1 
+
+    if deceased != None:
+        if deceased != member.Deceased:
+            logChange('Deceased',memberID,deceased,member.Deceased)
+            member.Deceased = deceased
+            fieldsChanged += 1
+
+    if restricted != None:
+        if restricted != member.Restricted_From_Shop:
+            logChange('Restricted',memberID,restricted,member.Restricted_From_Shop)
+            member.Restricted_From_Shop = restricted
+            fieldsChanged += 1
+
+    if reasonRestricted != None:
+        if reasonRestricted != member.Reason_For_Restricted_From_Shop:
+            logChange('Reason Restricted',memberID,reasonRestricted,member.Reason_For_Restricted_From_Shop)
+            member.Reason_For_Restricted_From_Shop = reasonRestricted
+            fieldsChanged += 1
+
+    if villagesWaiverSigned != None:
+        if villagesWaiverSigned != member.Villages_Waiver_Signed:
+            logChange('Waiver Signed',memberID,villagesWaiverSigned,member.Villages_Waiver_Signed)
+            member.Villages_Waiver_Signed = villagesWaiverSigned
+            fieldsChanged += 1
+
+    if waiverDateSigned != None:
+        if waiverDateSigned != member.Villages_Waiver_Date_Signed:
+            logChange('Waiver - Date Signed',memberID,waiverDateSigned,member.Villages_Waiver_Date_Signed)
+            member.Villages_Waiver_Date_Signed = waiverDateSigned
+            fieldsChanged += 1
+
     if fieldsChanged > 0:
         try:
             db.session.commit()
+            print ("Changes successful")
             flash("Changes successful","success")
+        # except SQLAlchemyError as e:
+        #     error = str(e.__dict__['orig'])
+        #     return error
         except Exception as e:
+            print ("Changes NOT successful\n",e)
             flash("Could not update member data.","danger")
             db.session.rollback()
 
@@ -472,4 +591,13 @@ def processNoteToMember():
     return make_response (f"{response}")
     
 
-    
+def logChange(colName,memberID,beforeData,afterData):
+    # get staff ID, date, write change
+    print('log - ',colName,"|",memberID,"|",beforeData,"|",afterData),"|"
+    return
+
+@app.route("/newMemberApplication")
+def newMemberApplication():
+    todays_date = datetime.today()
+    todaySTR = todays_date.strftime('%m-%d-%Y')
+    return render_template("newMemberApplication.html")

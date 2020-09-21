@@ -31,6 +31,7 @@
                     <button onclick="myFunction()" class="dropbtn">MEMBER MENU</button>
                     <div id="myDropdown" class="dropdown-content">
                       <a  onclick='noteRoutine()'>Note to Member</a>
+                      <a class='dropdown-item' href="{{ url_for('newMemberApplication')}}">New Member Application</a>
                       <a class='dropdown-item disabled'href="#dues">Pay Dues</a>
                       <a class='dropdown-item disabled'href="#classes">Class Signup</a>
                     </div>
@@ -166,8 +167,8 @@
         <!-- EMERGENCY INFORMATION -->
         <div id="emergencyID" class="emergencyInfo panel" style="padding-left:50px;padding-top:20px">
             <h5>EMERGENCY INFORMATION</h5>
+            <img id="memberImgID" src="" alt="No photo" width="400" height="300" style=display:none>
             <form method='POST' action="/saveEmergency" >
-                
                 <div class="row">
                     <label class="control-label col-sm-3 col-form-label-sm">Contact</label>
                     <div class="col-sm-9">
@@ -184,37 +185,29 @@
                 <br>
 
                 <div class="row">
-                    <div class='col-sm-7'>
-                        <!-- <label class="control-label col-sm-3 col-form-label-sm" for="defibrillator">Defibrillator trained </label>  -->
-                        <!-- <label for="defibrillator">  Defibrillator trained</label> -->
-                        <input id='defibrillatorID' name="defibrillator" type="checkbox"  {% if member.Defibrillator_Trained %} checked {% endif %} value="{{member.Defibrillator_Trained}}">
-                        <span> Defibrillator trained</span>
-                        <!-- <input id='noEmergDataID' name="emergNoData" type="checkbox"  {% if member.Emerg_No_Data_Provided %} checked {% endif %}value="{{member.Emerg_No_Data_Provided}}"> 
-                        <label for="noEmergDataID">  No data provided</label> -->
+                    <div class='col-sm-8'>
+                        <input id='defibrillatorID' name="emergDefib" type="checkbox"  {% if member.Defibrillator_Trained %} checked {% endif %} value="{{member.Defibrillator_Trained}}">
+                        <span> Defibrillator trained</span><br>
+                        <input id='noEmergDataID' name="emergNoData" type="checkbox"  {% if member.Emerg_No_Data_Provided %} checked {% endif %}value="{{member.Emerg_No_Data_Provided}}"> 
+                        <span> No data provided</span>    
                     </div>
-                    <div class='col-sm-6'>
-                        <button id="medicalModalBtn" class="btn-primary" style=float:right>MEDICAL INFO</button>
+                    <div class='col-sm-3'>
+                        <button id="medicalModalBtn" class="btn-primary" style=float:right;width:150px>MEDICAL INFO</button>
                     </div> 
                 </div>
-                
+                <br>
                 <div style=padding-left:100px>
                     <input type="hidden" class="memberID" name="memberID" value={{member.Member_ID}}>
                     <button id="emergSaveBtn" type="submit" name="emergAction" class="btn-primary" style=float:right;display:none value="SAVE">SAVE</button>
                     <button id="emergCancelBtn" type="submit" name="emergAction" class="btn-default" style=float:right;margin-right:20px;display:none value="CANCEL">CANCEL</button>
-                    <!-- <button id="cancelBtn" type="text" >Cancel</button> -->
-                    <!-- redirect(url_for('index',villageID=memberID)) -->
-                    below submit buttons
                 </div>
             </form>
             <hr>
-        </div>
-        <!-- <div class="row">
-            <div class="col-sm-3" >
-                <div class="thumbnail center" style="margin-left: 200px;">
-                    <img id="memberImgID" src="{{ url_for('static', filename='memberPhotos/604875.jpg') }}" alt="No photo" width="100%">
-                </div>
+            <div class='showPhoto'>
+                <button id='showPhotoBtn' onclick='showHidePhoto(this)' >SHOW PHOTO</button>
             </div>
-        </div> -->
+        </div>
+        
 
         <!-- MEMBERSHIP STATUS -->
         <div id="membershipID" class="membershipInfo panel">
@@ -223,12 +216,13 @@
                 <div class="row">
                     <label class="control-label col-sm-4 col-form-label-sm">Dues Paid</label>
                     <input id="dues" type="checkbox" class="form-control-sm" name="duesPaidChk" {% if member.Dues_Paid %} checked {% endif %} value={{member.Dues_Paid}}>
-                    <input id="duesText" type="hidden" class="form-control-sm" name="duesPaid" value="{{member.Dues_Paid}}">
+                    <input id="duesText" type="text" class="form-control-sm" name="duesPaid" value="{{member.Dues_Paid}}">
                     
                 </div>
                 <div class="row">
                     <label class="control-label col-sm-3 col-form-label-sm">Date Joined</label>
-                    <input type="text" class="form-control-sm" style="width:100px;margin-top:10px;margin-left:30px" name="dateJoined" value="{{member.Date_Joined}}">
+                    <input type="date" class="form-control-sm" style="width:150px;margin-top:10px;margin-left:30px" name="dateJoined" value="{{member.Date_Joined}}">
+                    {{member.Date_Joined}}
                 </div>
                 
                 <div class="row">
@@ -240,7 +234,7 @@
                 <div class="row">
                     <label class="control-label col-sm-4 col-form-label-sm">Inactive</label>
                     <input type="checkbox" class="form-control-sm"  name="inactive" {% if member.Inactive %} checked {% endif %}value="{{member.Inactive}}">
-                    <input type="text" class="form-control-sm" style="width:100px;margin-left:20px;margin-top:10px" name="inactiveDate" placeholder="inactive" value="{{member.Inactive_Date}}">
+                    <input type="date" class="form-control-sm" style="width:150px;margin-left:20px;margin-top:10px" name="inactiveDate" placeholder="inactive" value="{{member.Inactive_Date}}">
                 </div>
             
                 <div class="row">
@@ -250,7 +244,7 @@
             
                 <div class="row">
                     <label class="control-label col-sm-4 col-form-label-sm">Restricted</label>
-                    <input type="hidden" class="form-control-sm" name="restricted" value="{{member.Restricted}}">
+                    <input type="text" class="form-control-sm" name="restricted" value="{{member.Restricted}}">
                     <input type="checkbox" class="form-control-sm" name="restrictedCheckbox" {% if member.Restricted_From_Shop %} checked {% endif %}value="{{member.Restricted_From_Shop}}">
                     <input type="text" class="form-control-sm" style="height:100px;width:180px;margin-left:20px" name="reasonRestricted" placeholder="Enter reason ..." value="{{member.Reason_For_Restricted_From_Shop}}">
                 </div>
@@ -259,7 +253,7 @@
                     <label class="control-label col-sm-4 col-form-label-sm">Villages waiver</label>
                         <input type="hidden" class="form-control-sm" name="villagesWaiverSigned" value="{{member.Villages_Waiver_Signed}}">
                         <input type="checkbox" class="form-control-sm" name="villagesWaiverCheckbox" {% if member.Villages_Waiver_Signed %} checked {% endif %}value="{{member.Villages_Waiver_Signed}}">
-                        <input type="text" class="form-control-sm" style="width:100px;margin-left:20px;margin-top:10px" name="vwaiverDate" value="{{member.Villages_Waiver_Signed_Date}}">
+                        <input type="text" class="form-control-sm" style="width:100px;margin-left:20px;margin-top:10px" name="waiverDateSigned" value="{{member.Villages_Waiver_Signed_Date}}">
                 </div>
                
                 <div style=padding-left:100px>
@@ -280,14 +274,14 @@
                     <label class="control-label col-sm-6 col-form-label-sm">Certified - Rolling Acres</label>
                     <input type="hidden" class="form-control-sm" style="width:130px" readonly name="certifiedRAhidden value="{{member.Certified}}">
                     <input type="checkbox" class="form-control-sm" name="certifiedRA" {% if member.Certified %} checked {% endif %} readonly value="{{member.Certified}}">
-                    <input type="text" class="form-control-sm" style="width:80px;margin-left:50px" name="certifiedRAdate value="{{member.Certification_Training_Date}}">
+                    <input type="date" class="form-control-sm" style="width:150px;margin-left:50px" name="certifiedRAdate value="{{member.Certification_Training_Date}}">
                 </div>
                 
                 <div class="row">
                     <label class="control-label col-sm-6 col-form-label-sm">Certified - Brownwood</label>
                     <input type="hidden" class="form-control-sm"  name="certifiedBWhidden readonly value="{{member.Certified_2}}">
                     <input type="checkbox" class="form-control-sm" name="certifiedBW" {% if member.Certified_2 %} checked {% endif %} readonly value="{{member.Certified_2}}">
-                    <input type="text" class="form-control-sm" style="width:80px;margin-left:50px" name="certifiedBWdate value="{{member.Certification_Training_Date_2}}">
+                    <input type="date" class="form-control-sm" style="width:150px;margin-left:50px" name="certifiedBWdate value="{{member.Certification_Training_Date_2}}">
                 </div>
                 <hr>
                 <div class="row">
@@ -313,7 +307,7 @@
                 </div>
                 <div class="row">
                     <input type="text" class="form-control-sm col-sm-6" style="height:100px;width:100px;margin-left:10px" name="exemption" value="{{member.Monitor_Duty_Waiver_Reason}}">
-                    <input type="text" class="form-control-sm col-sm-3" style="width:60px;margin-left:30px" name="exemption" value="{{member.Monitor_Duty_Waiver_Expiration_Date}}">
+                    <input type="date" class="form-control-sm col-sm-3" style="width:60px;margin-left:30px" name="exemption" value="{{member.Monitor_Duty_Waiver_Expiration_Date}}">
                 </div>
                 <div style=padding-left:100px>
                     <input type="hidden" class="memberID" name="memberID" value={{member.Member_ID}}>
@@ -346,8 +340,6 @@
                 
                 <div id = "monthCheckboxesID" class="monthCheckboxes" style="margin:0; padding:0">
                     <ul>
-                        <!-- <li><input type="checkbox" name='janResident' {% if member.Jan_resident %} checked value=True
-                            {% else %} value=False {% endif %} ></li> -->
                         <li>
                             <input type="checkbox" id='jan' style=margin-left:5px name='janResident' {% if member.Jan_resident %} checked {% endif %} value='janResidentValue'>
                             <input type="hidden" id='janResidentValue' name='jan' value="{{ member.Jan_resident }}">
@@ -518,7 +510,7 @@
                 </div>
             </div>    
     </div>
-    
+
 {% endblock %}
 
 {% block scripts %}
