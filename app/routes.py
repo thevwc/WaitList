@@ -30,8 +30,12 @@ def index(villageID):
     nameArray=[]
     sqlSelect = "SELECT Last_Name, First_Name, Member_ID FROM tblMember_Data "
     sqlSelect += "ORDER BY Last_Name, First_Name "
-    
-    nameList = db.engine.execute(sqlSelect)
+    try:
+        nameList = db.engine.execute(sqlSelect)
+    except Exception as e:
+        print('ERROR in retrieving member list.')
+        flash("Could not retrieve member list.","danger")
+        
     position = 0
     
     # NEED TO PLACE NAME IN AN ARRAY BECAUSE OF NEED TO CONCATENATE 
@@ -63,34 +67,10 @@ def index(villageID):
         if len(member.Nickname) > 0 :
             hdgName += ' (' + member.Nickname + ')'
 
-    # EMERGENCY NOTES   
-    emergNotes = ''
-    if member.Emerg_Pacemaker:
-        emergNotes = 'Pacemaker'
-    if member.Emerg_Stent:
-        emergNotes += ', Stent'
-    if member.Emerg_CABG :
-        emergNotes += ', CABG'
-    if member.Emerg_MI:
-        emergNotes += ', MI'
-
-    if member.Emerg_Other_Diagnosis:
-        emergNotes += ', ' + member.Emerg_Other_Diagnosis
-    if member.Emerg_Diabetes_Type_1:
-        emergNotes += ', Diabetes Type 2'
-    if member.Emerg_Diabetes_Type_2:
-        emergNotes += ', Diabetes Type 2'
-    if member.Emerg_Diabetes_Other:
-        emergNotes += ', Diabetes Type Other'
-    if member.Emerg_Medical_Alergies:
-        emergNotes += ', ' + member.Emerg_Medical_Alergies
-    if member.Emerg_No_Data_Provided:
-        emergNotes += ', No data provided.'
-
-    
     # TEST FOR TEMPORARY VILLAGE ID EXPIRATION DATE
     expireMsg = ''
-    todays_date = datetime.today()
+    #todays_date = datetime.today()
+    todays_date = date.today()
 
     if member.Temporary_Village_ID is not None:
         if member.Temporary_ID_Expiration_Date is not None:
@@ -130,9 +110,7 @@ def index(villageID):
     sqlPastDuty += "ORDER BY Date_Scheduled DESC"
     pastDuty = db.engine.execute(sqlPastDuty)
    
-    print('date joined type and value - ',type(member.Date_Joined),member.Date_Joined)
-
-    return render_template("member.html",member=member,hdgName=hdgName,nameArray=nameArray,emergNotes=emergNotes,expireMsg=expireMsg,futureDuty=futureDuty,pastDuty=pastDuty)
+    return render_template("member.html",member=member,hdgName=hdgName,nameArray=nameArray,expireMsg=expireMsg,futureDuty=futureDuty,pastDuty=pastDuty)
     
 @app.route('/saveAddress', methods=['POST'])
 def saveAddress():
@@ -254,6 +232,7 @@ def saveEmergency():
         noEmergData = False
 
     #  DID USER CANCEL?
+    print('emergAction - ',request.form.get('emergAction'))
     if request.form['emergAction'] == 'CANCEL':
         return redirect(url_for('index',villageID=memberID))
 
@@ -293,58 +272,61 @@ def saveEmergency():
 def saveMemberStatus():
     print('saveMemberStatus routine')
     # GET DATA FROM FORM
-    memberID = request.form['memberID']
-    print('duesPaid',request.form.get('duesPaid'))
-    print('dateJoined',request.form.get('dateJoined'))
-    print('volunteer',request.form.get('volunteer'))
-    print('inactive',request.form.get('inactive'))
-    print('inactiveDate',request.form.get('inactiveDate'))
-    print('deceased',request.form.get('deceased'))
-    print('restricted',request.form.get('restricted'))
-    print('reasonRestricted',request.form.get('reasonRestricted'))
-    print('villagesWaiverSigned',request.form.get('villagesWaiverSigned'))
-    print('waiverDateSigned',request.form.get('waiverDateSigned'))
-
     if request.form['memberAction'] == 'CANCEL':
         return redirect(url_for('index',villageID=memberID))
     
-    if request.form.get('duesPaid') == 'True':
+    memberID = request.form['memberID']
+    print('memberID',request.form.get('memberID'))
+    print('duesPaid',request.form.get('duesPaidText'))
+    print('dateJoined',request.form.get('dateJoined'))
+    print('volunteer',request.form.get('volunteerText'))
+    print('inactive',request.form.get('inactiveText'))
+    print('inactiveDate',request.form.get('inactiveDate'))
+    print('deceased',request.form.get('deceasedText'))
+    print('restricted',request.form.get('restrictedText'))
+    print('reasonRestricted',request.form.get('reasonRestricted'))
+    print('villagesWaiverSigned',request.form.get('waiverText'))
+    print('waiverDateSigned',request.form.get('waiverDateSigned'))
+
+    
+    if request.form.get('duesPaidText') == 'True':
         duesPaid = True
     else:
         duesPaid = False 
 
     dateJoined = request.form.get('dateJoined')
 
-    if request.form.get('restricted') == 'True':
+    if request.form.get('restrictedText') == 'True':
         restricted = True
     else:
         reasonRestricted = False
     
-    if request.form.get('volunteer') == 'True':
+    if request.form.get('volunteerText') == 'True':
         volunteer = True
     else:
         volunteer = False
 
-    if request.form.get('inactive') == 'True':
+    if request.form.get('inactiveText') == 'True':
         inactive = True
     else:
         inactive = False
+    print('inactive from form -',request.form.get('inactiveText'))
 
     inactiveDate = request.form.get('inactiveDate')
-
-    if request.form.get('deceased') == 'True':
+   
+    if request.form.get('deceasedText') == 'True':
         deceased = True
     else:
         deceased = False
     
-    if request.form.get('restricted') == 'True':
+    if request.form.get('restrictedText') == 'True':
         restricted = True
     else:
         restricted = False
     
     reasonRestricted = request.form.get('reasonRestricted')
 
-    if request.form.get('villagesWaiverSigned') == 'True':
+    if request.form.get('waiverText') == 'True':
         villagesWaiverSigned = True
     else:
         villagesWaiverSigned = False
@@ -354,8 +336,10 @@ def saveMemberStatus():
 
      # GET MEMBER RECORD 
     member = db.session.query(Member).filter(Member.Member_ID == memberID).first()
+    if member == None:
+        print("ERROR - Member "+memberID+" not found.")
     fieldsChanged = 0
-
+    print(duesPaid,member.Dues_Paid)
     if duesPaid != member.Dues_Paid:
         logChange('Dues Paid',memberID,duesPaid,member.Dues_Paid)
         member.Dues_Paid = duesPaid
@@ -371,7 +355,8 @@ def saveMemberStatus():
             logChange('Volunteer',memberID,volunteer,member.NonMember_Volunteer)
             member.NonMember_Volunteer = volunteer
             fieldsChanged += 1
-
+    print('inactive - ',inactive)
+    print('member.inactive - ',member.Inactive)
     if inactive != None:
         if inactive != member.Inactive:
             logChange('Inactive',memberID,inactive,member.Inactive)
@@ -397,6 +382,8 @@ def saveMemberStatus():
             fieldsChanged += 1
 
     if reasonRestricted != None:
+        # print('reasonRestricted - ',reasonRestricted)
+        # print('member.Reason_For_Restricted_From_Shop - ',member.Reason_For_Restricted_From_Shop)
         if reasonRestricted != member.Reason_For_Restricted_From_Shop:
             logChange('Reason Restricted',memberID,reasonRestricted,member.Reason_For_Restricted_From_Shop)
             member.Reason_For_Restricted_From_Shop = reasonRestricted
@@ -432,21 +419,73 @@ def saveMemberStatus():
 
 @app.route('/saveCertification', methods=['POST'])
 def saveCertification():
+    print('/saveCertification')
     # GET DATA FROM FORM
     memberID = request.form['memberID']
     if request.form['certificationAction'] == 'CANCEL':
         return redirect(url_for('index',villageID=memberID))
 
+    certifiedRAdate = request.form.get('certifiedRAdate')
+    certifiedBWdate = request.form.get('certifiedBWdate')
+    #typeOfWorkHidden = request.form.get('typeOfWorkHidden')
+    typeOfWork = request.form.get('typeOfWorkSelecterName')
+    #typeOfWork2 = request.form.get('typeOfWork2')
+    #typeOfWorkSelecter = request.form.get('typeOfWorkSelecter')
+    #print('typeOfWorkHidden - ',typeOfWorkHidden)
+    #print('typeOfWork - ',typeOfWork)
+
+    skillLevel = request.form.get('skillLevelSelecterName')
+    waiverExpirationDate = request.form.get('waiverExpirationDate')
+    waiverReason = request.form.get('waiverReason')
+
     # GET MEMBER RECORD 
     member = db.session.query(Member).filter(Member.Member_ID == memberID).first()
-
     fieldsChanged = 0
+
+    print('orig -',member.Certification_Training_Date,' new - ',certifiedRAdate)
+    if certifiedRAdate != None and certifiedRAdate != '':
+        if certifiedRAdate != member.Certification_Training_Date:
+            logChange('RA certification',memberID,certifiedRAdate,member.Certification_Training_Date)
+            member.Certification_Training_Date = certifiedRAdate
+            fieldsChanged += 1
+
+    if certifiedBWdate != None and certifiedBWdate != '':
+        if certifiedBWdate != member.Certification_Training_Date_2:
+            logChange('BW certification',memberID,certifiedBWdate,member.Certification_Training_Date_2)
+            member.Certification_Training_Date_2 = certifiedBWdate
+            fieldsChanged += 1
+
+    if typeOfWork != None:
+        if typeOfWork != member.Default_Type_Of_Work:
+            logChange('Default_Type_Of_Work',memberID,typeOfWork,member.Default_Type_Of_Work)
+            member.Default_Type_Of_Work = typeOfWork
+            fieldsChanged += 1
+
+    if skillLevel != None:
+        if skillLevel != member.Skill_Level:
+            logChange('Skill_Level',memberID,skillLevel,member.Skill_Level)
+            member.Skill_Level = skillLevel
+            fieldsChanged += 1
+
+    # if waiverExpirationDate != None:
+    #     if waiverExpirationDate != member.Monitor_Duty_Waiver_Expiration_Date:
+    #         logChange('Monitor Waiver Expiration',memberID,waiverExpirationDate,member.Monitor_Duty_Waiver_Expiration_Date)
+    #         member.Monitor_Duty_Waiver_Expiration_Date = waiverExpirationDate
+    #         fieldsChanged += 1
+
+    # if waiverReason != None:
+    #     if waiverReason != member.Monitor_Duty_Waiver_Expiration_Date:
+    #         logChange('Monitor Waiver Reason',memberID,waiverReason,member.Monitor_Duty_Waiver_Expiration_Date)
+    #         member.Monitor_Duty_Waiver_Expiration_Date = waiverReason
+    #         fieldsChanged += 1
     if fieldsChanged > 0:
         try:
             db.session.commit()
+            print('Certification Info SAVED')
             flash("Changes successful","success")
         except Exception as e:
-            flash("Could not update member data.","danger")
+            print("Certification Info - Could not update member data.","danger")
+            flash("Certification Info - Could not update member data.","danger")
             db.session.rollback()
 
     return redirect(url_for('index',villageID=memberID))
@@ -591,9 +630,9 @@ def processNoteToMember():
     return make_response (f"{response}")
     
 
-def logChange(colName,memberID,beforeData,afterData):
-    # get staff ID, date, write change
-    print('log - ',colName,"|",memberID,"|",beforeData,"|",afterData),"|"
+def logChange(colName,memberID,newData,origData):
+    # get staff ID, current date & time, write change to tblMember_Transactions
+    print('log - ',colName,"|",memberID,"|New- ",newData,"|Orig-",origData),"|"
     return
 
 @app.route("/newMemberApplication")
@@ -601,3 +640,57 @@ def newMemberApplication():
     todays_date = datetime.today()
     todaySTR = todays_date.strftime('%m-%d-%Y')
     return render_template("newMemberApplication.html")
+
+@app.route("/getMedicalInfo")
+def getMedicalInfo():
+    memberID = request.args.get('memberID')
+    medicalInfo = db.session.query(Member).filter(Member.Member_ID == memberID).first()
+    if (medicalInfo):
+        pacemaker = medicalInfo.Emerg_Pacemaker
+        stent = medicalInfo.Emerg_Stent
+        CABG = medicalInfo.Emerg_CABG
+        MI = medicalInfo.Emerg_MI
+        otherDiagnosis = medicalInfo.Emerg_Other_Diagnosis
+        diabetes1 = medicalInfo.Emerg_Diabetes_Type_1
+        diabetes2 = medicalInfo.Emerg_Diabetes_Type_2
+        diabetesOther = medicalInfo.Emerg_Diabetes_Other
+        alergies = medicalInfo.Emerg_Medical_Alergies
+        # return jsonify(medData=medData)
+        # medData = {
+        #     'pacemaker':medicalInfo.Emerg_Pacemaker,
+        #     'stent':medicalInfo.Emerg_Stent,
+        #     'CABG':medicalInfo.Emerg_CABG,
+        #     'MI':medicalInfo.Emerg_MI,
+        #     'OtherDiagnosis':medicalInfo.Emerg_Other_Diagnosis,
+        #     'Diabetes1':medicalInfo.Emerg_Diabetes_Type_1,
+        #     'Diabetes2':medicalInfo.Emerg_Diabetes_Type_2,
+        #     'DiabetesOther':medicalInfo.Emerg_Diabetes_Other,
+        #     'Alergies':medicalInfo.Emerg_Medical_Alergies}
+        # print('medData - ',medData)
+        return jsonify(pacemaker=pacemaker,
+            stent=stent,
+            CABG=CABG,
+            MI=MI,
+            otherDiagnosis=otherDiagnosis, 
+            diabetes1=diabetes1,
+            diabetes2=diabetes2,
+            diabetesOther=diabetesOther,
+            alergies=alergies,
+            emergMemberID=memberID)
+    return make_response('Nothing')
+
+
+@app.route("/saveAddtlMedicalInfo", methods=['POST'])
+def saveAddtlMedicalInfo():
+    print('/saveAddtlMedicalInfo')
+    memberID = request.form['emergMemberID']
+    pacemaker = request.form['pacemaker']
+
+    medicalInfo = db.session.query(Member).filter(Member.Member_ID == memberID).first()
+    if (medicalInfo == None):
+        return make_response("ERROR - record not found for member ID " + memberID)
+
+    #pacemaker=request.form.get['pacemaker']
+
+    # try to update
+    return make_response("SUCCESS")

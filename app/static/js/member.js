@@ -32,6 +32,16 @@ var shopNames = ['Rolling Acres', 'Brownwood']
 var currentMemberID = ''
 var curShopNumber = ''
 
+// SET OPTIONS IN SELECT ELEMENTS BASED ON TEXT VALUES
+typeOfWorkText = document.getElementById('typeOfWorkTextID').value
+typeOfWorkSelect = document.getElementById('typeOfWorkSelecterID')
+typeOfWorkSelect.value = typeOfWorkText
+
+skillLevelText = document.getElementById('skillLevelTextID').value
+skillLevelSelect = document.getElementById('skillLevelSelecterID')
+if (skillLevelSelect != null) {
+    skillLevelSelect.value = skillLevelText
+}
 // ASSIGN PANELS TO VARIABLES
 localContactInfo = document.getElementById('localContactID')
 altContactInfo = document.getElementById('altContactID')
@@ -51,10 +61,13 @@ monitorDutyInfo.addEventListener('change',monitorDutyDataChanged);
 // MODAL EVENT LISTENERS
 document.getElementById("cancelNoteID").addEventListener("click",cancelNote)
 document.getElementById("processMsgID").addEventListener("click",processNote)
-document.getElementById("medicalModalBtn").addEventListener("click",showMedicalInfo)
+//document.getElementById("medicalModalBtn").addEventListener("click",showMedicalInfo)
 
 document.getElementById("selectpicker").addEventListener("change",memberSelectedRtn)
 document.getElementById("selectpicker").addEventListener("click",memberSelectedRtn)
+
+document.getElementById("typeOfWorkSelecterID").addEventListener("change",typeOfWorkRtn)
+document.getElementById("skillLevelSelecterID").addEventListener("change",skillLevelRtn)
 
 document.querySelector('#monthCheckboxesID').onclick = function(ev) {
     inputID = ev.target.id + 'ResidentValue'
@@ -74,6 +87,79 @@ document.querySelector('#dues').onclick = function(ev) {
         document.getElementById(inputID).value = 'False'
     }
 }
+document.querySelector('#volunteer').onclick = function(ev) {
+    alert('inputID - '+inputID)
+    inputID = ev.target.id + 'Text'
+    if (ev.target.checked) {
+        document.getElementById(inputID).value = 'True'
+    }
+    else {
+        document.getElementById(inputID).value = 'False'
+    }
+}
+document.querySelector('#inactive').onclick = function(ev) {
+    inputID = ev.target.id + 'Text'
+    if (ev.target.checked) {
+        document.getElementById(inputID).value = 'True'
+    }
+    else {
+        document.getElementById(inputID).value = 'False'
+    }
+    alert('inactive - '+ document.getElementById(inputID).value)
+}
+
+document.querySelector('#deceased').onclick = function(ev) {
+    inputID = ev.target.id + 'Text'
+    if (ev.target.checked) {
+        document.getElementById(inputID).value = 'True'
+    }
+    else {
+        document.getElementById(inputID).value = 'False'
+    }
+}
+
+document.querySelector('#restricted').onclick = function(ev) {
+    inputID = ev.target.id + 'Text'
+    if (ev.target.checked) {
+        document.getElementById(inputID).value = 'True'
+    }
+    else {
+        document.getElementById(inputID).value = 'False'
+    }
+}
+
+document.querySelector('#waiver').onclick = function(ev) {
+    waiverInputID = ev.target.id + 'Text'
+    if (ev.target.checked) {
+        document.getElementById(waiverInputID).value = 'True'
+    }
+    else {
+        document.getElementById(waiverInputID).value = 'False'
+    }
+}
+
+// HIDE DETAIL UNTIL A MEMBER IS SELECTED
+memberID = document.getElementById('memberID').value
+if (memberID.length == 0)
+{
+    // FIND METHOD TO DISPLAY BLANK SCREEN BELOW HEADING
+
+    
+    // localContactInfo.style.backgroundColor="rgba(0,0,0,0.6)"
+    // localContactInfo.style.color="rgba(0,0,0,0.6)"
+    // altContactInfo.style.backgroundColor="rgba(0,0,0,0.6)"
+    // altContactInfo.style.color="rgba(0,0,0,0.6)"
+    // emergencyInfo.style.backgroundColor="rgba(0,0,0,0.6)"
+    // emergencyInfo.style.color="rgba(0,0,0,0.6)"
+    // membershipInfo.style.backgroundColor="rgba(0,0,0,0.6)"
+    // membershipInfo.style.color="rgba(0,0,0,0.6)"
+    // certificationInfo.style.backgroundColor="rgba(0,0,0,0.6)"
+    // certificationInfo.style.color="rgba(0,0,0,0.6)"
+    // monitorDutyInfo.style.backgroundColor="rgba(0,0,0,0.6)"
+    // monitorDutyInfo.style.color="rgba(0,0,0,0.6)"
+
+}
+
 // CHECK BOX LISTENERS
 document.getElementById('defibrillatorID').onclick = function(ev) {
     if (ev.target.checked) {
@@ -92,7 +178,67 @@ document.getElementById('noEmergDataID').onclick = function(ev) {
         document.getElementById('noEmergDataID').value='False' 
     }
 }
+// MODAL OF ADDITIONAL MEDICAL INFO
+document.getElementById('emergPacemaker').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('emergPacemaker').value='True'
+    }
+    else {
+        document.getElementById('emergPacemaker').value='False' 
+    }
+}
+document.getElementById('emergStent').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('emergStent').value='True'
+    }
+    else {
+        document.getElementById('emergStent').value='False' 
+    }
+}
+document.getElementById('emergCABG').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('emergCABG').value='True'
+    }
+    else {
+        document.getElementById('emergCABG').value='False' 
+    }
+}
+document.getElementById('emergMI').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('emergMI').value='True'
+    }
+    else {
+        document.getElementById('emergMI').value='False' 
+    }
+}
+document.getElementById('emergDiabetes1').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('emergDiabetes1').value='True'
+    }
+    else {
+        document.getElementById('emergDiabetes1').value='False' 
+    }
+}
+document.getElementById('emergDiabetes2').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('emergDiabetes2').value='True'
+    }
+    else {
+        document.getElementById('emergDiabetes2').value='False' 
+    }
+}
 
+
+// SELECT CONTROL LISTENERS
+// typeOfWork = document.getElementById('typeOfWorkSelect')
+// typeOfWork.onchange = function(ev) {
+//     alert('selected value - '+ target.value)
+// }
+
+// document.getElementById('typeOfWorkSelect').onclick = function(ev) {
+//     alert('selected item - ' + target.value)
+//     document.getElementById('typeOfWorkText').value=target.value
+// }
 
 // RETRIEVE LOCAL STORAGE VALUES
 if (!localStorage.getItem('staffID')) {
@@ -146,6 +292,8 @@ function memberSelectedRtn() {
     link='/index/' + currentMemberID 
     linkToMemberBtn.setAttribute('href', link)
     linkToMemberBtn.click()
+    // hdgTitle = document.getElementById('hdgTitleID')
+    // hdgTitle.style.display='inline'
 }
 
 function localDataChanged() {
@@ -383,6 +531,76 @@ function showMedicalInfo() {
     alert('show emergModalID')
     $('#emergModalID').modal('show')
 }
+function medicalInfoRoutine() {
+    // CHECK FOR EXISTING MEDICAL DATA
+    // IF FOUND, DISPLAY IN FORM
+    memberID = document.getElementById('memberID').value
+    
+    $.ajax({
+        url : "/getMedicalInfo",
+        type: "GET",
+        data : {
+            memberID:memberID,
+            },
+ 
+        success: function(data, textStatus, jqXHR)
+        {
+            //alert('data - '+ data.medData.OtherDiagnosis)
+            //console.log('OtherDiagnosis - '+data.medData.OtherDiagnosis)
+            //console.log('otherDiagnosis - '+data.otherDiagnosis)
+            console.log('pacemaker - '+data.pacemaker)
+            console.log('alergies - '+data.alergies)
+            //console.log('stent - '+data.stent)
+            //console.log('MI - '+data.MI)
+            if (data.pacemaker == true) {
+                pacemaker = document.getElementById('emergPacemaker')
+                pacemaker.value = 'True'
+                pacemaker.checked = true
+                //console.log('pacemaker = true')
+            }
+            if (data.stent == true) {
+                stent = document.getElementById('emergStent')
+                stent.value = 'True'
+                stent.checked = true
+                //console.log('stent = true')
+            }
+            if (data.CABG == true) {
+                CABG = document.getElementById('emergCABG')
+                CABG.value = 'True'
+                CABG.checked = true
+                //console.log('CABG = true')
+            }
+            if (data.MI == true) {
+                MI = document.getElementById('emergMI')
+                MI.value = 'True'
+                MI.checked = true
+                //console.log('MI = true')
+            }
+            if (data.diabetes1 == true) {
+                diabetes1 = document.getElementById('emergDiabetes1')
+                diabetes1.value = 'True'
+                diabetes1.checked = true
+                //console.log('diabetes1 = true')
+            }
+            if (data.diabetes2 == true) {
+                diabetes2 = document.getElementById('emergDiabetes2')
+                diabetes2.value = 'True'
+                diabetes2.checked = true
+                //console.log('diabetes2 = true')
+            }
+            document.getElementById('emergOtherDiagnosis').value = data.otherDiagnosis
+            document.getElementById('emergDiabetesOther').value = data.diabetesOther
+            document.getElementById('emergAlergies').value = data.alergies
+
+            document.getElementById('emergMemberID').value = data.emergMemberID
+            alert("SUCCESS")
+        },
+        error: function(result){
+            alert("Error ..."+result)
+        }
+    })    
+    $('#emergModalID').modal('show')
+}
 
 // $("#emergCancelBtn").click(function () {
 //     alert('emergCancelBtn clicked')
@@ -405,3 +623,52 @@ function showHidePhoto(objBtn) {
         photo.style.display='none'
     }
 }
+
+function typeOfWorkRtn() {
+    typeOfWork = this.value
+    document.getElementById('typeOfWorkTextID').value=this.value
+}
+
+function skillLevelRtn() {
+    skillLevel = this.value
+    document.getElementById('skillLevelTextID').value=this.value
+}
+function clearScreen() {
+    // alert('clear screen')
+    // hdgTitle = document.getElementById('hdgTitleID')
+    // hdgTitle.style.display='none'
+    var linkToMemberBtn = document.getElementById('linkToMember');
+    link='/index/' 
+    linkToMemberBtn.setAttribute('href', link)
+    linkToMemberBtn.click()
+}
+
+function cancelAddtlMedicalInfo() {
+    $("#emergModalID").modal("hide");
+}
+function saveAddtlMedicalInfo() {
+    memberID = document.getElementById('memberID').value
+    $.ajax({
+        url : "/saveAddtlMedicalInfo",
+        type: "GET",
+        data : {
+            memberID:memberID,
+            
+            },
+ 
+        success: function(data, textStatus, jqXHR)
+        {
+            // if (data.msg) {
+            //     msg = data.msg
+            //     msgElement = document.getElementById('msgID')
+            //     msgElement.value = msg
+            // }
+            alert("SUCCESS"+ data)
+        },
+        error: function(result){
+            alert("Error ..."+result)
+        }
+    })    
+    $('#emergModalID').modal('hide')
+}
+  

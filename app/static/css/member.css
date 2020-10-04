@@ -29,8 +29,8 @@
 .hdg {
     grid-area: hdgArea; 
     display:grid;
-    grid-template-columns:1fr 1fr 1fr .75fr;
-    grid-template-areas: "hdgTitle   .      searchArea  menuArea";
+    grid-template-columns:1fr 1fr 1fr;
+    grid-template-areas: " searchArea hdgTitle  menuArea";
     height:50px;
     padding-top: 0px;
     padding-bottom: 0px;
@@ -44,13 +44,17 @@
 }
 
 .hdgTitle {
-    grid-area:hdgTitle; 
+    grid-area:hdgTitle;
+    text-align:center; 
+    background-color: white;
+    color:navy; 
+    height:40px;
 }
 .hdgSearch {
     grid-area:searchArea;
     padding-top:5px;
     padding-bottom: 5px;
-    align-items: right;
+    align-items: left;
 }
 .memberMenu {
     grid-area:menuArea;
@@ -60,7 +64,11 @@
     text-align: center;
     color:var(--main-panel-txt-color);
 }
+
 input {
+    color:blue;
+}
+#certDate {
     color:blue;
 }
 .localContactInfo {
@@ -69,7 +77,6 @@ input {
     color:var(--main-panel-txt-color);
     border:var(--main-panel-border);
     border-radius: 10px;
-    
 }
 .localContactInfo form {
     padding-left: 20px;
@@ -81,7 +88,8 @@ input {
 .localContactInfo input {
     border: 1px solid black;
     font-size:16px;
-}
+    color:var(--main-panel-txt-color);
+} 
 .localContactInfo label {
     text-align:right;
 }
@@ -96,6 +104,12 @@ input {
     padding-left: 20px;
     padding-top:0px;
 }
+.alternateContactInfo input {
+    border: 1px solid black;
+    font-size:16px;
+    color:var(--main-panel-txt-color);
+} 
+
 .alternateContactInfo .row {
     height:30px;
 }
@@ -115,9 +129,20 @@ input {
     border:var(--main-panel-border);
     border-radius: 10px;
 }
+.memberImgID {
+    margin-top:20px;
+    margin-left:20px;
+}
+
 .emergencyInfo form {
     padding-left: 20px;
     padding-top:0px;
+    border:1px solid blue;
+}
+.emergencyInfo input {
+    border: 1px solid black;
+    font-size:16px;
+    color:var(--main-panel-txt-color);
 }
 .emergencyInfo .row {
     height:30px;
@@ -126,12 +151,21 @@ input {
     text-align:right;
 }
 
-.emergencyInfo input {
-    border: 1px solid black;
-    font-size:16px;
-}
 .emergencyInfo hr {
     border: 2px solid black;
+    margin-left:0px;
+    width:300px;
+}
+.medConditions {
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "medCol1area medCol2area";
+}
+.medCol1 {
+    grid-area:medCol1area;
+}
+.medCol2 {
+    grid-area:medCol2area;
 }
 .monthInputs li {
     display:inline;
@@ -147,16 +181,34 @@ input {
     border-radius: 10px;
 }
 .membershipInfo, form {
-    padding-left:50px;
-    padding-top:10px;
+    padding-left:10px;
 }
-
+.membershipInfo .row {
+    height:30px;
+}
+.membershipInfo input {
+    border: 1px solid black;
+    font-size:16px;
+    color:var(--main-panel-txt-color);
+}
+.membershipInfo label{
+    text-align:right;
+}
 .certificationInfo {
     grid-area:certInfo;
     background-color:var(--main-panel-bg-color);
     color: var(--main-panel-txt-color);
     border:var(--main-panel-border);
     border-radius: 10px;
+}
+
+.certificationInfo input {
+    border: 1px solid black;
+    font-size:16px;
+    color:var(--main-panel-txt-color);
+} 
+.certificationInfo label{
+    text-align:right;
 }
 .monitorDutyInfo {
     grid-area:monitorDuty;
@@ -285,4 +337,14 @@ table th {
   }
   .showPhoto {
       text-align: center;
+  }
+  .datepick {
+    width:150px;
+    height:35px;
+  }
+
+  .cancelSave {
+    float:right;
+    margin-top:20px;
+    margin-right:20px;
   }
