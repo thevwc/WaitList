@@ -217,6 +217,21 @@ def saveAltAddress():
 
 @app.route('/saveEmergency', methods=['POST'])
 def saveEmergency():
+    
+    # show what is in form for testing -
+    print('request.form - ', request.form)
+    print ('.........................................')
+
+    data = request.form
+    for key, value in data.items():
+        print("received", key, "with value", value)
+
+    print ('otherDiagnosis - ', request.form['otherDiagnosis'])
+    
+    #  DID USER CANCEL?
+    if request.form['emergAction'] == 'CANCEL':
+        return redirect(url_for('index',villageID=memberID))
+
     # GET DATA FROM FORM
     memberID = request.form['memberID']
     contact = request.form['emergContact']
@@ -231,10 +246,39 @@ def saveEmergency():
     else:
         noEmergData = False
 
-    #  DID USER CANCEL?
-    print('emergAction - ',request.form.get('emergAction'))
-    if request.form['emergAction'] == 'CANCEL':
-        return redirect(url_for('index',villageID=memberID))
+    if request.form.get('pacemaker') == 'True':
+        pacemaker = True
+    else:
+        pacemaker = False
+    
+    if request.form.get('stent') == 'True':
+        stent = True
+    else:
+        stent = False
+
+    if request.form.get('CABG') == 'True':
+        CABG = True
+    else:
+        CABG = False
+
+    if request.form.get('MI') == 'True':
+        MI = True
+    else:
+        MI = False
+    
+    if request.form.get('diabetes1') == 'True':
+        diabetes1 = True
+    else:
+        diabetes1 = False
+    
+    if request.form.get('diabetes2') == 'True':
+        diabetes2 = True
+    else:
+        diabetes2 = False
+
+    otherDiagnosis = request.form['otherDiagnosis']
+    diabetesOther = request.form['diabetesOther']
+    alergies = request.form['alergies']
 
      # GET MEMBER RECORD 
     member = db.session.query(Member).filter(Member.Member_ID == memberID).first()
@@ -248,14 +292,68 @@ def saveEmergency():
         member.Emerg_Phone = phone
         fieldsChanged += 1    
 
+    print('defibrillatorStatus - ',defibrillatorStatus, type(defibrillatorStatus))
+    print('member.Defibrillator_Trained - ',member.Defibrillator_Trained,type(member.Defibrillator_Trained))
+
     if defibrillatorStatus != member.Defibrillator_Trained:
+        logChange('Defibrillator Trained',memberID,defibrillatorStatus,member.Defibrillator_Trained)
         member.Defibrillator_Trained = defibrillatorStatus
         fieldsChanged += 1
 
     if noEmergData != member.Emerg_No_Data_Provided:
+        logChange('No Data Provided',memberID,noEmergData,member.Emerg_No_Data_Provided)
         member.Emerg_No_Data_Provided = noEmergData
         fieldsChanged += 1
+    
+    if pacemaker != member.Emerg_Pacemaker: 
+        logChange('Pacemaker',memberID,pacemaker,member.Emerg_Pacemaker)
+        member.Emerg_Pacemaker = pacemaker
+        fieldsChanged += 1
 
+    if stent != member.Emerg_Stent: 
+        logChange('Stent',memberID,stent,member.Emerg_Stent)
+        member.Emerg_Stent = stent
+        fieldsChanged += 1
+
+    if CABG != member.Emerg_CABG: 
+        logChange('CABG',memberID,CABG,member.Emerg_CABG)
+        member.Emerg_CABG = CABG
+        fieldsChanged += 1
+
+    if MI != member.Emerg_MI: 
+        logChange('MI',memberID,MI,member.Emerg_MI)
+        member.Emerg_MI = MI
+        fieldsChanged += 1
+
+    print('diabetes1 - ',diabetes1,type(diabetes1))
+    print('member.Emerg_Diabetes_Type_1 - ',member.Emerg_Diabetes_Type_1,type(member.Emerg_Diabetes_Type_1))
+
+    if diabetes1 != member.Emerg_Diabetes_Type_1: 
+        logChange('diabetes1',memberID,diabetes1,member.Emerg_Diabetes_Type_1)
+        member.Emerg_Diabetes_Type_1 = diabetes1
+        fieldsChanged += 1
+
+    if diabetes2 != member.Emerg_Diabetes_Type_2: 
+        logChange('diabetes2',memberID,diabetes2,member.Emerg_Diabetes_Type_2)
+        member.Emerg_Diabetes2 = diabetes2
+        fieldsChanged += 1
+
+    if otherDiagnosis != member.Emerg_Other_Diagnosis:
+        logChange('otherDiagnosis',memberID,otherDiagnosis,member.Emerg_Other_Diagnosis)
+        member.Emerg_Other_Diagnosis = otherDiagnosis
+        fieldsChanged += 1
+
+    if diabetesOther != member.Emerg_Diabetes_Other:
+        logChange('diabetesOther',memberID,diabetesOther,member.Emerg_Diabetes_Other)
+        member.Emerg_Diabetes_Other = diabetesOther
+        fieldsChanged += 1
+
+    if alergies != member.Emerg_Medical_Alergies:
+        logChange('alergies',memberID,alergies,member.Emerg_Medical_Alergies)
+        member.Emerg_Medical_Alergies = alergies
+        fieldsChanged += 1
+
+    # IF ANY FIELDS CHANGED, SAVE CHANGES
     if fieldsChanged > 0:
         try:
             db.session.commit()
@@ -427,12 +525,7 @@ def saveCertification():
 
     certifiedRAdate = request.form.get('certifiedRAdate')
     certifiedBWdate = request.form.get('certifiedBWdate')
-    #typeOfWorkHidden = request.form.get('typeOfWorkHidden')
     typeOfWork = request.form.get('typeOfWorkSelecterName')
-    #typeOfWork2 = request.form.get('typeOfWork2')
-    #typeOfWorkSelecter = request.form.get('typeOfWorkSelecter')
-    #print('typeOfWorkHidden - ',typeOfWorkHidden)
-    #print('typeOfWork - ',typeOfWork)
 
     skillLevel = request.form.get('skillLevelSelecterName')
     waiverExpirationDate = request.form.get('waiverExpirationDate')
@@ -442,7 +535,6 @@ def saveCertification():
     member = db.session.query(Member).filter(Member.Member_ID == memberID).first()
     fieldsChanged = 0
 
-    print('orig -',member.Certification_Training_Date,' new - ',certifiedRAdate)
     if certifiedRAdate != None and certifiedRAdate != '':
         if certifiedRAdate != member.Certification_Training_Date:
             logChange('RA certification',memberID,certifiedRAdate,member.Certification_Training_Date)
@@ -641,20 +733,20 @@ def newMemberApplication():
     todaySTR = todays_date.strftime('%m-%d-%Y')
     return render_template("newMemberApplication.html")
 
-@app.route("/getMedicalInfo")
-def getMedicalInfo():
-    memberID = request.args.get('memberID')
-    medicalInfo = db.session.query(Member).filter(Member.Member_ID == memberID).first()
-    if (medicalInfo):
-        pacemaker = medicalInfo.Emerg_Pacemaker
-        stent = medicalInfo.Emerg_Stent
-        CABG = medicalInfo.Emerg_CABG
-        MI = medicalInfo.Emerg_MI
-        otherDiagnosis = medicalInfo.Emerg_Other_Diagnosis
-        diabetes1 = medicalInfo.Emerg_Diabetes_Type_1
-        diabetes2 = medicalInfo.Emerg_Diabetes_Type_2
-        diabetesOther = medicalInfo.Emerg_Diabetes_Other
-        alergies = medicalInfo.Emerg_Medical_Alergies
+# @app.route("/getMedicalInfo")
+# def getMedicalInfo():
+#     memberID = request.args.get('memberID')
+#     medicalInfo = db.session.query(Member).filter(Member.Member_ID == memberID).first()
+#     if (medicalInfo):
+#         pacemaker = medicalInfo.Emerg_Pacemaker
+#         stent = medicalInfo.Emerg_Stent
+#         CABG = medicalInfo.Emerg_CABG
+#         MI = medicalInfo.Emerg_MI
+#         otherDiagnosis = medicalInfo.Emerg_Other_Diagnosis
+#         diabetes1 = medicalInfo.Emerg_Diabetes_Type_1
+#         diabetes2 = medicalInfo.Emerg_Diabetes_Type_2
+#         diabetesOther = medicalInfo.Emerg_Diabetes_Other
+#         alergies = medicalInfo.Emerg_Medical_Alergies
         # return jsonify(medData=medData)
         # medData = {
         #     'pacemaker':medicalInfo.Emerg_Pacemaker,
@@ -667,28 +759,28 @@ def getMedicalInfo():
         #     'DiabetesOther':medicalInfo.Emerg_Diabetes_Other,
         #     'Alergies':medicalInfo.Emerg_Medical_Alergies}
         # print('medData - ',medData)
-        return jsonify(pacemaker=pacemaker,
-            stent=stent,
-            CABG=CABG,
-            MI=MI,
-            otherDiagnosis=otherDiagnosis, 
-            diabetes1=diabetes1,
-            diabetes2=diabetes2,
-            diabetesOther=diabetesOther,
-            alergies=alergies,
-            emergMemberID=memberID)
-    return make_response('Nothing')
+    #     return jsonify(pacemaker=pacemaker,
+    #         stent=stent,
+    #         CABG=CABG,
+    #         MI=MI,
+    #         otherDiagnosis=otherDiagnosis, 
+    #         diabetes1=diabetes1,
+    #         diabetes2=diabetes2,
+    #         diabetesOther=diabetesOther,
+    #         alergies=alergies,
+    #         emergMemberID=memberID)
+    # return make_response('Nothing')
 
 
-@app.route("/saveAddtlMedicalInfo", methods=['POST'])
-def saveAddtlMedicalInfo():
-    print('/saveAddtlMedicalInfo')
-    memberID = request.form['emergMemberID']
-    pacemaker = request.form['pacemaker']
+# @app.route("/saveAddtlMedicalInfo", methods=['POST'])
+# def saveAddtlMedicalInfo():
+#     print('/saveAddtlMedicalInfo')
+#     memberID = request.form['emergMemberID']
+#     pacemaker = request.form['pacemaker']
 
-    medicalInfo = db.session.query(Member).filter(Member.Member_ID == memberID).first()
-    if (medicalInfo == None):
-        return make_response("ERROR - record not found for member ID " + memberID)
+#     medicalInfo = db.session.query(Member).filter(Member.Member_ID == memberID).first()
+#     if (medicalInfo == None):
+#         return make_response("ERROR - record not found for member ID " + memberID)
 
     #pacemaker=request.form.get['pacemaker']
 

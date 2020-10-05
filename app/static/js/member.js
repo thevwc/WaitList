@@ -179,52 +179,52 @@ document.getElementById('noEmergDataID').onclick = function(ev) {
     }
 }
 // MODAL OF ADDITIONAL MEDICAL INFO
-document.getElementById('emergPacemaker').onclick = function(ev) {
+document.getElementById('emergPacemakerID').onclick = function(ev) {
     if (ev.target.checked) {
-        document.getElementById('emergPacemaker').value='True'
+        document.getElementById('emergPacemakerID').value='True'
     }
     else {
-        document.getElementById('emergPacemaker').value='False' 
+        document.getElementById('emergPacemakerID').value='False' 
     }
 }
-document.getElementById('emergStent').onclick = function(ev) {
+document.getElementById('emergStentID').onclick = function(ev) {
     if (ev.target.checked) {
-        document.getElementById('emergStent').value='True'
+        document.getElementById('emergStentID').value='True'
     }
     else {
-        document.getElementById('emergStent').value='False' 
+        document.getElementById('emergStentID').value='False' 
     }
 }
-document.getElementById('emergCABG').onclick = function(ev) {
+document.getElementById('emergCABGID').onclick = function(ev) {
     if (ev.target.checked) {
-        document.getElementById('emergCABG').value='True'
+        document.getElementById('emergCABGID').value='True'
     }
     else {
-        document.getElementById('emergCABG').value='False' 
+        document.getElementById('emergCABGID').value='False' 
     }
 }
-document.getElementById('emergMI').onclick = function(ev) {
+document.getElementById('emergMIID').onclick = function(ev) {
     if (ev.target.checked) {
-        document.getElementById('emergMI').value='True'
+        document.getElementById('emergMIID').value='True'
     }
     else {
-        document.getElementById('emergMI').value='False' 
+        document.getElementById('emergMIID').value='False' 
     }
 }
-document.getElementById('emergDiabetes1').onclick = function(ev) {
+document.getElementById('emergDiabetes1ID').onclick = function(ev) {
     if (ev.target.checked) {
-        document.getElementById('emergDiabetes1').value='True'
+        document.getElementById('emergDiabetes1ID').value='True'
     }
     else {
-        document.getElementById('emergDiabetes1').value='False' 
+        document.getElementById('emergDiabetes1ID').value='False' 
     }
 }
-document.getElementById('emergDiabetes2').onclick = function(ev) {
+document.getElementById('emergDiabetes2ID').onclick = function(ev) {
     if (ev.target.checked) {
-        document.getElementById('emergDiabetes2').value='True'
+        document.getElementById('emergDiabetes2ID').value='True'
     }
     else {
-        document.getElementById('emergDiabetes2').value='False' 
+        document.getElementById('emergDiabetes2ID').value='False' 
     }
 }
 
@@ -527,89 +527,90 @@ function processNote() {
 // $('#noteModalID').on('shown.bs.modal', function () {
 //     $('#msgID').focus();
 // }) 
-function showMedicalInfo() {
-    alert('show emergModalID')
-    $('#emergModalID').modal('show')
-}
-function medicalInfoRoutine() {
-    // CHECK FOR EXISTING MEDICAL DATA
-    // IF FOUND, DISPLAY IN FORM
-    memberID = document.getElementById('memberID').value
+// function showMedicalInfo() {
+//     alert('show emergModalID')
+//     $('#emergModalID').modal('show')
+// }
+// function medicalInfoRoutine() {
+//     // CHECK FOR EXISTING MEDICAL DATA
+//     // IF FOUND, DISPLAY IN FORM
+//     memberID = document.getElementById('memberID').value
     
-    $.ajax({
-        url : "/getMedicalInfo",
-        type: "GET",
-        data : {
-            memberID:memberID,
-            },
+//     $.ajax({
+//         url : "/getMedicalInfo",
+//         type: "GET",
+//         data : {
+//             memberID:memberID,
+//             },
  
-        success: function(data, textStatus, jqXHR)
-        {
-            //alert('data - '+ data.medData.OtherDiagnosis)
-            //console.log('OtherDiagnosis - '+data.medData.OtherDiagnosis)
-            //console.log('otherDiagnosis - '+data.otherDiagnosis)
-            console.log('pacemaker - '+data.pacemaker)
-            console.log('alergies - '+data.alergies)
-            //console.log('stent - '+data.stent)
-            //console.log('MI - '+data.MI)
-            if (data.pacemaker == true) {
-                pacemaker = document.getElementById('emergPacemaker')
-                pacemaker.value = 'True'
-                pacemaker.checked = true
-                //console.log('pacemaker = true')
-            }
-            if (data.stent == true) {
-                stent = document.getElementById('emergStent')
-                stent.value = 'True'
-                stent.checked = true
-                //console.log('stent = true')
-            }
-            if (data.CABG == true) {
-                CABG = document.getElementById('emergCABG')
-                CABG.value = 'True'
-                CABG.checked = true
-                //console.log('CABG = true')
-            }
-            if (data.MI == true) {
-                MI = document.getElementById('emergMI')
-                MI.value = 'True'
-                MI.checked = true
-                //console.log('MI = true')
-            }
-            if (data.diabetes1 == true) {
-                diabetes1 = document.getElementById('emergDiabetes1')
-                diabetes1.value = 'True'
-                diabetes1.checked = true
-                //console.log('diabetes1 = true')
-            }
-            if (data.diabetes2 == true) {
-                diabetes2 = document.getElementById('emergDiabetes2')
-                diabetes2.value = 'True'
-                diabetes2.checked = true
-                //console.log('diabetes2 = true')
-            }
-            document.getElementById('emergOtherDiagnosis').value = data.otherDiagnosis
-            document.getElementById('emergDiabetesOther').value = data.diabetesOther
-            document.getElementById('emergAlergies').value = data.alergies
+//         success: function(data, textStatus, jqXHR)
+//         {
+//             //alert('data - '+ data.medData.OtherDiagnosis)
+//             //console.log('OtherDiagnosis - '+data.medData.OtherDiagnosis)
+//             //console.log('otherDiagnosis - '+data.otherDiagnosis)
+//             console.log('pacemaker - '+data.pacemaker)
+//             console.log('alergies - '+data.alergies)
+//             //console.log('stent - '+data.stent)
+//             //console.log('MI - '+data.MI)
+//             if (data.pacemaker == true) {
+//                 pacemaker = document.getElementById('emergPacemaker')
+//                 pacemaker.value = 'True'
+//                 pacemaker.checked = true
+//                 //console.log('pacemaker = true')
+//             }
+//             if (data.stent == true) {
+//                 stent = document.getElementById('emergStent')
+//                 stent.value = 'True'
+//                 stent.checked = true
+//                 //console.log('stent = true')
+//             }
+//             if (data.CABG == true) {
+//                 CABG = document.getElementById('emergCABG')
+//                 CABG.value = 'True'
+//                 CABG.checked = true
+//                 //console.log('CABG = true')
+//             }
+//             if (data.MI == true) {
+//                 MI = document.getElementById('emergMI')
+//                 MI.value = 'True'
+//                 MI.checked = true
+//                 //console.log('MI = true')
+//             }
+//             if (data.diabetes1 == true) {
+//                 diabetes1 = document.getElementById('emergDiabetes1')
+//                 diabetes1.value = 'True'
+//                 diabetes1.checked = true
+//                 //console.log('diabetes1 = true')
+//             }
+//             if (data.diabetes2 == true) {
+//                 diabetes2 = document.getElementById('emergDiabetes2')
+//                 diabetes2.value = 'True'
+//                 diabetes2.checked = true
+//                 //console.log('diabetes2 = true')
+//             }
+//             document.getElementById('emergOtherDiagnosis').value = data.otherDiagnosis
+//             document.getElementById('emergDiabetesOther').value = data.diabetesOther
+//             document.getElementById('emergAlergies').value = data.alergies
 
-            document.getElementById('emergMemberID').value = data.emergMemberID
-            alert("SUCCESS")
-        },
-        error: function(result){
-            alert("Error ..."+result)
-        }
-    })    
-    $('#emergModalID').modal('show')
-}
+//             document.getElementById('emergMemberID').value = data.emergMemberID
+//             alert("SUCCESS")
+//         },
+//         error: function(result){
+//             alert("Error ..."+result)
+//         }
+//     })    
+//     $('#emergModalID').modal('show')
+// }
 
 // $("#emergCancelBtn").click(function () {
 //     alert('emergCancelBtn clicked')
 //     $("#emergencyID").modal("hide");
 // });
-// function setPhotoSrc() {
-//     photo = document.getElementsByClassName('memberImgID')
-//     photo.src = "{{ url_for('static', filename='memberPhotos/" + currentMemberID + ".jpg') }}"
-// }
+
+function setPhotoSrc() {
+    photo = document.getElementsByClassName('memberImgID')
+    photo.src = "{{ url_for('static', filename='memberPhotos/" + currentMemberID + ".jpg') }}"
+}
 function showHidePhoto(objBtn) {
     photo = document.getElementById('memberImgID')
     memberID = document.getElementById('memberID').value

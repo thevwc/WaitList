@@ -158,14 +158,18 @@ input {
 }
 .medConditions {
     display:grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: .25fr auto;
     grid-template-areas: "medCol1area medCol2area";
 }
 .medCol1 {
     grid-area:medCol1area;
+    margin-left:20px;
 }
 .medCol2 {
     grid-area:medCol2area;
+    margin-left:20px;
+    margin-right:0px;
+    padding:0;
 }
 .monthInputs li {
     display:inline;

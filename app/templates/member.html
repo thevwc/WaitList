@@ -29,11 +29,9 @@
         <div class="memberMenu">
             <div class="dropdown">
                 <button onclick="myFunction()" class="dropbtn">MEMBER MENU</button>
-                <div id="myDropdown" class="dropdown-content">
+                <div id="myDropdown" class="dropdown-content"style=text-align:left>
                     <a onclick='clearScreen()'>Clear Screen</a>
                     <a onclick='noteRoutine()'>Note to Member</a>
-                    <a onclick='showMedicalInfo()'>Show Medical</a>
-
                     <a class='dropdown-item' href="{{ url_for('newMemberApplication')}}">New Member Application</a>
                     <a class='dropdown-item disabled'href="#dues">Pay Dues</a>
                     <a class='dropdown-item disabled'href="#classes">Class Signup</a>
@@ -111,7 +109,7 @@
             </div>
             <br>
             <div class="cancelSave" style=padding-left:100px>
-                <input id='memberID' type="hidden" class="memberID" name="memberID" value={{member.Member_ID}}>
+                <!-- <input id='localSaveMemberID' type="hidden" class="memberID" name="memberID" value={{member.Member_ID}}> -->
                 <button id="localSaveBtn" type="submit" name="localAction" class="btn-primary" style=display:none value="SAVE">SAVE</button>
                 <button id="localCancelBtn" type="submit" name="localAction" class="btn-default" style=display:none value="CANCEL">CANCEL</button>
                 <br>
@@ -179,7 +177,7 @@
             <div class="row">
                 <label class="control-label col-md-2 col-form-label-md"style=margin-top:3px>Contact</label>
                 <input type="text" class="form-control-md col-md-4" style=height:30px name="emergContact" value="{{member.Emerg_Name}}">
-                <label class="control-label col-form-label-md col-md-4" style=margin-left:0px;margin-top:2px> No data provided</label>    
+                <label class="control-label col-form-label-md col-md-4" style=margin-left:0px;margin-top:5px> No data provided</label>    
                 <input id='noEmergDataID' type="checkbox" class="form-control form-control-md col-md-1" name="emergNoData"   {% if member.Emerg_No_Data_Provided %} checked {% endif %}value="{{member.Emerg_No_Data_Provided}}">
             </div>
  
@@ -191,37 +189,59 @@
             
             <div class='medConditions'>
                 <div class= 'medCol1'>
-                    column 1
+                    <input id=emergMemberID type="hidden" name='emergMemberID'>
+                    <div class='form-group-sm'>
+                        <input id='emergPacemakerID' type='checkbox' class='form-check-input' name='pacemaker' {% if member.Emerg_Pacemaker %} checked {% endif %}  value="{{member.Emerg_Pacemaker}}" value="">
+                        <label for="emergPacemakerID" class="col-sm-2 form-check-label">Pacemaker</label>
+                    </div>
+                    <div class='form-group-sm'>
+                        <input id='emergStentID' type="checkbox" class='form-check-input' name='stent'  {% if member.Emerg_Stent %} checked {% endif %}  value="{{member.Emerg_Stent}}">
+                        <label for="emergStentID" class="col-sm-2 form-check-label">Stent</label>
+                    </div>
+                    <div class='form-group-sm'>
+                        <input id='emergCABGID' type="checkbox" class='form-check-input' name='CABG'  {% if member.Emerg_CABG %} checked {% endif %}  value="{{member.Emerg_CABG}}">
+                        <label for="emergCABGID" class="col-sm-2 form-check-label">CABG</label>
+                    </div>
+                    <div class='form-group-sm'>
+                        <input id='emergMIID' type="checkbox" class='form-check-input' name='MI'  {% if member.Emerg_MI %} checked {% endif %}  value="{{member.Emerg_MI}}">
+                        <label for="emergMIID" class="col-sm-2 form-check-label">MI</label>
+                    </div>
+                    <div class='form-group-sm'>
+                        <input id='emergDiabetes1ID' type="checkbox" class='form-check-input' name='diabetes1'  {% if member.Emerg_Diabetes_1 %} checked {% endif %}  value="{{member.Emerg_Diabetes_1}}">
+                        <label for="emergDiabetes1ID" class="col-sm-2 form-check-label">Diabetes&nbsp1</label>
+                    </div>
+                    <div class='form-group-sm'>
+                        <input id='emergDiabetes2ID' type="checkbox" class='form-check-input' name='diabetes2'  {% if member.Emerg_Diabetes_2 %} checked {% endif %}  value="{{member.Emerg_Diabetes_2}}">
+                        <label for="emergDiabetes2ID" class="col-sm-2 form-check-label">Diabetes&nbsp2</label>
+                    </div>   
                 </div>
                 <div class='medCol2'>
-                    column 2
-                </div>
+                    <div class='form-group-sm'>
+                        <label for="emergOtherDiagnosisID" class="col-sm-3 form-label">Other</label>
+                        <textarea id="emergOtherDiagnosisID" style=font-size:12px rows="2" cols="25" name='otherDiagnosis' >{{member.Emerg_Other_Diagnosis}}</textarea>
+                    </div>
+                    <div class='form-group-sm'>
+                        <label for="emergDiabetesOtherID" class="col-sm-3 form-label-sm">Diabetes</label>
+                        <textarea id="emergDiabetesOtherID" style=font-size:12px rows="2" cols="25" name='diabetesOther' >{{member.Emerg_Diabetes_Other}}</textarea>
+                    </div>
+                    <div class='form-group-sm'>
+                        <label for="emergAlergiesID" class="col-sm-3 form-label">Alergies</label>
+                        <textarea id="emergAlergiesID" style=font-size:12px rows="2" cols="25" name='alergies'>{{member.Emerg_Medical_Alergies}}</textarea>
+                    </div>
+                </div>   
             </div> 
-
-            <!-- <div class="row">
-                <label class="control-label col-md-5 col-form-label-md" style=margin-left:70px;margin-top:5px> Defibrillator trained</label>
-                <input id='defibrillatorID' type="checkbox" class="form-control form-control-md col-md-1" name="emergDefib"  {% if member.Defibrillator_Trained %} checked {% endif %} value="{{member.Defibrillator_Trained}}">
-            </div> -->
+            <br>
+            <div class='form-group-md' style=margin-left:0px>
+                <input id='defibrillatorID' type="checkbox" class="form-check-input-md" name="emergDefib"   {% if member.Defibrillator_Trained%} checked {% endif %}value="{{member.Defibrillator_Trained}}">
+                <label for='defibrillatorID' class="form-check-label col-md-5" style=margin-left:0px;margin-top:5px> Defibrillator Trained</label>    
+            </div>
             
-            <!-- <div class="cancelSave" style=padding-left:100px>
+            <div class="cancelSave" style=padding-left:100px>
                 <input type="hidden" class="memberID" name="memberID" value={{member.Member_ID}}>
                 <button id="emergCancelBtn" type="submit" name="emergAction" class="btn-default" style=display:none value="CANCEL">CANCEL</button>
                 <button id="emergSaveBtn" type="submit" name="emergAction" class="btn-primary" style=display:none value="SAVE">SAVE</button>  
-            </div> -->
-           
-        </form>
-    <!-- </div>     -->
-        <!-- <div class='row'>
-            <div class='col-md-3'>
-                <a onclick='medicalInfoRoutine()'>ADDITIONAL MEDICAL INFO</a>
-                <button id="medicalModalBtn" onclick='medicalInfoRoutine()' class="btn-primary" style='margin-left:125px; width:250px'>ADDITIONAL MEDICAL INFO</button>
             </div>
-        </div>
-        <div class='row'>
-            <div class='col-md-3 showPhoto' style='margin-left:125px;margin-top:20px;'>
-                
-            </div>
-        </div> -->
+        </form>      
     </div>
     
 
@@ -498,50 +518,6 @@
     </div>
 </div>
 
-<!-- MODAL FORM FOR MEDICAL DATA -->
-<div id="emergModalID" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="emergModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">MEDICAL INFORMATION</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body medicalInfo">
-                <form method='post' action="/saveAddtlMedicalInfo">
-                    <div id="emergInfoColumn1">
-                        <input id=emergMemberID type="text" name='emergMemberID'>
-                        <input id='emergPacemaker' type="checkbox" name='pacemaker' value="">  Pacemaker<br>
-                        <input id='emergStent' type="checkbox" value="" >  Stent<br><br>
-                        <input id='emergCABG' type="checkbox" value="" >  CABG<br><br>
-                        <input id='emergMI' type="checkbox" value="" >  MI<br><br>
-                        <input id='emergDiabetes1' type="checkbox" value="" >  Diabetes Type 1<br><br>
-                        <input id='emergDiabetes2' type="checkbox" value="" >  Diabetes Type 2<br><br>
-                    </div>
-                    <div id="emergInfoColumn2">
-                        <span>Other:</span><br>
-                        <textarea id="emergOtherDiagnosis" style=font-size:14px rows="3"" cols="60" ></textarea>
-                        <br>
-                        <span>Diabetes:</span><br>
-                        <textarea id="emergDiabetesOther" style=font-size:14px rows="3"" cols="60" ></textarea>
-                        <br>
-                        <span>Medical Allergies:</span><br>
-                        <textarea id="emergAlergies" style=font-size:14px rows="3"" cols="60" ></textarea>
-                        <br>
-                    </div>
-                    <button type="submit">SAVE</button>
-                </form>
-                <div class="modal-footer">
-                    <div class='footer-right-col'> 
-                        <button id='cancelEmergID' onclick='cancelAddtlMedicalInfo' type='button' class='btn btn-primary'style=margin-bottom:50px>Cancel</button>
-                        <button id='processEmergID'onclick="saveAddtlMedicalInfo()" type="button" class="btn btn-primary"style=margin-bottom:50px>Save</button>
-                    </div>
-                </div>
-            </div>
-        </div>    
-    </div>
-</div>
 
 {% endblock %}
 
