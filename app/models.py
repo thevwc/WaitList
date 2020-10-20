@@ -29,7 +29,7 @@ class ControlVariables(db.Model):
     __tablename__ = 'tblControl_Variables'
     __table_args__ = {"schema": "dbo"}
     Shop_Number = db.Column(db.Integer, primary_key=True)
-    Last_Acceptable_Monitor_Training_Date = db.Column(db.DateTime)
+    Last_Acceptable_Monitor_Training_Date = db.Column(db.Date)
         
 
 class Member(db.Model):
@@ -112,7 +112,10 @@ class Member(db.Model):
     
     Temporary_Village_ID = db.Column(db.Boolean)
     Temporary_ID_Expiration_Date = db.Column(db.Date)
-
+    Last_Monitor_Training_Shop_2 = db.Column(db.Date)
+    Monitor_Sub = db.Column(db.Boolean)
+    Monitor_Sub_2 = db.Column(db.Boolean)
+    
     fullName = column_property(First_Name + " " + Last_Name)
     # Relationships
     #activities = db.relationship('MemberActivity', backref='member')
@@ -199,3 +202,16 @@ class NotesToMembers(db.Model):
     __table_args__={"schema":"dbo"}
     memberID = db.Column(db.String(6), primary_key=True)
     noteToMember = db.Column(db.String(255))
+
+class MemberTransactions(db.Model):
+    __tablename__="tblMember_Data_Transactions"
+    __table_args__={"schema":"dbo"}
+    ID = db.Column(db.Integer, primary_key=True)
+    Transaction_Date = db.Column(db.DateTime)
+    Member_ID = db.Column(db.String(6))
+    Staff_ID = db.Column(db.String(6))
+    Original_Data = db.Column(db.String(50))
+    Current_Data = db.Column(db.String(50))
+    Data_Item = db.Column(db.String(30))
+    Action = db.Column(db.String(6))
+

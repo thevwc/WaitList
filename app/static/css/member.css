@@ -60,6 +60,10 @@
     grid-area:menuArea;
     color:blue;
 }
+.panel {
+    display:inline;
+}
+
 .panel h5 {
     text-align: center;
     color:var(--main-panel-txt-color);
@@ -71,6 +75,7 @@ input {
 #certDate {
     color:blue;
 }
+/* LOCAL CONTACT PANEL */
 .localContactInfo {
     grid-area:localInfo;
     background-color: var(--main-panel-bg-color);
@@ -93,6 +98,8 @@ input {
 .localContactInfo label {
     text-align:right;
 }
+
+/* ALTERNATE ADDRESS PANEL */
 .alternateContactInfo {
     grid-area:altInfo;
     background-color: var(--main-panel-bg-color);
@@ -122,6 +129,7 @@ input {
     font-size:16px;
 }
 
+/* EMERGENCY INFO PANEL */
 .emergencyInfo {
     grid-area:emergInfo;
     background-color: var(--main-panel-bg-color);
@@ -137,7 +145,6 @@ input {
 .emergencyInfo form {
     padding-left: 20px;
     padding-top:0px;
-    border:1px solid blue;
 }
 .emergencyInfo input {
     border: 1px solid black;
@@ -171,12 +178,8 @@ input {
     margin-right:0px;
     padding:0;
 }
-.monthInputs li {
-    display:inline;
-    text-decoration: none;
-    color:var(--main-txt-color);
-    margin-right:20px;
-}
+
+/* MEMBERSHIP STATUS PANEL */
 .membershipInfo {
     grid-area:memberStatus;
     background-color:var(--main-panel-bg-color);
@@ -195,9 +198,27 @@ input {
     font-size:16px;
     color:var(--main-panel-txt-color);
 }
-.membershipInfo label{
+/* .membershipInfo label{
     text-align:right;
+} */
+.memberStatus {
+    display:grid;
+    grid-template-columns: .5fr 1fr;
+    grid-template-areas: "memberStatusCol1area memberStatusCol2area";
 }
+.memberStatusCol1 {
+    grid-area: memberStatusCol1area;
+    margin-left:0px;
+}
+.memberStatusCol2 {
+    grid-area: memberStatusCol2area;
+    margin-left:0px;
+    margin-right:0px;
+    padding:0;
+}
+
+
+/* CERTIFICATION INFO PANEL */
 .certificationInfo {
     grid-area:certInfo;
     background-color:var(--main-panel-bg-color);
@@ -210,10 +231,64 @@ input {
     border: 1px solid black;
     font-size:16px;
     color:var(--main-panel-txt-color);
+}
+
+.certTopPanel {
+    padding-right:20px;
+}
+
+.shopNames {
+    grid-area:shopNameArea;
+}
+.certLabels {
+    grid-area:labelArea
+}
+.certifiedRA {
+    grid-area:RAcertArea;
+}
+.certifiedBW {
+    grid-area:BWcertArea;
+}
+.willSub {
+    grid-area:willSubArea
+}
+.lastMntrTrng {
+    grid-area:mntrTrngArea;
 } 
+.trngNeededMsg {
+    grid-area:neededMsgArea;
+}
+.certBottomPanel {
+    background-color: lightgrey;
+}
 .certificationInfo label{
     text-align:right;
+} 
+#RAcertifiedID {
+    margin-right:0px;
 }
+#BWcertifiedID {
+    margin-right:0px;
+}
+
+#RAtrainingNeeded {
+    color:red;
+    justify-items: center;
+    margin-left:35px;
+}
+#BWtrainingNeeded {
+    color: red;
+    margin-left:35px;
+}
+
+/* MONITOR DUTY PANEL */
+
+/* .monthInputs li {
+    display:inline;
+    text-decoration: none;
+    color:var(--main-txt-color);
+    margin-right:20px;
+} */
 .monitorDutyInfo {
     grid-area:monitorDuty;
     background-color:var(--main-panel-bg-color);
@@ -264,6 +339,8 @@ table th {
     margin-right: auto;
     width: 100%;
   }
+
+
 
 /* DROPDOWN MENU CSS FOLLOWS */
   .dropbtn {
@@ -351,4 +428,11 @@ table th {
     float:right;
     margin-top:20px;
     margin-right:20px;
+  }
+  input:read-only {
+      background-color: yellow;
+  }
+  input:disabled {
+      color:green;
+      background-color: yellow;
   }

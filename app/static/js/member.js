@@ -28,6 +28,16 @@ const colors = {
 // clientLocation, staffID will be set in localStorage within login routine
 var clientLocation = ''
 var todaysDate = new Date();
+var todaysDateSTR =  (todaysDate.getFullYear() + "-" + ("0"+(todaysDate.getMonth()+1)).slice(-2) + "-" + ("0" + todaysDate.getDate()).slice(-2))
+
+//var d = new Date();
+//var datestring = d.getFullYear() + "-" + (d.getMonth()) + "-" + d.getDate() 
+//var datestring =
+
+//+ "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +
+//    d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+
+
 var shopNames = ['Rolling Acres', 'Brownwood']
 var currentMemberID = ''
 var curShopNumber = ''
@@ -49,6 +59,30 @@ emergencyInfo = document.getElementById('emergencyID')
 membershipInfo = document.getElementById('membershipID')
 certificationInfo = document.getElementById('certificationID')
 monitorDutyInfo = document.getElementById('monitorDutyID')
+
+// RETRIEVE LOCAL STORAGE VALUES
+if (!localStorage.getItem('staffID')) {
+    localStorage.setItem('staffID','111111')
+}
+staffID = localStorage.getItem('staffID')
+
+// SET STAFF ID IN EACH PANEL
+var staffIDelements = document.getElementsByClassName('staffID')
+for (var i = 0; i < staffIDelements.length; i++) {
+   staffIDelements[i].setAttribute("value", staffID);
+}
+
+
+// IF clientLocation IS NOT FOUND IN LOCAL STORAGE
+// THEN PROMPT WITH MODAL FORM FOR LOCATION AND YEAR
+if (!clientLocation) {
+    localStorage.setItem('clientLocation','RA')
+}
+clientLocation = localStorage.getItem('clientLocation')
+
+setShopFilter(clientLocation)
+
+
 
 // DEFINE EVENT LISTENERS
 localContactInfo.addEventListener('change',localDataChanged);
@@ -78,87 +112,93 @@ document.querySelector('#monthCheckboxesID').onclick = function(ev) {
         document.getElementById(inputID).value='False' 
     }
 }
-document.querySelector('#dues').onclick = function(ev) {
-    inputID = ev.target.id + 'Text'
-    if (ev.target.checked) {
-        document.getElementById(inputID).value = 'True'
-    }
-    else {
-        document.getElementById(inputID).value = 'False'
-    }
-}
-document.querySelector('#volunteer').onclick = function(ev) {
-    alert('inputID - '+inputID)
-    inputID = ev.target.id + 'Text'
-    if (ev.target.checked) {
-        document.getElementById(inputID).value = 'True'
-    }
-    else {
-        document.getElementById(inputID).value = 'False'
-    }
-}
-document.querySelector('#inactive').onclick = function(ev) {
-    inputID = ev.target.id + 'Text'
-    if (ev.target.checked) {
-        document.getElementById(inputID).value = 'True'
-    }
-    else {
-        document.getElementById(inputID).value = 'False'
-    }
-    alert('inactive - '+ document.getElementById(inputID).value)
-}
+// document.getElementById('duesPaidID').onclick = function(ev) {
+//     inputID = ev.target.id + 'Text'
+//     if (ev.target.checked) {
+//         document.getElementById(inputID).value = 'True'
+//     }
+//     else {
+//         document.getElementById(inputID).value = 'False'
+//     }
+// }
+// document.getElementById('volunteerID').onclick = function(ev) {
+//     alert('inputID - '+inputID)
+//     inputID = ev.target.id + 'Text'
+//     if (ev.target.checked) {
+//         document.getElementById(inputID).value = 'True'
+//     }
+//     else {
+//         document.getElementById(inputID).value = 'False'
+//     }
+// }
+// document.getElementById('inactiveID').onclick = function(ev) {
+//     inputID = ev.target.id + 'Text'
+//     if (ev.target.checked) {
+//         document.getElementById(inputID).value = 'True'
+//     }
+//     else {
+//         document.getElementById(inputID).value = 'False'
+//     }
+//     alert('inactive - '+ document.getElementById(inputID).value)
+// }
 
-document.querySelector('#deceased').onclick = function(ev) {
-    inputID = ev.target.id + 'Text'
-    if (ev.target.checked) {
-        document.getElementById(inputID).value = 'True'
-    }
-    else {
-        document.getElementById(inputID).value = 'False'
-    }
-}
+// document.getElementById('deceasedID').onclick = function(ev) {
+//     inputID = ev.target.id + 'Text'
+//     if (ev.target.checked) {
+//         document.getElementById(inputID).value = 'True'
+//     }
+//     else {
+//         document.getElementById(inputID).value = 'False'
+//     }
+// }
 
-document.querySelector('#restricted').onclick = function(ev) {
-    inputID = ev.target.id + 'Text'
-    if (ev.target.checked) {
-        document.getElementById(inputID).value = 'True'
-    }
-    else {
-        document.getElementById(inputID).value = 'False'
-    }
-}
+// document.getElementById('restrictedID').onclick = function(ev) {
+//     inputID = ev.target.id + 'Text'
+//     if (ev.target.checked) {
+//         document.getElementById(inputID).value = 'True'
+//     }
+//     else {
+//         document.getElementById(inputID).value = 'False'
+//     }
+// }
 
-document.querySelector('#waiver').onclick = function(ev) {
-    waiverInputID = ev.target.id + 'Text'
-    if (ev.target.checked) {
-        document.getElementById(waiverInputID).value = 'True'
-    }
-    else {
-        document.getElementById(waiverInputID).value = 'False'
-    }
-}
+// document.getElementById('villagesWaiverID').onclick = function(ev) {
+//     //waiverInputID = ev.target.id + 'Text'
+//     if (ev.target.id.checked) {
+//         document.getElementById('villagesWaiverID').value = 'True'
+//     }
+//     else {
+//         document.getElementById('villagesWaiverID').value = 'False'
+//     }
+// }
 
 // HIDE DETAIL UNTIL A MEMBER IS SELECTED
-memberID = document.getElementById('memberID').value
-if (memberID.length == 0)
-{
-    // FIND METHOD TO DISPLAY BLANK SCREEN BELOW HEADING
+console.log('memberID.value - '+memberID.value)
+if (memberID.value == 'undefined' | memberID.value == ''){
+    console.log('undefined routine')
+    panels = document.getElementsByClassName('panel')
+    for (i = 0; i < panels.length; i++) {
+        panels[i].style.display='none'
+    }
+}   
+        
+ 
+// ALTERNATE TEST FOR EXISTANCE OF element in DOM
+// if ('memberID' in window){
+//     // do nothing
+// }
+// else{
+//      panels = document.getElementsByClassName('panel')
+//      for (i = 0; i < panels.length; i++) {
+//          panels[i].style.display='none'
+//      }
+// }
+
 
     
-    // localContactInfo.style.backgroundColor="rgba(0,0,0,0.6)"
-    // localContactInfo.style.color="rgba(0,0,0,0.6)"
-    // altContactInfo.style.backgroundColor="rgba(0,0,0,0.6)"
-    // altContactInfo.style.color="rgba(0,0,0,0.6)"
-    // emergencyInfo.style.backgroundColor="rgba(0,0,0,0.6)"
-    // emergencyInfo.style.color="rgba(0,0,0,0.6)"
-    // membershipInfo.style.backgroundColor="rgba(0,0,0,0.6)"
-    // membershipInfo.style.color="rgba(0,0,0,0.6)"
-    // certificationInfo.style.backgroundColor="rgba(0,0,0,0.6)"
-    // certificationInfo.style.color="rgba(0,0,0,0.6)"
-    // monitorDutyInfo.style.backgroundColor="rgba(0,0,0,0.6)"
-    // monitorDutyInfo.style.color="rgba(0,0,0,0.6)"
+    
+    
 
-}
 
 // CHECK BOX LISTENERS
 document.getElementById('defibrillatorID').onclick = function(ev) {
@@ -178,7 +218,7 @@ document.getElementById('noEmergDataID').onclick = function(ev) {
         document.getElementById('noEmergDataID').value='False' 
     }
 }
-// MODAL OF ADDITIONAL MEDICAL INFO
+// SET VALUE OF MEDICAL INFO WHEN CLICKED
 document.getElementById('emergPacemakerID').onclick = function(ev) {
     if (ev.target.checked) {
         document.getElementById('emergPacemakerID').value='True'
@@ -228,7 +268,96 @@ document.getElementById('emergDiabetes2ID').onclick = function(ev) {
     }
 }
 
+// SET VALUE OF MEMBERSHIP STATUS CHECKBOXES WHEN CLICKED
+document.getElementById('duesPaidID').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('duesPaidID').value='True'
+    }
+    else {
+        document.getElementById('duesPaidID').value='False' 
+    }
+}
+document.getElementById('volunteerID').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('volunteerID').value='True'
+    }
+    else {
+        document.getElementById('volunteerID').value='False' 
+    }
+}
+document.getElementById('inactiveID').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('inactiveID').value='True'
+        document.getElementById('inactiveDateID').value = todaysDateSTR
+    }
+    else {
+        document.getElementById('inactiveID').value='False' 
+    }
+}
+document.getElementById('deceasedID').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('deceasedID').value='True'
+    }
+    else {
+        document.getElementById('deceasedID').value='False' 
+    }
+}
+document.getElementById('restrictedID').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('restrictedID').value='True'
+    }
+    else {
+        document.getElementById('restrictedID').value='False' 
+    }
+}
+document.getElementById('villagesWaiverID').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('villagesWaiverID').value='True'
+        //alert('todaysDate - '+ todaysDate.toDateString()+'\n'+todaysDate.toLocaleString()+'\n'+todaysDate.toLocaleDateString()+'\n'+todaysDate.toString()+"\n"+datestring)
+        document.getElementById('villagesWaiverDateSigned').value = todaysDateSTR
+        //todaysDate.toLocaleDateString()
+    }
+    else {
+        document.getElementById('villagesWaiverID').value='False' 
+        document.getElementById('villagesWaiverDateSigned').value = ''
+    }
+}
+// SET VALUE OF CERTIFICATION PANEL CHECKBOXES WHEN CLICKED
+document.getElementById('RAcertifiedID').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('RAcertifiedID').value='True'
+    }
+    else {
+        document.getElementById('RAcertifiedID').value='False' 
+    }
+}
 
+document.getElementById('BWcertifiedID').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('BWcertifiedID').value='True'
+    }
+    else {
+        document.getElementById('BWcertifiedID').value='False' 
+    }
+}
+
+document.getElementById('RAwillSub').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('RAwillSub').value='True'
+    }
+    else {
+        document.getElementById('RAwillSub').value='False' 
+    }
+}
+
+document.getElementById('BWwillSub').onclick = function(ev) {
+    if (ev.target.checked) {
+        document.getElementById('BWwillSub').value='True'
+    }
+    else {
+        document.getElementById('BWwillSub').value='False' 
+    }
+}
 // SELECT CONTROL LISTENERS
 // typeOfWork = document.getElementById('typeOfWorkSelect')
 // typeOfWork.onchange = function(ev) {
@@ -240,21 +369,6 @@ document.getElementById('emergDiabetes2ID').onclick = function(ev) {
 //     document.getElementById('typeOfWorkText').value=target.value
 // }
 
-// RETRIEVE LOCAL STORAGE VALUES
-if (!localStorage.getItem('staffID')) {
-    localStorage.setItem('staffID','111111')
-}
-staffID = localStorage.getItem('staffID')
- 
-
-// IF clientLocation IS NOT FOUND IN LOCAL STORAGE
-// THEN PROMPT WITH MODAL FORM FOR LOCATION AND YEAR
-if (!clientLocation) {
-    localStorage.setItem('clientLocation','RA')
-}
-clientLocation = localStorage.getItem('clientLocation')
-
-setShopFilter(clientLocation)
 
 // ------------------------------------------------------------------------------------------------------
 // FUNCTIONS    
