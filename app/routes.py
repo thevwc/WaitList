@@ -177,7 +177,7 @@ def saveAddress():
         villagesWaiverSigned = True
     else:
         villagesWaiverSigned = False
-    print('waiver date - ',request.form.get('villagesWaiverDateSigned'))
+    
     villagesWaiverDateSigned = request.form.get('villagesWaiverDateSigned')
 
     # WAS ACTION CANCELLED?
@@ -225,16 +225,14 @@ def saveAddress():
             member.Villages_Waiver_Signed = villagesWaiverSigned
             fieldsChanged += 1
 
-    if villagesWaiverDateSigned != None:
-        if villagesWaiverDateSigned != member.Villages_Waiver_Date_Signed:
-            logChange(staffID,'Waiver - Date Signed',memberID,villagesWaiverDateSigned,member.Villages_Waiver_Date_Signed)
-            print(villagesWaiverDateSigned)
-            # if villagesWaiverDateSigned == '1900-01-01':
+    if villagesWaiverDateSigned != member.Villages_Waiver_Date_Signed:
+        logChange(staffID,'Waiver - Date Signed',memberID,villagesWaiverDateSigned,member.Villages_Waiver_Date_Signed)
+        if villagesWaiverDateSigned == '':
             member.Villages_Waiver_Date_Signed = None 
-            #else:
+        else:
             member.Villages_Waiver_Date_Signed = villagesWaiverDateSigned
-            fieldsChanged += 1
-            
+        fieldsChanged += 1
+        
     if fieldsChanged > 0:
         try:
             db.session.commit()

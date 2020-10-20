@@ -258,9 +258,6 @@ input {
 .trngNeededMsg {
     grid-area:neededMsgArea;
 }
-.certBottomPanel {
-    background-color: lightgrey;
-}
 .certificationInfo label{
     text-align:right;
 } 
