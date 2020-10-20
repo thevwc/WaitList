@@ -187,7 +187,7 @@
 
     <!-- EMERGENCY INFORMATION -->
     <div id="emergencyID" class="emergencyInfo panel" style="padding-left:0px">
-        <img id="memberImgID" src="" alt="No photo" width="300" height="200" style=display:none;margin-top:20px;margin-left:70px >
+        <img id="memberImgID" src="" alt="NO PHOTO AVAILABLE" width="300" height="200" style=display:none;margin-top:20px;margin-left:200px >
         <h5>EMERGENCY INFORMATION</h5>
         <form method='POST' action="/saveEmergency">
             <div class="row">
@@ -346,7 +346,7 @@
                         <input id='RAcertifiedID' type="checkbox" class="form-control form-control-md" style="margin-left:0px;" name="certifiedRA" {% if member.Certified %} checked {% endif %} value="{{member.Certified}}">
                     </div>
                     <div class='col-md-4 BWcolumn'>
-                        <input id='BWcertifiedID' type="checkbox" class="form-control form-control-md" disabled style="margin-left:0px" name="certifiedBW" {% if member.Certified_2 %} checked {% endif %} value="{{member.Certified_2}}">
+                        <input id='BWcertifiedID' type="checkbox" class="form-control form-control-md" style="margin-left:0px" name="certifiedBW" {% if member.Certified_2 %} checked {% endif %} value="{{member.Certified_2}}">
                     </div> 
                 </div>  
 
@@ -364,20 +364,20 @@
                 <div class='row'>
                     <div class='col-4'>Will Sub:</div>
                     <div class='col-md-4 RAcolumn'>
-                        <input id='RAwillSub' type="checkbox" class="form-control form-control-md" style=margin-left:0px name="willSubRA" {% if member.Will_Sub %} checked {% endif %} readonly value="{{member.Will_Sub}}">   
+                        <input id='RAwillSub' type="checkbox" class="form-control form-control-md" style=margin-left:0px name="willSubRA" {% if member.Monitor_Sub %} checked {% endif %} readonly value="{{member.Monitor_Sub}}">   
                     </div>
                     <div class='col-md-4 BWcolumn'>                
-                        <input id='BWwillSub' type="checkbox" class="form-control form-control-md" style=margin-left:0px name="willSubBW" {% if member.Will_Sub_2 %} checked {% endif %} readonly value="{{member.Will_Sub_2}}">                
+                        <input id='BWwillSub' type="checkbox" class="form-control form-control-md" style=margin-left:0px name="willSubBW" {% if member.Monitor_Sub_2 %} checked {% endif %} readonly value="{{member.Monitor_Sub_2}}">                
                     </div>
                 </div>
                 
                 <div class='row'>
                     <div class='col-4'>Last Monitor Training</div>
                     <div class='col-4 RAcolumn'>
-                        <input id='raLastMonitorTraining' type="date" class='form-control form-control-md datepick' style="margin-left:20px" value={{member.Last_Monitor_Training}}>
+                        <input id='raLastMonitorTraining' type="date" class='form-control form-control-md datepick' style="margin-left:20px" name='RAmonitorTrainingDate' value={{member.Last_Monitor_Training}}>
                     </div>
                     <div class='col-4 BWcolumn'>
-                        <input id='bwLastMonitorTraining' type="date" class='form-control form-control-md datepick'  style="margin-left:20px"value={{member.Last_Monitor_Training_2}}>
+                        <input id='bwLastMonitorTraining' type="date" class='form-control form-control-md datepick'  style="margin-left:20px" name='BWmonitorTrainingDate'value={{member.Last_Monitor_Training_Shop_2}}>
                     </div>
                 </div>
 
@@ -413,7 +413,7 @@
                     
                         <label class="control-label col-form-label-md" style=margin-left:20px>Skill level</label>
                         <input id="skillLevelTextID" type="hidden" class="form-control-md" name="skillLevelHidden" value={{member.Skill_Level}}>
-                        <select id="skillLevelSelecterID" class="form-control-md" style=margin-left:10px name="skillLevelSelecterName" id="skillLevel" >
+                        <select id="skillLevelSelecterID" class="form-control-md" style=margin-left:10px name="skillLevelSelecterName"  >
                                 <option value='0'>None</option>
                                 <option value='1'>Basic</option>
                                 <option value='3'>Some</option>

@@ -574,7 +574,6 @@ def saveMemberStatus():
 
 @app.route('/saveCertification', methods=['POST'])
 def saveCertification():
-    print('/saveCertification')
     # GET DATA FROM FORM
     memberID = request.form['memberID']
     staffID = request.form['staffID']
@@ -603,7 +602,9 @@ def saveCertification():
         willSubBW = True
     else:
         willSubBW = False
-            
+
+    RAmonitorTrainingDate = request.form.get('RAmonitorTrainingDate')    
+    BWmonitorTrainingDate = request.form.get('BWmonitorTrainingDate')    
     
     typeOfWork = request.form.get('typeOfWorkSelecterName')
 
@@ -614,9 +615,7 @@ def saveCertification():
     # GET MEMBER RECORD 
     member = db.session.query(Member).filter(Member.Member_ID == memberID).first()
     fieldsChanged = 0
-    
-    print('certified new - ',certifiedRA, ' orig value - ', member.Certified)
-    
+     
     if certifiedRA != member.Certified:
         logChange(staffID,'Certified RA',memberID,certifiedRA,member.Certified)
         member.Certified = certifiedRA
@@ -627,10 +626,6 @@ def saveCertification():
         member.Certified_2 = certifiedBW
         fieldsChanged += 1
 
-    # print("certified dates - ",member.Certification_Training_Date,member.Certification_Training_Date_2)
-    # print("RA value - ",certifiedRAdate," BW value - ",certifiedBWdate)
-   
-    #if certifiedRAdate != None and certifiedRAdate != '':
     if certifiedRAdate != member.Certification_Training_Date:
         logChange(staffID,'RA certification',memberID,certifiedRAdate,member.Certification_Training_Date)
         if certifiedRAdate == '':
@@ -647,8 +642,6 @@ def saveCertification():
             member.Certification_Training_Date_2 = certifiedBWdate
         fieldsChanged += 1
 
-    print(willSubRA,member.Monitor_Sub)
-
     if willSubRA != member.Monitor_Sub:
         logChange(staffID,'Will sub RA',memberID,willSubRA,member.Monitor_Sub)
         member.Monitor_Sub = willSubRA
@@ -658,7 +651,23 @@ def saveCertification():
         logChange(staffID,'Will sub BW',memberID,willSubBW,member.Monitor_Sub_2)
         member.Monitor_Sub_2 = willSubBW
         fieldsChanged += 1
-         
+
+    if RAmonitorTrainingDate != member.Last_Monitor_Training:
+        logChange(staffID,'RA Monitor Training',memberID,RAmonitorTrainingDate,member.Last_Monitor_Training)
+        if RAmonitorTrainingDate == '':
+            member.Last_Monitor_Training = None
+        else:
+            member.Last_Monitor_Training = RAmonitorTrainingDate
+        fieldsChanged += 1
+     
+    if BWmonitorTrainingDate != member.Last_Monitor_Training_Shop_2:
+        logChange(staffID,'BW Monitor Training',memberID,BWmonitorTrainingDate,member.Last_Monitor_Training_Shop_2)
+        if BWmonitorTrainingDate == '':
+            member.Last_Monitor_Training_Shop_2 = None
+        else:
+            member.Last_Monitor_Training_Shop_2 = BWmonitorTrainingDate
+        fieldsChanged += 1
+     
     if typeOfWork != None:
         if typeOfWork != member.Default_Type_Of_Work:
             logChange(staffID,'Default_Type_Of_Work',memberID,typeOfWork,member.Default_Type_Of_Work)
@@ -671,7 +680,6 @@ def saveCertification():
             member.Skill_Level = skillLevel
             fieldsChanged += 1
 
-    print('waiver new -',waiverExpirationDate,' waiver old - ',member.Monitor_Duty_Waiver_Expiration_Date)
     if waiverExpirationDate != member.Monitor_Duty_Waiver_Expiration_Date:
         logChange(staffID,'Monitor Waiver Expiration',memberID,waiverExpirationDate,member.Monitor_Duty_Waiver_Expiration_Date)
         if waiverExpirationDate == '':
@@ -680,7 +688,6 @@ def saveCertification():
             member.Monitor_Duty_Waiver_Expiration_Date = waiverExpirationDate
         fieldsChanged += 1
 
-    print('waiver reason new -',waiverReason,' waiver reason old - ',member.Monitor_Duty_Waiver_Reason)
     if waiverReason != member.Monitor_Duty_Waiver_Reason:
         logChange(staffID,'Monitor Waiver Reason',memberID,waiverReason,member.Monitor_Duty_Waiver_Reason)
         if waiverReason == '':
@@ -899,12 +906,15 @@ def saveMonitorDuty():
 
 @app.route("/getNoteToMember")
 def getNoteToMember():
+    print('getNoteToMember')
     memberID = request.args.get('memberID')
     currentNote = db.session.query(NotesToMembers).filter(NotesToMembers.memberID == memberID).first()
     if (currentNote):
         msg = currentNote.noteToMember
         msg += '\n-----------------------------------------------\n'
+        print('return msg')
         return jsonify(msg=msg)
+    print('return Nothing')
     return make_response('Nothing')
 
 @app.route("/processNoteToMember")
@@ -957,15 +967,9 @@ def processNoteToMember():
     
 
 def logChange(staffID,colName,memberID,newData,origData):
-    # now = datetime.now()
-    # date_time = now.strftime('%y-%m-%d %H:%M:%S')
-    # todays_date = datetime.today()
-    # todaySTR = todays_date.strftime('%Y-%m-%d')
-    # print('now - ',date_time)
-    # print('todaySTR - ',todaySTR)
 
-    # get staff ID, current date & time, write change to tblMember_Transactions
-    print('log - ',staffID,"|",colName,"|",memberID,"|New- ",newData,"|Orig-",origData),"|"
+    # Write data changes to tblMember_Data_Transactions
+    #print('log - ',staffID,"|",colName,"|",memberID,"|New- ",newData,"|Orig-",origData),"|"
     newTransaction = MemberTransactions(
         Transaction_Date = datetime.now(),
         Member_ID = memberID,

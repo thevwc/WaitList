@@ -553,6 +553,7 @@ function myFunction() {
   }
 
 function noteRoutine() {
+    console.log("noteRoutine")
     // CHECK FOR EXISTING NOTE
     // IF FOUND, DISPLAY IN MSG
     memberID = document.getElementById('memberID').value
@@ -571,6 +572,7 @@ function noteRoutine() {
                 msg = data.msg
                 msgElement = document.getElementById('msgID')
                 msgElement.value = msg
+                $('#noteModalID').modal('show')
             }
             //alert("SUCCESS"+ data)
         },
@@ -641,85 +643,6 @@ function processNote() {
 // $('#noteModalID').on('shown.bs.modal', function () {
 //     $('#msgID').focus();
 // }) 
-// function showMedicalInfo() {
-//     alert('show emergModalID')
-//     $('#emergModalID').modal('show')
-// }
-// function medicalInfoRoutine() {
-//     // CHECK FOR EXISTING MEDICAL DATA
-//     // IF FOUND, DISPLAY IN FORM
-//     memberID = document.getElementById('memberID').value
-    
-//     $.ajax({
-//         url : "/getMedicalInfo",
-//         type: "GET",
-//         data : {
-//             memberID:memberID,
-//             },
- 
-//         success: function(data, textStatus, jqXHR)
-//         {
-//             //alert('data - '+ data.medData.OtherDiagnosis)
-//             //console.log('OtherDiagnosis - '+data.medData.OtherDiagnosis)
-//             //console.log('otherDiagnosis - '+data.otherDiagnosis)
-//             console.log('pacemaker - '+data.pacemaker)
-//             console.log('alergies - '+data.alergies)
-//             //console.log('stent - '+data.stent)
-//             //console.log('MI - '+data.MI)
-//             if (data.pacemaker == true) {
-//                 pacemaker = document.getElementById('emergPacemaker')
-//                 pacemaker.value = 'True'
-//                 pacemaker.checked = true
-//                 //console.log('pacemaker = true')
-//             }
-//             if (data.stent == true) {
-//                 stent = document.getElementById('emergStent')
-//                 stent.value = 'True'
-//                 stent.checked = true
-//                 //console.log('stent = true')
-//             }
-//             if (data.CABG == true) {
-//                 CABG = document.getElementById('emergCABG')
-//                 CABG.value = 'True'
-//                 CABG.checked = true
-//                 //console.log('CABG = true')
-//             }
-//             if (data.MI == true) {
-//                 MI = document.getElementById('emergMI')
-//                 MI.value = 'True'
-//                 MI.checked = true
-//                 //console.log('MI = true')
-//             }
-//             if (data.diabetes1 == true) {
-//                 diabetes1 = document.getElementById('emergDiabetes1')
-//                 diabetes1.value = 'True'
-//                 diabetes1.checked = true
-//                 //console.log('diabetes1 = true')
-//             }
-//             if (data.diabetes2 == true) {
-//                 diabetes2 = document.getElementById('emergDiabetes2')
-//                 diabetes2.value = 'True'
-//                 diabetes2.checked = true
-//                 //console.log('diabetes2 = true')
-//             }
-//             document.getElementById('emergOtherDiagnosis').value = data.otherDiagnosis
-//             document.getElementById('emergDiabetesOther').value = data.diabetesOther
-//             document.getElementById('emergAlergies').value = data.alergies
-
-//             document.getElementById('emergMemberID').value = data.emergMemberID
-//             alert("SUCCESS")
-//         },
-//         error: function(result){
-//             alert("Error ..."+result)
-//         }
-//     })    
-//     $('#emergModalID').modal('show')
-// }
-
-// $("#emergCancelBtn").click(function () {
-//     alert('emergCancelBtn clicked')
-//     $("#emergencyID").modal("hide");
-// });
 
 function setPhotoSrc() {
     photo = document.getElementsByClassName('memberImgID')
