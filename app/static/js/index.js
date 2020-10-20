@@ -9,7 +9,7 @@ function memberSelectedRtn() {
     
     // SET UP LINK TO MEMBER FORM 
     var linkToMemberBtn = document.getElementById('linkToMember');
-    link='/index/' + currentMemberID 
+    link='/member/index/' + currentMemberID 
     linkToMemberBtn.setAttribute('href', link)
     linkToMemberBtn.click()
 }

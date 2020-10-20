@@ -676,7 +676,7 @@ function clearScreen() {
     // hdgTitle = document.getElementById('hdgTitleID')
     // hdgTitle.style.display='none'
     var linkToMemberBtn = document.getElementById('linkToMember');
-    link='/index/' 
+    link='/member/index/' 
     linkToMemberBtn.setAttribute('href', link)
     linkToMemberBtn.click()
 }

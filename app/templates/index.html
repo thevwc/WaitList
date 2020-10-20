@@ -2,9 +2,10 @@
 
 {% block styles %}
     {{super()}}
-    <!-- external index.css not loading ?????????? -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 {% endblock %}
+
+{% include 'hamburger.html' %}
 
 {% block content %}
     <div class="parent">
