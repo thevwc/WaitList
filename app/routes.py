@@ -8,7 +8,8 @@ from flask_bootstrap import Bootstrap
 
 from werkzeug.urls import url_parse
 from app.models import ShopName, Member, MemberActivity, MonitorSchedule, MonitorScheduleTransaction,\
-MonitorWeekNote, CoordinatorsSchedule, ControlVariables, NotesToMembers, MemberTransactions
+MonitorWeekNote, CoordinatorsSchedule, ControlVariables, NotesToMembers, MemberTransactions,\
+DuesPaidYears
 from app import app
 from app import db
 from sqlalchemy import func, case, desc, extract, select, update, text
@@ -153,9 +154,31 @@ def index(villageID):
             if member.Last_Monitor_Training_Shop_2 < BWlastAcceptableTrainingDate:
                 BWtrainingNeeded = 'Training Needed'
             #print('BWlastAcceptableTrainingDate - ',BWlastAcceptableTrainingDate)
+    # GET SHOP NUMBER
+    #shopLocation = request.cookies.get('shopLocation')
+    shopLocation = request.cookies.get('clientLocation')
+    if shopLocation == 'RA':
+        shopNumber = 1
+    else:
+        if shopLocation == 'BW':
+            shopNumber = 2
+        else:
+            flash ('Missing shop location, RA assumed.','info')
+            shopNumber = 1
 
+    # GET LAST PAID YEAR
+    lastYearPaid = db.session.query(func.max(DuesPaidYears.Dues_Year_Paid)).filter(DuesPaidYears.Member_ID == villageID).scalar()
+
+    # GET CURRENT DUES YEAR
+    currentDuesYear = db.session.query(ControlVariables.Current_Dues_Year).filter(ControlVariables.Shop_Number == shopNumber).scalar()
+    
+    # GET DATE TO ACCEPT DUES
+    acceptDuesDate = db.session.query(ControlVariables.Date_To_Begin_New_Dues_Collection).filter(ControlVariables.Shop_Number == shopNumber).scalar()
+    print('acceptDuesDate - ',acceptDuesDate)
+    
     return render_template("member.html",member=member,hdgName=hdgName,nameArray=nameArray,expireMsg=expireMsg,
-    futureDuty=futureDuty,pastDuty=pastDuty,RAtrainingNeeded=RAtrainingNeeded,BWtrainingNeeded=BWtrainingNeeded)
+    futureDuty=futureDuty,pastDuty=pastDuty,RAtrainingNeeded=RAtrainingNeeded,BWtrainingNeeded=BWtrainingNeeded,
+    shopNumber=shopNumber,lastYearPaid=lastYearPaid,currentDuesYear=currentDuesYear,acceptDuesDate=acceptDuesDate)
     
 @app.route('/saveAddress', methods=['POST'])
 def saveAddress():
@@ -904,15 +927,17 @@ def saveMonitorDuty():
 
 @app.route("/getNoteToMember")
 def getNoteToMember():
-    print('getNoteToMember')
     memberID = request.args.get('memberID')
     currentNote = db.session.query(NotesToMembers).filter(NotesToMembers.memberID == memberID).first()
+    todays_date = datetime.today()
+    todaySTR = todays_date.strftime('%m-%d-%Y')
     if (currentNote):
         msg = currentNote.noteToMember
-        msg += '\n-----------------------------------------------\n'
+        msg += '\n' + todaysSTR + '\n'
+    else:
+        msg = todaysSTR + '\n'
         print('return msg')
         return jsonify(msg=msg)
-    print('return Nothing')
     return make_response('Nothing')
 
 @app.route("/processNoteToMember")
@@ -944,7 +969,7 @@ def processNoteToMember():
             response = "New note successfully created!"
             
         except SQLAlchemyError as e:
-            newNote.rollback()
+            db.session.rollback()
             return make_response(f"ERROR - Could not add a new note.")
  
     # PREPARE AN EMAIL, IF REQUESTED
@@ -978,11 +1003,82 @@ def logChange(staffID,colName,memberID,newData,origData):
         Action = 'UPDATE'
     )
     db.session.add(newTransaction)
-    db.session.commit()
     return
+    db.session.commit()
 
 @app.route("/newMemberApplication")
 def newMemberApplication():
     todays_date = datetime.today()
     todaySTR = todays_date.strftime('%m-%d-%Y')
+    duesAmount = db.session.query(ControlVariables.Current_Dues_Amount).filter(ControlVariables.Shop_Number==1)
+    initiationFee = db.session.query(ControlVariables.Current_Initiation_Fee).filter(ControlVariables.Shop_Number==1)
+    
     return render_template("newMemberApplication.html")
+
+@app.route("/acceptDues")
+def acceptDues():
+    shopNumber = getShopNumber()
+    #print('shopNumber - ',shopNumber)
+
+    initiationFee = db.session.query(ControlVariables.Current_Initiation_Fee).filter(ControlVariables.Shop_Number == shopNumber).scalar()
+    #print('initiation fee - ',initiationFee)
+    initiationFeeAcct = db.session.query(ControlVariables.Initiation_Fee_Account).filter(ControlVariables.Shop_Number == shopNumber).scalar()
+    #print('initiation fee acct - ',initiationFeeAcct)
+
+    duesAmount = db.session.query(ControlVariables.Current_Dues_Amount).filter(ControlVariables.Shop_Number==1).scalar()
+    #print ('duesAmount - ',duesAmount)
+    memberID=request.args.get('memberID')
+    #print('memberID - ',memberID)
+    
+    duesAccount = db.session.query(ControlVariables.Dues_Account).filter(ControlVariables.Shop_Number==shopNumber).scalar()
+    #print('duesAccount - ',duesAccount)
+    
+    currentDuesYear = db.session.query(ControlVariables.Current_Dues_Year).filter(ControlVariables.Shop_Number == shopNumber).scalar()
+    #print('currentDuesYear - ',currentDuesYear)
+    todays_date = datetime.today()
+    todaySTR = todays_date.strftime('%m-%d-%Y')
+
+    # SET DUES PAID FLAG
+    try:
+        member = Member.query.filter_by(Member_ID=memberID).first()
+        member.Dues_Paid = True
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        flash('ERROR - '+error,'danger')
+        print('error - ',error)
+        db.session.rollback()
+        
+    # ADD RECORD TO tblDues_Paid_Years
+    try:
+        newDuesPaidYear = DuesPaidYears(
+            Member_ID = memberID,
+            Dues_Year_Paid = currentDuesYear,
+            Date_Dues_Paid = datetime.now()
+        )
+        db.session.add(newDuesPaidYear)
+        db.session.commit()
+
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        flash('ERROR - '+error,'danger')
+        print('error - ',error)
+        db.session.rollback()
+        return make_response(f"ERROR - Could not process payment.\n" + error)
+
+    
+    print('Data sent to Lightspeed - ',memberID,duesAccount,currentDuesYear,todaySTR,duesAmount)
+    #return redirect(url_for('index',villageID=memberID))
+    flash ("SUCCESS - Payment processed","success")
+    return make_response(f"SUCCESS - Payment processed")
+ 
+def getShopNumber():
+    shopLocation = request.cookies.get('clientLocation')
+    if shopLocation == 'RA':
+        shopNumber = 1
+    else:
+        if shopLocation == 'BW':
+            shopNumber = 2
+        else:
+            flash ('Missing shop location, RA assumed.','info')
+            shopNumber = 1
+    return shopNumber

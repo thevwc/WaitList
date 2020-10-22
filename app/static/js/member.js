@@ -25,22 +25,35 @@ const colors = {
 
 // Declare global variables)
 
-// clientLocation, staffID will be set in localStorage within login routine
+// THE COOKIES FOR clientLocation AND staffID will be set as cookies within login routine
+
+// IF clientLocation COOKIE IS NOT FOUND, PROMPT FOR LOCATION
+checkLocationCookie()
 var clientLocation = ''
+clientLocation= getCookie('clientLocation')
+
 var todaysDate = new Date();
 var todaysDateSTR =  (todaysDate.getFullYear() + "-" + ("0"+(todaysDate.getMonth()+1)).slice(-2) + "-" + ("0" + todaysDate.getDate()).slice(-2))
-
-//var d = new Date();
-//var datestring = d.getFullYear() + "-" + (d.getMonth()) + "-" + d.getDate() 
-//var datestring =
-
-//+ "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +
-//    d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
-
 
 var shopNames = ['Rolling Acres', 'Brownwood']
 var currentMemberID = ''
 var curShopNumber = ''
+
+//==================================================================
+// PAGE START-UP STATEMENTS 
+//==================================================================
+
+// SHOW 'ACCEPT DUES ...' BUTTON IF TIME TO COLLECT DUES
+acceptDuesDate = document.getElementById('acceptDuesDateID').value
+acceptDuesBtn = document.getElementById('acceptDuesID')
+if (todaysDateSTR  < acceptDuesDate) {
+    acceptDuesBtn.style.display='none'
+}
+//     acceptDuesBtn.setAttribute(disabled,False)    
+// }
+// else {
+//     acceptDuesBtn.setAttribute(disabled,True)   
+// }
 
 // SET OPTIONS IN SELECT ELEMENTS BASED ON TEXT VALUES
 typeOfWorkText = document.getElementById('typeOfWorkTextID').value
@@ -60,11 +73,13 @@ membershipInfo = document.getElementById('membershipID')
 certificationInfo = document.getElementById('certificationID')
 monitorDutyInfo = document.getElementById('monitorDutyID')
 
-// RETRIEVE LOCAL STORAGE VALUES
-if (!localStorage.getItem('staffID')) {
-    localStorage.setItem('staffID','111111')
-}
-staffID = localStorage.getItem('staffID')
+// RETRIEVE LOCAL STORAGE VALUES (no longer needed?)
+
+
+
+// IF NO staffID COOKIE, PROMPT FOR AN ID
+checkStaffCookie()
+var staffID = getCookie('staffID')
 
 // SET STAFF ID IN EACH PANEL
 var staffIDelements = document.getElementsByClassName('staffID')
@@ -72,17 +87,9 @@ for (var i = 0; i < staffIDelements.length; i++) {
    staffIDelements[i].setAttribute("value", staffID);
 }
 
-
-// IF clientLocation IS NOT FOUND IN LOCAL STORAGE
-// THEN PROMPT WITH MODAL FORM FOR LOCATION AND YEAR
-if (!clientLocation) {
-    localStorage.setItem('clientLocation','RA')
-}
-clientLocation = localStorage.getItem('clientLocation')
-
+// IF clientLocation IS NOT FOUND, PROMPT FOR LOCATION
+var clientLocation = getCookie('clientLocation')
 setShopFilter(clientLocation)
-
-
 
 // DEFINE EVENT LISTENERS
 localContactInfo.addEventListener('change',localDataChanged);
@@ -91,11 +98,10 @@ emergencyInfo.addEventListener('change',emergencyDataChanged);
 membershipInfo.addEventListener('change',membershipDataChanged);
 certificationInfo.addEventListener('change',certificationDataChanged);
 monitorDutyInfo.addEventListener('change',monitorDutyDataChanged);
-// showPhotoBtn.addEventListener('click','setPhotoSrc');
+
 // MODAL EVENT LISTENERS
 document.getElementById("cancelNoteID").addEventListener("click",cancelNote)
 document.getElementById("processMsgID").addEventListener("click",processNote)
-//document.getElementById("medicalModalBtn").addEventListener("click",showMedicalInfo)
 
 document.getElementById("selectpicker").addEventListener("change",memberSelectedRtn)
 document.getElementById("selectpicker").addEventListener("click",memberSelectedRtn)
@@ -112,95 +118,18 @@ document.querySelector('#monthCheckboxesID').onclick = function(ev) {
         document.getElementById(inputID).value='False' 
     }
 }
-// document.getElementById('duesPaidID').onclick = function(ev) {
-//     inputID = ev.target.id + 'Text'
-//     if (ev.target.checked) {
-//         document.getElementById(inputID).value = 'True'
-//     }
-//     else {
-//         document.getElementById(inputID).value = 'False'
-//     }
-// }
-// document.getElementById('volunteerID').onclick = function(ev) {
-//     alert('inputID - '+inputID)
-//     inputID = ev.target.id + 'Text'
-//     if (ev.target.checked) {
-//         document.getElementById(inputID).value = 'True'
-//     }
-//     else {
-//         document.getElementById(inputID).value = 'False'
-//     }
-// }
-// document.getElementById('inactiveID').onclick = function(ev) {
-//     inputID = ev.target.id + 'Text'
-//     if (ev.target.checked) {
-//         document.getElementById(inputID).value = 'True'
-//     }
-//     else {
-//         document.getElementById(inputID).value = 'False'
-//     }
-//     alert('inactive - '+ document.getElementById(inputID).value)
-// }
-
-// document.getElementById('deceasedID').onclick = function(ev) {
-//     inputID = ev.target.id + 'Text'
-//     if (ev.target.checked) {
-//         document.getElementById(inputID).value = 'True'
-//     }
-//     else {
-//         document.getElementById(inputID).value = 'False'
-//     }
-// }
-
-// document.getElementById('restrictedID').onclick = function(ev) {
-//     inputID = ev.target.id + 'Text'
-//     if (ev.target.checked) {
-//         document.getElementById(inputID).value = 'True'
-//     }
-//     else {
-//         document.getElementById(inputID).value = 'False'
-//     }
-// }
-
-// document.getElementById('villagesWaiverID').onclick = function(ev) {
-//     //waiverInputID = ev.target.id + 'Text'
-//     if (ev.target.id.checked) {
-//         document.getElementById('villagesWaiverID').value = 'True'
-//     }
-//     else {
-//         document.getElementById('villagesWaiverID').value = 'False'
-//     }
-// }
 
 // HIDE DETAIL UNTIL A MEMBER IS SELECTED
-console.log('memberID.value - '+memberID.value)
 if (memberID.value == 'undefined' | memberID.value == ''){
-    console.log('undefined routine')
     panels = document.getElementsByClassName('panel')
     for (i = 0; i < panels.length; i++) {
         panels[i].style.display='none'
     }
 }   
-        
- 
-// ALTERNATE TEST FOR EXISTANCE OF element in DOM
-// if ('memberID' in window){
-//     // do nothing
-// }
-// else{
-//      panels = document.getElementsByClassName('panel')
-//      for (i = 0; i < panels.length; i++) {
-//          panels[i].style.display='none'
-//      }
-// }
+           
 
-
-    
-    
-    
-
-
-// CHECK BOX LISTENERS
+// CHECK BOX LISTENERS; SET VALUE TO STRING OF 'True' WHEN CLICKED
+// CANNOT PASS BOOLEAN VALUES
 document.getElementById('defibrillatorID').onclick = function(ev) {
     if (ev.target.checked) {
         document.getElementById('defibrillatorID').value='True'
@@ -313,9 +242,7 @@ document.getElementById('restrictedID').onclick = function(ev) {
 document.getElementById('villagesWaiverID').onclick = function(ev) {
     if (ev.target.checked) {
         document.getElementById('villagesWaiverID').value='True'
-        //alert('todaysDate - '+ todaysDate.toDateString()+'\n'+todaysDate.toLocaleString()+'\n'+todaysDate.toLocaleDateString()+'\n'+todaysDate.toString()+"\n"+datestring)
         document.getElementById('villagesWaiverDateSigned').value = todaysDateSTR
-        //todaysDate.toLocaleDateString()
     }
     else {
         document.getElementById('villagesWaiverID').value='False' 
@@ -406,8 +333,6 @@ function memberSelectedRtn() {
     link='/index/' + currentMemberID 
     linkToMemberBtn.setAttribute('href', link)
     linkToMemberBtn.click()
-    // hdgTitle = document.getElementById('hdgTitleID')
-    // hdgTitle.style.display='inline'
 }
 
 function localDataChanged() {
@@ -501,23 +426,16 @@ function monitorDutyDataChanged() {
     certificationInfo.style.color="rgba(0,0,0,0.6)"
 }
 
-// function cancelRtn(){
-//     // SET UP LINK TO MEMBER FORM 
-//     alert('currentMemberID- ',currentMemberID)
-//     var refreshPageBtn = document.getElementById('refreshPage');
-//     link='/index/' + currentMemberID 
-//     refreshPageBtn.setAttribute('href', link)
-//     refreshPageBtn.click()
-// }
 
-function monthCheckboxRtn() {
-    if (this.checked) {
-        this.value = True
-    }
-    else {
-        this.value = False
-    }
-}
+
+// function monthCheckboxRtn() {
+//     if (this.checked) {
+//         this.value = True
+//     }
+//     else {
+//         this.value = False
+//     }
+// }
 
 function findAllVariables() { 
     msg=''
@@ -532,14 +450,13 @@ function findAllVariables() {
 
 /* When the user clicks on the button, 
 toggle between hiding and showing the dropdown content */
-function myFunction() {
-    //alert('myFunction')
+function showMenu() {
+    //alert('showMenu')
     document.getElementById("myDropdown").classList.toggle("show");
   }
   
   // Close the dropdown if the user clicks outside of it
   window.onclick = function(event) {
-    //alert('window.onclick')
     if (!event.target.matches('.dropbtn')) {
       var dropdowns = document.getElementsByClassName("dropdown-content");
       var i;
@@ -553,12 +470,9 @@ function myFunction() {
   }
 
 function noteRoutine() {
-    console.log("noteRoutine")
     // CHECK FOR EXISTING NOTE
     // IF FOUND, DISPLAY IN MSG
     memberID = document.getElementById('memberID').value
-    //memberName = document.getElementById('modal-title').value
-
     $.ajax({
         url : "/getNoteToMember",
         type: "GET",
@@ -572,9 +486,7 @@ function noteRoutine() {
                 msg = data.msg
                 msgElement = document.getElementById('msgID')
                 msgElement.value = msg
-                $('#noteModalID').modal('show')
             }
-            //alert("SUCCESS"+ data)
         },
         error: function(result){
             alert("Error ..."+result)
@@ -583,23 +495,19 @@ function noteRoutine() {
     $('#noteModalID').modal('show')
 }
 
-// $('#noteModalID').on('hide.bs.modal', function () {
-//     alert('modal was hidden')
-// })
-
 function cancelNote() {
     $('#noteModalID').modal('hide')
 }
 
 function processNote() {
-    console.log('processNote')
+    //console.log('processNote')
     memberID = document.getElementById('memberID').value
     show = document.getElementById('showAtCheckIn')
     send = document.getElementById('sendEmail')
     msg = document.getElementById('msgID').value
     eMailAddr = document.getElementById('eMailID').value
-    console.log('memberID - '+memberID + '\nshow - '+show.checked+'\nsend - '
-    +send.checked+'\nmsg - '+msg+'\neMailAddr - '+eMailAddr)
+    //console.log('memberID - '+memberID + '\nshow - '+show.checked+'\nsend - '
+    //+send.checked+'\nmsg - '+msg+'\neMailAddr - '+eMailAddr)
     
     if (show.checked) {
         showAtCheckIn='true'
@@ -608,11 +516,11 @@ function processNote() {
         showAtCheckIn='false'
     }
     if (send.checked) {
-        console.log('send routine ...')
+        //console.log('send routine ...')
         sendEmail = 'true'
         
-        console.log ('eMailAddr - ' + eMailAddr)
-        alert ('emailAddress - '+eMailAddr)
+        //console.log ('eMailAddr - ' + eMailAddr)
+        //alert ('emailAddress - '+eMailAddr)
     }
     else {
         sendEmail = 'false' 
@@ -680,33 +588,78 @@ function clearScreen() {
     linkToMemberBtn.setAttribute('href', link)
     linkToMemberBtn.click()
 }
+  
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+  }
+  
+  function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+  function checkStaffCookie() {
+    var staffID = getCookie("staffID");
+    if (staffID != "") {
+    //   alert("Welcome again " + staffID);
+    } else {
+      staffID = prompt("Please enter your village ID:", "");
+      if (staffID != "" && staffID != null) {
+        setCookie("staffID", staffID, 365);
+      }
+    }
+  }
+  function checkLocationCookie() {
+    var clientLocation = getCookie("clientLocation");
+    if (clientLocation != "") {
+      //alert("Welcome again " + clientLocation);
+    } else {
+      clientLocation = prompt("Please enter your location (RA/BW):", "");
+      if (clientLocation != "" && clientLocation != null) {
+        setCookie("clientLocation", clientLocation, 365);
+      }
+    }
+  }
+// SAMPLE CODE TO CHECK FOR EXISTENCE OF A COOKIE
+//   function checkCookie() {
+//     var user = getCookie("username");
+//     if (user != "") {
+//       alert("Welcome again " + user);
+//     } else {
+//       user = prompt("Please enter your name:", "");
+//       if (user != "" && user != null) {
+//         setCookie("username", user, 365);
+//       }
+//     }
+//   }
 
-function cancelAddtlMedicalInfo() {
-    $("#emergModalID").modal("hide");
-}
-function saveAddtlMedicalInfo() {
-    memberID = document.getElementById('memberID').value
+function acceptDues() {
+    var memberID = document.getElementById('memberID').value
     $.ajax({
-        url : "/saveAddtlMedicalInfo",
+        url : "/acceptDues",
         type: "GET",
         data : {
-            memberID:memberID,
-            
-            },
- 
+            memberID:memberID
+        },
         success: function(data, textStatus, jqXHR)
         {
-            // if (data.msg) {
-            //     msg = data.msg
-            //     msgElement = document.getElementById('msgID')
-            //     msgElement.value = msg
-            // }
-            alert("SUCCESS"+ data)
+            alert(data)
+            location.reload()
         },
         error: function(result){
             alert("Error ..."+result)
         }
-    })    
-    $('#emergModalID').modal('hide')
+    }) 
 }
-  

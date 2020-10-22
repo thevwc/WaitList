@@ -29,7 +29,7 @@
         </div>
         <div class="memberMenu">
             <div class="dropdown">
-                <button onclick="myFunction()" class="dropbtn">MEMBER MENU</button>
+                <button onclick="showMenu()" class="dropbtn">MEMBER MENU</button>
                 <div id="myDropdown" class="dropdown-content"style=text-align:left>
                     <a onclick='clearScreen()'>Clear Screen</a>
                     <a onclick='noteRoutine()'>Note to Member</a>
@@ -54,7 +54,7 @@
             <div class="row">
                 <label class="control-label col-md-3 col-form-label-md" for="memberID">ID</label>
                 <div class="col-md-9">
-                    <input id='memberID' type="text" class="form-control-md" style="width:75px" name="memberID" readonly value="{{member.Member_ID}}">
+                    <input id='memberID' type="text" class="form-control-md" style="width:75px" name="memberID" value="{{member.Member_ID}}">
                     <label class="control-label col-form-label-md" style="color:red;font-size:18px" >{{ expireMsg }}</label>
                 </div>
             </div>
@@ -275,27 +275,31 @@
                 <div class="row ">
                     <div class='form-check'>
                         <input id="duesPaidID" type="checkbox" class="form-check-input" name="duesPaid" {% if member.Dues_Paid %} checked {% endif %} value={{member.Dues_Paid}}>
-                        <label class="form-check-label">Dues Paid</label>
+                        <label class="form-check-label">Dues paid for {{lastYearPaid}}</label>
+                        <input id=shopNumberID type="hidden" value={{shopNumber}}>
+                        <input id=acceptDuesDateID type="hidden" value={{acceptDuesDate}}>
+                        <input id=lastYearPaidID type="hidden" value={{lastYearPaid}}>
+                        <input id=currentDuesYearID type="hidden" value={{currentDuesYear}}>
                     </div>
                 </div>
                 
                 <div class="row form-check">
-                    <input id="volunteerID" type="checkbox" class="form-check-input" name="volunteer" {% if member.NonMember_Volunteer %} checked {% endif %} value="{{member.NonMember_Volunteer}}">
+                    <input id="volunteerID" type="checkbox" class="form-check-input" style=margin-top:5px name="volunteer" {% if member.NonMember_Volunteer %} checked {% endif %} value="{{member.NonMember_Volunteer}}">
                     <label for='volunteerID' class="form-check-label">Volunteer</label>
                 </div>
                 
-                <div class="row form-check">
-                    <input id="inactiveID" type="checkbox" class="form-check-input" style=margin-top:0px name="inactive" {% if member.Inactive %} checked {% endif %}value="{{member.Inactive}}">
+                <div class="row form-check" style=margin-top:10px>
+                    <input id="inactiveID" type="checkbox" class="form-check-input" style=margin-top:5px name="inactive" {% if member.Inactive %} checked {% endif %}value="{{member.Inactive}}">
                     <label for='inactiveID' class="form-check-label" style=margin-top:0px>Inactive</label>
                 </div>
-            
+                
                 <div class="row form-check">
-                    <input id="deceasedID" type="checkbox" class="form-check-input" style=margin-top:0px name="deceased" {% if member.Deceased %} checked {% endif %}value="{{member.Deceased}}">
+                    <input id="deceasedID" type="checkbox" class="form-check-input" style=margin-top:5px name="deceased" {% if member.Deceased %} checked {% endif %}value="{{member.Deceased}}">
                     <label class="form-check-label"style=margin-top:0px>Deceased</label>
                 </div>
                 <div class='row'></div>
                 <div class="row form-check">
-                    <input id="restrictedID" type="checkbox" class="form-check-input" style=margin-top:0px name="restricted" {% if member.Restricted_From_Shop %} checked {% endif %}value="{{member.Restricted_From_Shop}}">
+                    <input id="restrictedID" type="checkbox" class="form-check-input" style=margin-top:5px name="restricted" {% if member.Restricted_From_Shop %} checked {% endif %}value="{{member.Restricted_From_Shop}}">
                     <label for='restrictedID' class="form-check-label" style=margin-top:0px>Restricted</label>
                 </div>
     
@@ -305,18 +309,23 @@
                     <label for='dateJoinedID' class="col-5 col-form-label" style=width:200px;margin-top:-5px>Date Joined</label>
                     <input id='dateJoinedID' type="date" class="form-control-sm col-5 input "  name="dateJoined" value="{{member.Date_Joined}}"> 
                 </div>
-                
-                <div class='row form-group' style=margin-top:32px>
+                <div class='row'></div>
+                <div class='row'></div>
+                <div class='row form-group' style=margin-top:0x>
                     <label for="inactiveDateID" class="col-md-5 col-form-label-md" >Date Inactive</label>
                     <input id="inactiveDateID" type="date" class="form-control-sm input-sm col-md-5" name="inactiveDate" placeholder="inactive" value="{{member.Inactive_Date}}">
                 </div>
-                <div class='row'></div>
+                
                 
                 <div class='row'>
-                    <textarea name="reasonRestricted" class="col-md-10" style=margin-left:10px;margin-top:20px id="reasonRestricted" cols="30" rows="2">{{member.Reason_For_Restricted_From_Shop}}</textarea>
+                    <textarea name="reasonRestricted" class="col-md-10" style=margin-left:10px;margin-top:10px id="reasonRestricted" cols="30" rows="2">{{member.Reason_For_Restricted_From_Shop}}</textarea>
                 </div>
             </div>
-           
+        </div>
+
+        <div class='row'></div>
+        <div class='row'>
+            <input id="acceptDuesID"  type='text' onclick="acceptDues()" class="btn btn-primary"style=margin-left:200px;width:220px;color:white; value="ACCEPT DUES FOR {{currentDuesYear}}"">
         </div>
 
         <div class="cancelSave" style=padding-left:100px;padding-top:20px>
@@ -569,7 +578,7 @@
 
 <!-- MODAL FORM FOR NOTE TO MEMBER (BOOTSTRAP) -->
 <div id="noteModalID" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalTitle">Note to {{hdgName}}</h5>

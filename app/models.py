@@ -29,8 +29,16 @@ class ControlVariables(db.Model):
     __tablename__ = 'tblControl_Variables'
     __table_args__ = {"schema": "dbo"}
     Shop_Number = db.Column(db.Integer, primary_key=True)
+    Current_Dues_Year = db.Column(db.String(4))
+    Current_Dues_Amount = db.Column(db.Numeric)
+    Current_Initiation_Fee = db.Column(db.Numeric)
+    Date_To_Begin_New_Dues_Collection = db.Column(db.Date)
+    Date_To_Accept_New_Members = db.Column(db.Date)
     Last_Acceptable_Monitor_Training_Date = db.Column(db.Date)
-        
+    AcceptingNewMembers = db.Column(db.Boolean)
+    Dues_Account = db.Column(db.String(10))
+    Initiation_Fee_Account = db.Column(db.String(10))
+
 
 class Member(db.Model):
     __tablename__ = 'tblMember_Data'
@@ -214,4 +222,12 @@ class MemberTransactions(db.Model):
     Current_Data = db.Column(db.String(50))
     Data_Item = db.Column(db.String(30))
     Action = db.Column(db.String(6))
+
+class DuesPaidYears(db.Model):
+    __tablename__ = "tblDues_Paid_Years"
+    __table_args__={"schema":"dbo"}
+    ID = db.Column(db.Integer,primary_key=True)
+    Member_ID = db.Column(db.String(6))
+    Dues_Year_Paid = db.Column(db.String(6))
+    Date_Dues_Paid = db.Column(db.Date)
 
