@@ -580,11 +580,8 @@ function skillLevelRtn() {
     document.getElementById('skillLevelTextID').value=this.value
 }
 function clearScreen() {
-    // alert('clear screen')
-    // hdgTitle = document.getElementById('hdgTitleID')
-    // hdgTitle.style.display='none'
     var linkToMemberBtn = document.getElementById('linkToMember');
-    link='/member/index/' 
+    link='/index/' 
     linkToMemberBtn.setAttribute('href', link)
     linkToMemberBtn.click()
 }

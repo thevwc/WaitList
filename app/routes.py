@@ -1,10 +1,12 @@
 # routes.py
 from flask import session, render_template, flash, redirect, url_for, request, jsonify, json, make_response, after_this_request
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField
-from app.forms import LocalAddressPhone
-from flask_bootstrap import Bootstrap
+#from wtforms import StringField, PasswordField, TextAreaField, SubmitField, DateField, SelectField
+#from wtforms.validators import ValidationError, DataRequired, Length, Email, EqualTo
 
+from app.forms import LocalAddressPhone, NewMember
+from flask_bootstrap import Bootstrap
+#Bootstrap(app)
 
 from werkzeug.urls import url_parse
 from app.models import ShopName, Member, MemberActivity, MonitorSchedule, MonitorScheduleTransaction,\
@@ -77,7 +79,8 @@ def index(villageID):
     expireMsg = ''
     #todays_date = datetime.today()
     todays_date = date.today()
-
+    todaySTR = todays_date.strftime('%m-%d-%Y')
+    
     if member.Temporary_Village_ID is not None:
         if member.Temporary_ID_Expiration_Date is not None:
             minus30 = member.Temporary_ID_Expiration_Date - timedelta(days=30)
@@ -90,7 +93,7 @@ def index(villageID):
     beginDateDAT = todays_date - timedelta(days=365)
     beginDateSTR = beginDateDAT.strftime('%m-%d-%Y')
 
-    todaySTR = todays_date.strftime('%m-%d-%Y')
+    
 
     # print('Today-',todaySTR)
     # print('beginDateSTR-',beginDateSTR)
@@ -176,9 +179,14 @@ def index(villageID):
     acceptDuesDate = db.session.query(ControlVariables.Date_To_Begin_New_Dues_Collection).filter(ControlVariables.Shop_Number == shopNumber).scalar()
     print('acceptDuesDate - ',acceptDuesDate)
     
+    # COMPUTE NUMBER ON WAIT LIST
+    waitListCnt = '13'
+    print('waitListCnt - ',waitListCnt)
+    
     return render_template("member.html",member=member,hdgName=hdgName,nameArray=nameArray,expireMsg=expireMsg,
     futureDuty=futureDuty,pastDuty=pastDuty,RAtrainingNeeded=RAtrainingNeeded,BWtrainingNeeded=BWtrainingNeeded,
-    shopNumber=shopNumber,lastYearPaid=lastYearPaid,currentDuesYear=currentDuesYear,acceptDuesDate=acceptDuesDate)
+    shopNumber=shopNumber,lastYearPaid=lastYearPaid,currentDuesYear=currentDuesYear,acceptDuesDate=acceptDuesDate,
+    waitListCnt=waitListCnt)
     
 @app.route('/saveAddress', methods=['POST'])
 def saveAddress():
@@ -1006,15 +1014,79 @@ def logChange(staffID,colName,memberID,newData,origData):
     return
     db.session.commit()
 
-@app.route("/newMemberApplication")
+@app.route("/newMemberApplication",methods=('GET', 'POST'))
 def newMemberApplication():
+    #form=NewMember()
+    #if form.validate_on_submit():
+    #    return redirect(url_for('success'))
+    if request.method != 'POST':
+        todays_date = date.today()
+        todaySTR = todays_date.strftime('%m-%d-%Y')
+        # PREPARE LIST OF AVAILABLE CERTIFICATION DATES FOR ROLLING ACRES
+        sqlSelect = "SELECT trainingDate, classLimit FROM tblTrainingDates "
+        sqlSelect += "WHERE shopNumber = 1 "
+        sqlSelect += "and trainingDate >= '" + todaySTR + "';"
+        RAclasses = db.engine.execute(sqlSelect)
+        RAclassArray = []
+        for RA in RAclasses:
+            print (RA.trainingDate,RA.classLimit)
+            RAenrolled = db.session.query(func.count(Member.Member_ID)).filter(Member.Certification_Training_Date == RA.trainingDate).scalar()
+            print('RAenrolled',RAenrolled)
+            if RAenrolled < RA.classLimit:
+                print('RA match - ',RA.trainingDate)
+                RAclassArray.append(RA.trainingDate.strftime('%m-%d-%Y'))
+        print('array - ',RAclassArray)
+        print('RA length -',len(RAclassArray))
+        RAavailableDates = len(RAclassArray)
+
+        # PREPARE LIST OF AVAILABLE CERTIFICATION DATES FOR BROWNWOOD
+        sqlSelect = "SELECT trainingDate, classLimit FROM tblTrainingDates "
+        sqlSelect += "WHERE shopNumber = 2 "
+        sqlSelect += "and trainingDate >= '" + todaySTR + "';"
+        BWclasses = db.engine.execute(sqlSelect)
+        BWclassArray = []
+        for BW in BWclasses:
+            print ('BW - ',BW.trainingDate,BW.classLimit)
+            BWenrolled = db.session.query(func.count(Member.Member_ID)).filter(Member.Certification_Training_Date_2 == BW.trainingDate).scalar()
+            print('BWenrolled',BWenrolled)
+            if BWenrolled < BW.classLimit:
+                print('BW match - ',BW.trainingDate)
+                BWclassArray.append(BW.trainingDate.strftime('%m-%d-%Y'))
+        print('array - ',BWclassArray)
+        print('BA length -',len(BWclassArray))
+        BWavailableDates = len(BWclassArray)
+
+        singleInitiationFee = db.session.query(ControlVariables.Current_Initiation_Fee).filter(ControlVariables.Shop_Number==1).scalar()
+        annualFee = db.session.query(ControlVariables.Current_Dues_Amount).filter(ControlVariables.Shop_Number==1).scalar()
+        singleInitiationFeeCUR =  "${:,.2f}".format(singleInitiationFee)
+        annualFeeCUR =  "${:,.2f}".format(annualFee)
+        familyInitiationFee = singleInitiationFee / 2
+        familyInitiationFeeCUR = "${:,.2f}".format(familyInitiationFee)
+        print('singleInitiationFee - ',singleInitiationFee,singleInitiationFeeCUR)
+        print('familyInitiationFee - ',familyInitiationFee,familyInitiationFeeCUR)
+        print('annualFee - ',annualFee,annualFeeCUR)
+
+        return render_template("newMember.html",RAclassArray=RAclassArray,BWclassArray=BWclassArray,\
+        RAavailableDates=RAavailableDates,BWavailableDates=BWavailableDates,\
+        singleInitiationFeeCUR=singleInitiationFeeCUR,familyInitiationFeeCUR=familyInitiationFeeCUR,annualFeeCUR=annualFeeCUR)
+
+    # POST REQUEST; PROCESS FORM DATA; IF OK SEND PAYMENT DATA, DISPLAY MEMBER FORM
     todays_date = datetime.today()
     todaySTR = todays_date.strftime('%m-%d-%Y')
-    duesAmount = db.session.query(ControlVariables.Current_Dues_Amount).filter(ControlVariables.Shop_Number==1)
-    initiationFee = db.session.query(ControlVariables.Current_Initiation_Fee).filter(ControlVariables.Shop_Number==1)
+    duesAmount = db.session.query(ControlVariables.Current_Dues_Amount).filter(ControlVariables.Shop_Number==1).scalar()
+    initiationFee = db.session.query(ControlVariables.Current_Initiation_Fee).filter(ControlVariables.Shop_Number==1).scalar()
+    memberID = request.form.get('memberID')
+    firstName = request.form.get('firstName')
+    print('ID - ',memberID)
+    print('Name - ',firstName)
+    # VALIDATE DATA
+    #    if temp id then set Temporary_Village_ID to true
     
-    return render_template("newMemberApplication.html")
+    # SEND REQUEST FOR PAYMENT TO LIGHTSPEED
 
+    # DISPLAY NEW MEMBER RECORD SO STAFF CAN ENTER REMAINING DATA
+    return redirect(url_for('index',villageID=memberID),todaysDate=todaySTR)
+    
 @app.route("/acceptDues")
 def acceptDues():
     shopNumber = getShopNumber()

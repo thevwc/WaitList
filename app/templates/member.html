@@ -31,14 +31,13 @@
             <div class="dropdown">
                 <button onclick="showMenu()" class="dropbtn">MEMBER MENU</button>
                 <div id="myDropdown" class="dropdown-content"style=text-align:left>
-                    <a onclick='clearScreen()'>Clear Screen</a>
+                    <a class='dropdown-item' onclick='clearScreen()'>Clear Screen</a>
                     <a onclick='noteRoutine()'>Note to Member</a>
                     <a class='dropdown-item' href="{{ url_for('newMemberApplication')}}">New Member Application</a>
-                    <a class='dropdown-item disabled'href="#dues">Pay Dues</a>
-                    <a class='dropdown-item disabled'href="#classes">Class Signup</a>
+                    <a class='dropdown-item disabled' href="#classes">Class Signup</a>
                     <a class='dropdown-item disabled'href="#roles">Roles</a>
                     <a class='dropdown-item disabled'href="#monitorDuty">Schedule Monitor Duty</a>
-                    <a class='dropdown-item disabled'href="#waitList">Wait List</a>
+                    <a class='dropdown-item'href="#waitList">Wait List ({{ waitListCnt }})</a>
                 </div>
                 <button id='showPhotoBtn' onclick='showHidePhoto(this)' style=margin-left:50px>SHOW PHOTO</button>
             </div>

@@ -1,0 +1,108 @@
+/* * {
+    box-sizing: border-box;
+  } */
+/* For mobile phones: */
+/* [class*="col-"] {
+    width: 100%;
+  } */
+  
+
+
+
+  /* @media only screen and (orientation: landscape) {
+    body {
+      background-color: lightblue;
+    }
+  }
+.row::after {
+    content: "";
+    clear: both;
+    display: table;
+} */
+
+/* html {
+    font-family: "Lucida Sans", sans-serif;
+} */
+
+
+.parent {
+    display: grid;
+    grid-template-columns:1fr 1fr;
+    /* grid-template-rows:50px 1fr 1fr; */
+    /* grid-template-rows: repeat(3, minmax(50px, auto)); */
+    grid-template-areas:    "hdgArea            hdgArea  "
+                            "demographicArea    column2Area"
+                            "footerBtnsArea    footerBtnsArea";
+                            
+    gap:5px;
+    background-color:lightgray;
+    padding:10px;
+    margin:10px; 
+}
+form {
+    margin-top:30px;
+    margin-bottom:30px;
+    margin-left:100px;
+    margin-right:100px;
+
+}
+.hdg {
+    grid-area: hdgArea;
+    text-align:center; 
+    background-color: navy;
+    color:white; 
+    height:40px;
+    padding:0px;
+}
+.demographic {
+    grid-area: demographicArea;
+    border:1px solid black;
+    background-color: lightgrey;
+    color:black; 
+    padding:10px;
+    margin-left:30px;
+}
+/* .demographic form {
+    padding-left: 20px;
+    padding-top:0px;
+} */
+/* .demographic .row {
+    height:30px;
+} */
+.demographic input {
+    border: 1px solid black;
+    font-size:16px;
+    color:navy;
+} 
+
+.demographic label {
+    text-align:right;
+}
+.column2 {
+    border:1px solid black;
+    color:black; 
+    padding:10px;
+    margin-left:30px;
+}
+.column2 input option{
+    border: 1px solid black;
+    font-size:16px;
+    color:navy;
+}
+.column2 label {
+    text-align:right;
+}
+
+.shopData {
+    background-color: lightgreen;
+    color:black; 
+}
+.billing {
+    background-color: lightsalmon;
+    color:black; 
+}
+.footerBtns {
+    grid-area: footerBtnsArea;
+    color:black;
+}
+   
