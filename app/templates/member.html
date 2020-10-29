@@ -262,63 +262,44 @@
     <!-- MEMBERSHIP STATUS -->
     <div id="membershipID" class="membershipInfo panel">
         <h5>MEMBERSHIP STATUS</h5> 
-        <form method='POST'  action="/saveMemberStatus" style="padding-left:0px">
-        <div class='memberStatus'>
-            <div class= 'memberStatusCol1' style=margin-left:20px>
-                <div class="row ">
-                    <div class='form-check'>
-                        <input id="duesPaidID" type="checkbox" class="form-check-input" name="duesPaid" {% if member.Dues_Paid %} checked {% endif %} value={{member.Dues_Paid}}>
-                        <label class="form-check-label">Dues paid for {{lastYearPaid}}</label>
-                        <input id=shopNumberID type="hidden" value={{shopNumber}}>
-                        <input id=acceptDuesDateID type="hidden" value={{acceptDuesDate}}>
-                        <input id=lastYearPaidID type="hidden" value={{lastYearPaid}}>
-                        <input id=currentDuesYearID type="hidden" value={{currentDuesYear}}>
-                    </div>
-                </div>
-                
-                <div class="row form-check">
-                    <input id="volunteerID" type="checkbox" class="form-check-input" style=margin-top:5px name="volunteer" {% if member.NonMember_Volunteer %} checked {% endif %} value="{{member.NonMember_Volunteer}}">
-                    <label for='volunteerID' class="form-check-label">Volunteer</label>
-                </div>
-                
-                <div class="row form-check" style=margin-top:10px>
-                    <input id="inactiveID" type="checkbox" class="form-check-input" style=margin-top:5px name="inactive" {% if member.Inactive %} checked {% endif %}value="{{member.Inactive}}">
-                    <label for='inactiveID' class="form-check-label" style=margin-top:0px>Inactive</label>
-                </div>
-                
-                <div class="row form-check">
-                    <input id="deceasedID" type="checkbox" class="form-check-input" style=margin-top:5px name="deceased" {% if member.Deceased %} checked {% endif %}value="{{member.Deceased}}">
-                    <label class="form-check-label"style=margin-top:0px>Deceased</label>
-                </div>
-                <div class='row'></div>
-                <div class="row form-check">
-                    <input id="restrictedID" type="checkbox" class="form-check-input" style=margin-top:5px name="restricted" {% if member.Restricted_From_Shop %} checked {% endif %}value="{{member.Restricted_From_Shop}}">
-                    <label for='restrictedID' class="form-check-label" style=margin-top:0px>Restricted</label>
-                </div>
-    
-            </div>
-            <div class="memberStatusCol2">
-                <div class="row form-group">
-                    <label for='dateJoinedID' class="col-5 col-form-label" style=width:200px;margin-top:-5px>Date Joined</label>
-                    <input id='dateJoinedID' type="date" class="form-control-sm col-5 input "  name="dateJoined" value="{{member.Date_Joined}}"> 
-                </div>
-                <div class='row'></div>
-                <div class='row'></div>
-                <div class='row form-group' style=margin-top:0x>
-                    <label for="inactiveDateID" class="col-md-5 col-form-label-md" >Date Inactive</label>
-                    <input id="inactiveDateID" type="date" class="form-control-sm input-sm col-md-5" name="inactiveDate" placeholder="inactive" value="{{member.Inactive_Date}}">
-                </div>
-                
-                
-                <div class='row'>
-                    <textarea name="reasonRestricted" class="col-md-10" style=margin-left:10px;margin-top:10px id="reasonRestricted" cols="30" rows="2">{{member.Reason_For_Restricted_From_Shop}}</textarea>
-                </div>
-            </div>
+        <form method='POST'  action="/saveMemberStatus" style="padding-left:20px">
+        <input id=shopNumberID type="hidden" value={{shopNumber}}>
+        <input id=acceptDuesDateID type="hidden" value={{acceptDuesDate}}>
+        <input id=lastYearPaidID type="hidden" value={{lastYearPaid}}>
+        <input id=currentDuesYearID type="hidden" value={{currentDuesYear}}>
+
+        <div class="row form-check">
+                <input id="duesPaidID" type="checkbox" class="form-check-input" style=margin-top:10px name="duesPaid" {% if member.Dues_Paid %} checked {% endif %} value={{member.Dues_Paid}}>
+                <label class="form-check-label">Dues paid ({{lastYearPaid}})</label> 
+                <label for='dateJoinedID' class="col-form-label" style=margin-top:-5px;margin-left:30px>Date Joined</label>
+                <input id='dateJoinedID' type="date" class="form-control-sm "  name="dateJoined" value="{{member.Date_Joined}}"> 
+        </div> 
+        
+        <div class="row form-check">
+            <input id="volunteerID" type="checkbox" class="form-check-input" style=margin-top:5px name="volunteer" {% if member.NonMember_Volunteer %} checked {% endif %} value="{{member.NonMember_Volunteer}}">
+            <label for='volunteerID' class="form-check-label">Volunteer</label>
+        </div>
+        
+        <div class="row form-check" style=margin-top:10px>
+            <input id="inactiveID" type="checkbox" class="form-check-input" style=margin-top:10px name="inactive" {% if member.Inactive %} checked {% endif %}value="{{member.Inactive}}">
+            <label for='inactiveID' class="form-check-label" style=margin-top:0px>Inactive</label>
+            <input id="inactiveDateID" type="date" class="form-control-sm" style=margin-left:20px name="inactiveDate" placeholder="inactive" value="{{member.Inactive_Date}}">
+        </div>
+            
+        <div class="row form-check">
+            <input id="deceasedID" type="checkbox" class="form-check-input" style=margin-top:5px name="deceased" {% if member.Deceased %} checked {% endif %}value="{{member.Deceased}}">
+            <label class="form-check-label"style=margin-top:0px>Deceased</label>
         </div>
 
+        <div class="row">
+            <input id="restrictedID" type="checkbox" class="form-check-input" style=margin-top:5px;margin-left:0px name="restricted" {% if member.Restricted_From_Shop %} checked {% endif %}value="{{member.Restricted_From_Shop}}">
+            <label class="form-check-label" style=margin-top:0px;margin-left:20px>Restricted</label>
+            <textarea name="reasonRestricted"  style=margin-left:10px;margin-top:5px id="reasonRestricted" cols="30" rows="2">{{member.Reason_For_Restricted_From_Shop}}</textarea>
+        </div>
+    
         <div class='row'></div>
         <div class='row'>
-            <input id="acceptDuesID"  type='text' onclick="acceptDues()" class="btn btn-primary"style=margin-left:200px;width:220px;color:white; value="ACCEPT DUES FOR {{currentDuesYear}}"">
+            <input id="acceptDuesID"  type='text' onclick="acceptDues()" class="btn btn-primary"style=margin-left:100px;width:220px;color:white; value="ACCEPT DUES FOR {{currentDuesYear}}"">
         </div>
 
         <div class="cancelSave" style=padding-left:100px;padding-top:20px>
@@ -327,6 +308,7 @@
             <button id="memberCancelBtn" type="submit" name="memberAction" class="btn-default" style=display:none value="CANCEL">CANCEL</button>
             <button id="memberSaveBtn" type="submit" name="memberAction" class="btn-primary" style=display:none value="SAVE">SAVE</button>   
         </div>
+
         </form>
         
     </div>
@@ -424,12 +406,12 @@
                 </div>
                 
                 <div class="row">
-                    <label class="control-label col-sm-5 col-form-label-sm" style=margin-left:0px">Monitor Exemption</label>
-                    <textarea name="waiverReason" class="col-sm-6" style=margin-left:10px id="waiverReason" cols="30" rows="2">{{member.Monitor_Duty_Waiver_Reason}}</textarea>
+                    <label class="control-label col-sm-4 col-form-label-sm" style=text-align:left;margin-left:0px">Monitor Exemption</label>
+                    <textarea name="waiverReason" class="col-sm-6" style=margin-left:10px id="waiverReason" cols="30" rows="1">{{member.Monitor_Duty_Waiver_Reason}}</textarea>
                 </div>
 
                 <div class="row">
-                    <label class="control-label col-sm-5 col-form-label-sm">Exemption Expiration</label>
+                    <label class="control-label col-sm-4 col-form-label-sm"style=text-align:left;>Exemption Expiration</label>
                     <input type="date" class="form-control form-control-sm datepick" style="margin-left:10px" name="waiverExpirationDate" value="{{member.Monitor_Duty_Waiver_Expiration_Date}}"> 
                 </div>
                 

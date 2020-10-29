@@ -1099,7 +1099,9 @@ def newMemberApplication():
     city = request.form.get('city')
     state = request.form.get('state')
     zip = request.form.get('zip')
+    print('zip - ',zip)
     cellPhone = request.form.get('cellPhone')
+    print('cellPhone - ',cellPhone, ' type - ',type(zip))
     homePhone = request.form.get('homePhone')
     eMail = request.form.get('eMail')
     dateJoined = request.form.get('dateJoined')
@@ -1110,8 +1112,19 @@ def newMemberApplication():
         initiationFee = memberInitiationFee
     else:
         initiationFee = memberInitiationFee / 2
-    currentDuesYear = request.form.get('currentDuesYear')
-    
+
+    currentDuesYear = db.session.query(ControlVariables.Current_Dues_Year).filter(ControlVariables.Shop_Number == 1).scalar()
+    #currentDuesYear = request.form.get('currentDuesYear')
+    print('currentDuesYear - ',currentDuesYear)
+
+    tempIDexpirationDate = request.form.get('expireDate')
+    if tempIDexpirationDate != None:
+        hasTempID = True
+    else:
+        hasTempID = False
+    print ('expire date - ',tempIDexpirationDate)
+    print ('hasTempID - ',hasTempID)
+
     # VALIDATE DATA
     #    if temp id then set Temporary_Village_ID to true
 
@@ -1167,7 +1180,7 @@ def newMemberApplication():
         Staff_ID = staffID,
         Original_Data = '',
         Current_Data = memberID,
-        Data_Item = 'NEW MEMBER,
+        Data_Item = 'NEW MEMBER',
         Action = 'NEW'
     )
     # WRITE TO MEMBER_TRANSACTION TABLE
@@ -1183,7 +1196,7 @@ def newMemberApplication():
     # SEND REQUEST FOR PAYMENT TO LIGHTSPEED
 
     # DISPLAY NEW MEMBER RECORD SO STAFF CAN ENTER REMAINING DATA
-    return redirect(url_for('index',villageID=memberID),todaysDate=todaySTR)
+    return redirect(url_for('index',villageID=memberID,todaysDate=todaySTR))
     
 @app.route("/acceptDues")
 def acceptDues():
