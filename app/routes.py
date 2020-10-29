@@ -1019,6 +1019,8 @@ def newMemberApplication():
     #form=NewMember()
     #if form.validate_on_submit():
     #    return redirect(url_for('success'))
+
+    # GATHER DATA FOR NEW MEMBER FORM
     if request.method != 'POST':
         todays_date = date.today()
         todaySTR = todays_date.strftime('%m-%d-%Y')
@@ -1056,32 +1058,128 @@ def newMemberApplication():
         print('BA length -',len(BWclassArray))
         BWavailableDates = len(BWclassArray)
 
+
         singleInitiationFee = db.session.query(ControlVariables.Current_Initiation_Fee).filter(ControlVariables.Shop_Number==1).scalar()
         annualFee = db.session.query(ControlVariables.Current_Dues_Amount).filter(ControlVariables.Shop_Number==1).scalar()
         singleInitiationFeeCUR =  "${:,.2f}".format(singleInitiationFee)
         annualFeeCUR =  "${:,.2f}".format(annualFee)
         familyInitiationFee = singleInitiationFee / 2
         familyInitiationFeeCUR = "${:,.2f}".format(familyInitiationFee)
+        currentDuesYear = db.session.query(ControlVariables.Current_Dues_Year).filter(ControlVariables.Shop_Number == 1).scalar()
         print('singleInitiationFee - ',singleInitiationFee,singleInitiationFeeCUR)
         print('familyInitiationFee - ',familyInitiationFee,familyInitiationFeeCUR)
         print('annualFee - ',annualFee,annualFeeCUR)
+        singleTotalFee = singleInitiationFee + annualFee
+        singleTotalFeeCUR = "${:,.2f}".format(singleTotalFee)
+        familyTotalFee = familyInitiationFee + annualFee
+        familyTotalFeeCUR = "${:,.2f}".format(familyTotalFee)
 
         return render_template("newMember.html",RAclassArray=RAclassArray,BWclassArray=BWclassArray,\
         RAavailableDates=RAavailableDates,BWavailableDates=BWavailableDates,\
-        singleInitiationFeeCUR=singleInitiationFeeCUR,familyInitiationFeeCUR=familyInitiationFeeCUR,annualFeeCUR=annualFeeCUR)
+        singleInitiationFeeCUR=singleInitiationFeeCUR,familyInitiationFeeCUR=familyInitiationFeeCUR,\
+        annualFeeCUR=annualFeeCUR,currentDuesYear=currentDuesYear,dateJoined=todaySTR,\
+        singleTotalFeeCUR=singleTotalFeeCUR,familyTotalFeeCUR=familyTotalFeeCUR)
 
-    # POST REQUEST; PROCESS FORM DATA; IF OK SEND PAYMENT DATA, DISPLAY MEMBER FORM
+    # POST REQUEST; PROCESS FORM DATA; IF OK SEND PAYMENT DATA, ADD TO MEMBER_DATA, INSERT TRANSACTION ('ADD'), DISPLAY MEMBER FORM
     todays_date = datetime.today()
     todaySTR = todays_date.strftime('%m-%d-%Y')
     duesAmount = db.session.query(ControlVariables.Current_Dues_Amount).filter(ControlVariables.Shop_Number==1).scalar()
-    initiationFee = db.session.query(ControlVariables.Current_Initiation_Fee).filter(ControlVariables.Shop_Number==1).scalar()
+    memberInitiationFee = db.session.query(ControlVariables.Current_Initiation_Fee).filter(ControlVariables.Shop_Number==1).scalar()
+    data = request.form
+    for key, value in data.items():
+        print("received", key, "with value", value)
+
     memberID = request.form.get('memberID')
+    expireDate = request.form.get('expireDate')
     firstName = request.form.get('firstName')
-    print('ID - ',memberID)
-    print('Name - ',firstName)
+    middleName = request.form.get('middleName')
+    lastName = request.form.get('lastName')
+    nickname = request.form.get('nickname')
+    street = request.form.get('street')
+    city = request.form.get('city')
+    state = request.form.get('state')
+    zip = request.form.get('zip')
+    cellPhone = request.form.get('cellPhone')
+    homePhone = request.form.get('homePhone')
+    eMail = request.form.get('eMail')
+    dateJoined = request.form.get('dateJoined')
+    typeOfWork = request.form.get('typeOfWork')
+    skillLevel = request.form.get('skillLevel')
+    membershipType = request.form.get('membershipType')
+    if membershipType == 'single' :
+        initiationFee = memberInitiationFee
+    else:
+        initiationFee = memberInitiationFee / 2
+    currentDuesYear = request.form.get('currentDuesYear')
+    
     # VALIDATE DATA
     #    if temp id then set Temporary_Village_ID to true
+
+    newMember = Member(
+        Member_ID = memberID,
+        Temporary_ID_Expiration_Date = expireDate,
+        First_Name = firstName,
+        Middle_Name = middleName,
+        Last_Name = lastName,
+        Nickname = nickname,
+        Address = street,
+        City = city,
+        State = state,
+        Zip = zip,
+        Cell_Phone = cellPhone,
+        Home_Phone = homePhone,
+        eMail = eMail,
+        Date_Joined = dateJoined,
+        Default_Type_Of_Work = typeOfWork,
+        Skill_Level = skillLevel,
+        Dues_Paid = 1
+    ) 
+    # ADD RECORD TO tblDues_Years_Paid TABLE
+    try:
+        newDuesPaidYear = DuesPaidYears(
+            Member_ID = memberID,
+            Dues_Year_Paid = currentDuesYear,
+            Date_Dues_Paid = datetime.now()
+        )
+        db.session.add(newDuesPaidYear)
+        db.session.commit()
+
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        flash('ERROR - '+error,'danger')
+        print('error - ',error)
+        db.session.rollback()
     
+    # ADD TO tblMember_Data TABLE
+    try:
+        db.session.add(newMember)
+        db.session.commit()
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        flash('ERROR - '+error,'danger')
+        print('error - ',error)
+        db.session.rollback()
+
+    staffID = '123456'
+    newTransaction = MemberTransactions(
+        Transaction_Date = datetime.now(),
+        Member_ID = memberID,
+        Staff_ID = staffID,
+        Original_Data = '',
+        Current_Data = memberID,
+        Data_Item = 'NEW MEMBER,
+        Action = 'NEW'
+    )
+    # WRITE TO MEMBER_TRANSACTION TABLE
+    try:
+        db.session.add(newTransaction)
+        db.session.commit() 
+    except SQLAlchemyError as e:
+        error = str(e.__dict__['orig'])
+        flash('ERROR - '+error,'danger')
+        print('error - ',error)
+        db.session.rollback()
+
     # SEND REQUEST FOR PAYMENT TO LIGHTSPEED
 
     # DISPLAY NEW MEMBER RECORD SO STAFF CAN ENTER REMAINING DATA
@@ -1091,7 +1189,7 @@ def newMemberApplication():
 def acceptDues():
     shopNumber = getShopNumber()
     #print('shopNumber - ',shopNumber)
-
+    
     initiationFee = db.session.query(ControlVariables.Current_Initiation_Fee).filter(ControlVariables.Shop_Number == shopNumber).scalar()
     #print('initiation fee - ',initiationFee)
     initiationFeeAcct = db.session.query(ControlVariables.Initiation_Fee_Account).filter(ControlVariables.Shop_Number == shopNumber).scalar()

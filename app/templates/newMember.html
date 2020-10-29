@@ -19,7 +19,7 @@
         <div class="demographic">
             <div class="form-group-md">
                 <label for=memberID class='col-md-4 form-label-md'>Village ID</label>
-                <input id='memberID' type="text" class="form-control-md" style="width:60px" name="memberID">
+                <input id='memberID' type="text" required class="form-control-md" style="width:60px" name="memberID">
                 <label for=expireDate class="col-md-3 form-label-md" >Expiration date</label>
                 <input type="date" datepicker class="form-control-md" name='expireDate'>
             </div>
@@ -28,7 +28,7 @@
             <br>    
             <div class='form-group-md'>
                 <label for="firstName" class="col-md-4 form-label-md">Name</label>
-                <input id="firstName"type='text' class='form-control-md' name='firstName' placeholder="First name">
+                <input id="firstName"type='text' required class='form-control-md' name='firstName' placeholder="First name">
             </div>
             <div class='form-group-md'>
                 <label for="middleName" class="col-md-4 form-label-md"></label>
@@ -36,7 +36,7 @@
             </div>
             <div class='form-group-md'>
                 <label for="lastName" class="col-md-4 form-label-md"></label>
-                <input id="lastName"type='text' class='form-control-md' name='lastName' placeholder="Last name">
+                <input id="lastName"type='text' required class='form-control-md' name='lastName' placeholder="Last name">
             </div>
             <div class='form-group-md'>
                 <label for="nickname" class="col-md-4 form-label-md"></label>
@@ -69,7 +69,7 @@
             <div class='email'>
                 <div class='form-group-md'>
                     <label for="eMail" class="col-md-4 form-label-md">Email</label>
-                    <input id="eMail"type='email' class='form-control-md' name='eMail' >
+                    <input id="eMail"type='email' required class='form-control-md' name='eMail' >
                 </div>   
             </div>
         </div> <!-- END OF demographic-->
@@ -77,7 +77,7 @@
         <div class='column2'>
             <div class='form-group-md' style=margin-top:20px>
                 <label for="dateJoined" class="col-md-5 form-label-md">Date joined</label>
-                <input id="dateJoined"type='date' datepicker class='dateJoined form-control-md' name='dateJoined'>
+                <input id="dateJoined"type='date' datepicker class='dateJoined form-control-md' name='dateJoined' value={{dateJoined}}>
             </div>  
 
             <div class='form-group-md'>
@@ -111,7 +111,7 @@
 
             <div class='form-group-md'>
                 <label class='col-md-3'></label>
-                <label class='col-md-3 form-label-md' style=text-align:left;margin-left:120px>Rolling Acres ({{RAavailableDates}})</label>
+                <label class='col-md-4 form-label-md' style=text-align:left;margin-left:85px>Rolling Acres ({{RAavailableDates}})</label>
                 <label class='col-md-3 form-label-md' style=text-align:left;margin-left:0px>Brownwood ({{BWavailableDates}})</label>
             </div>
             
@@ -134,26 +134,34 @@
             
             <div class='form-group-md'>
                 <label for="membershipType" class="col-md-5 form-label-md">Membership</label>
-                <select id="membershipType" class="form-control-md" style=margin-left:0px name="membershipType"  >
+                <select id="membershipType" class="form-control-md"  style=margin-left:0px name="membershipType"  >
                     <option value='' selected >Select one -</option>
-                    <option value='single' selected >Regular membership ({{singleInitiationFeeCUR}})</option>
+                    <option value='single'>Regular membership ({{singleInitiationFeeCUR}})</option>
                     <option value='family'>2nd membership ({{familyInitiationFeeCUR}})</option>
                 </select>
-                <input id='initiationFee' type="hidden" value={{initiationFee}}>
-                <input id='annualFee' type="hidden" value={{annualFee}}>
+                <!-- <input id='initiationFee' type="hidden" value={{initiationFee}}> -->
+                <input id='singleInitiationFee' type="hidden" value={{singleInitiationFeeCUR}}>
+                <input id='familyInitiationFee' type="hidden" value={{familyInitiationFeeCUR}}>
+                <input id='annualFee' type="hidden" value={{annualFeeCUR}}>
+                <input id='singleTotalFee' type="hidden" value={{singleTotalFeeCUR}}>
+                <input id='familyTotalFee' type="hidden" value={{familyTotalFeeCUR}}>
             </div> 
             <hr>
             <div class='form-group-md'>
                 <label for="initiationFee" class='col-md-5 form-label-md'>Initiation fee</label>
-                <input id='initiationFee' readonly type="text" class='form-control-md 'style=width:120px name='initiationFee' value = {{initiationFee}}>
+                <input id='initiationFee' readonly type="text" class='form-control-md 'style=width:80px;text-align:right name='initiationFee' value = ''>
+            
             </div>
             <div class='form-group-md'>
                 <label for="annualDues" class='col-md-5 form-label-md'>Annual dues</label>
-                <input id='annualDues' readonly type="text" class='form-control-md' style=width:120px name='annualDues' value = {{annualFee}}>
+                <input id='annualDues' readonly type="text" class='form-control-md' style=width:80px;text-align:right name='annualDues' value = {{annualFeeCUR}}>
+                <label for="currentDuesYear" class='form-label-md' style=margin-left:20px>(Dues year {{currentDuesYear}})</label>
+                <!-- <input id='currentDuesYear' readonly type="text" class='form-control-md' style=margin-left:20px;width:50px;text-align:right name='currentDuesYear' value = {{currentDuesYear}}> -->
             </div>
+            
             <div class='form-group-md'>
                 <label for="totalAmt" class='col-md-5 form-label-md'>Total amount</label>
-                <input id='totalAmt' readonly type="text" class='form-control-md' style=width:120pxname='totalAmt' value = ''>
+                <input id='totalAmt' readonly type="text" class='form-control-md' style=width:80px;text-align:right name='totalAmt' value = ''>
             </div>
 
         </div>
@@ -162,7 +170,7 @@
             <div class="cancelSave" >
                 <label class='col-5'></label>
                 <button id="cancelBtn" type="submit" name="newMember" class="btn-default" value="CANCEL">CANCEL</button>
-                <button id="saveBtn" type="submit" name="newMember" class="btn-primary"  value="SAVE">SAVE</button>  
+                <button id="saveBtn" type="submit" name="newMember" class=" saveBtn btn-primary" style=display:none value="SAVE">SAVE</button>  
                 <label class='col-4'></label>
             </div>
         </div>

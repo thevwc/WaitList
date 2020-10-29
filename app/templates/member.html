@@ -112,7 +112,7 @@
             </div>
             
             <div class="row">
-                <div class='col-3' style=margin-top:15px;margin-left:100px>
+                <div class='col-4' style=margin-top:15px;margin-left:50px>
                     <input id='villagesWaiverID' type="checkbox" class="form-check-input" name="villagesWaiverSigned"   {% if member.Villages_Waiver_Signed %} checked {% endif %}value="True">
                     <label for='villagesWaiverID' class="form-check-label" >Villages Waiver</label>    
                 </div>
@@ -192,16 +192,10 @@
         <form method='POST' action="/saveEmergency">
             <div class="row">
                 <label class="col-2 col-form-label"style=margin-top:0px>Contact</label>
-                <input type="text" class="form-control col-4" style=height:30px name="emergContact" value="{{member.Emerg_Name}}">
-               
+                <input type="text" class="form-control col-4" style=height:30px name="emergContact" placeholder='Name' value="{{member.Emerg_Name}}">
+                <input type="text" class="form-control form-control-md col-md-4" style="height:30px" name="emergPhone" placeholder="Phone" value="{{member.Emerg_Phone}}">
             </div>
  
-            <div class="row">
-                <label class="control-label col-md-2 col-form-label-md">Phone</label>
-                <input type="text" class="form-control form-control-md col-md-4" style="height:30px" name="emergPhone" value="{{member.Emerg_Phone}}">
-            </div>
-            <br>
-            
             <div class='medConditions'>
                 <div class= 'medCol1'>
                     <input id=emergMemberID type="hidden" name='emergMemberID'>
@@ -249,7 +243,7 @@
                     </div>
                 </div>   
             </div> 
-            <br>
+            
             <div class='form-group-sm' style=margin-left:20px>
                 <input id='defibrillatorID' type="checkbox" class="form-check-input" name="emergDefib"   {% if member.Defibrillator_Trained%} checked {% endif %}value="{{member.Defibrillator_Trained}}">
                 <label for='defibrillatorID' class="form-check-label"> Defibrillator Trained</label>    
@@ -361,12 +355,12 @@
 
 
                 <div class='row'>
-                    <div class='col-4'>Certified:</div>
-                    <div class='col-4 RAcolumn'>
-                        <input type="date" class="form-control form-control-sm datepick"  style="margin-left:20px" name="certifiedRAdate" value="{{member.Certification_Training_Date}}">
+                    <div class='col-3'>Certified:</div>
+                    <div class='col-4 RAcolumn' style='margin-left:0px'>
+                        <input type="date" class="form-control form-control-sm datepick"  style="width:140px;margin-left:35px" name="certifiedRAdate" value="{{member.Certification_Training_Date}}">
                     </div>
                     <div class='col-4 BWcolumn'>
-                        <input type="date" class="form-control form-control-sm datepick" readonly style="margin-left:20px" name="certifiedBWdate" value="{{member.Certification_Training_Date_2}}">
+                        <input type="date" class="form-control form-control-sm datepick"  style="width:140px;margin-left:35px" name="certifiedBWdate" value="{{member.Certification_Training_Date_2}}">
                     </div>
                 </div>
 
@@ -381,32 +375,30 @@
                 </div>
                 
                 <div class='row'>
-                    <div class='col-4'>Last Monitor Training</div>
+                    <div class='col-4'>Lst Mntr Trng</div>
                     <div class='col-4 RAcolumn'>
-                        <input id='raLastMonitorTraining' type="date" class='form-control form-control-md datepick' style="margin-left:20px" name='RAmonitorTrainingDate' value={{member.Last_Monitor_Training}}>
+                        <input id='raLastMonitorTraining' type="date" class='form-control form-control-sm datepick' style="width:140px;margin-left:0px" name='RAmonitorTrainingDate' value={{member.Last_Monitor_Training}}>
                     </div>
                     <div class='col-4 BWcolumn'>
-                        <input id='bwLastMonitorTraining' type="date" class='form-control form-control-md datepick'  style="margin-left:20px" name='BWmonitorTrainingDate'value={{member.Last_Monitor_Training_Shop_2}}>
+                        <input id='bwLastMonitorTraining' type="date" class='form-control form-control-sm datepick'  style="width:140px;margin-left:0px" name='BWmonitorTrainingDate'value={{member.Last_Monitor_Training_Shop_2}}>
                     </div>
                 </div>
 
                 <div class = 'row'>
-                    <div class='col-4'></div>
-                    <div class='col-4 RAcolumn'>
-                        <div id='RAtrainingNeeded'>{{RAtrainingNeeded}}</div>
+                    <div class='col-5 RAcolumn'>
+                        <div id='RAtrainingNeeded' style=width:150px;margin-left:160px>{{RAtrainingNeeded}}</div>
                     </div>
-                    <div class='col-4 BWcolumn'> 
-                        <span id='BWtrainingNeeded'>{{BWtrainingNeeded}}</span>    
+                    <div class='col-5 BWcolumn'> 
+                        <div id='BWtrainingNeeded' style=width:140px;margin-left:120px></span>{{BWtrainingNeeded}}</div>    
                     </div>
                 </div> 
             </div>
 
             <div class='certBottomPanel'>
-                <hr>
                 <div class="row">
                     <div class='col-12'>
-                        <label class="control-label col-form-label-md">Default type of work</label>
-                        <input id=typeOfWorkTextID type="hidden" class="form-control-md" name="typeOfWorkHidden" value={{member.Default_Type_Of_Work}}>
+                        <label class="control-label col-form-label-sm">Type of work</label>
+                        <input id=typeOfWorkTextID type="hidden" class="form-control-sm" name="typeOfWorkHidden" value={{member.Default_Type_Of_Work}}>
                         <select id="typeOfWorkSelecterID" class="form-control-md selectTypeOfWork" style=margin-left:10px name="typeOfWorkSelecterName" >
                             <option value='General'>General</option>
                             <option value='Administrative'>Administration</option>
@@ -420,9 +412,9 @@
                             <option value='Painting'>Painting</option>
                         </select>
                     
-                        <label class="control-label col-form-label-md" style=margin-left:20px>Skill level</label>
+                        <label class="control-label col-form-label-sm" style=margin-left:20px>Skill level</label>
                         <input id="skillLevelTextID" type="hidden" class="form-control-md" name="skillLevelHidden" value={{member.Skill_Level}}>
-                        <select id="skillLevelSelecterID" class="form-control-md" style=margin-left:10px name="skillLevelSelecterName"  >
+                        <select id="skillLevelSelecterID" class="form-control-sm" style=margin-left:10px name="skillLevelSelecterName"  >
                                 <option value='0'>None</option>
                                 <option value='1'>Basic</option>
                                 <option value='3'>Some</option>
@@ -430,15 +422,15 @@
                         </select>
                     </div>
                 </div>
-                <hr>
+                
                 <div class="row">
-                    <label class="control-label col-md-5 col-form-label-md" style=margin-left:0px">Monitor Exemption</label>
-                    <textarea name="waiverReason" class="col-md-6" style=margin-left:10px id="waiverReason" cols="30" rows="2">{{member.Monitor_Duty_Waiver_Reason}}</textarea>
+                    <label class="control-label col-sm-5 col-form-label-sm" style=margin-left:0px">Monitor Exemption</label>
+                    <textarea name="waiverReason" class="col-sm-6" style=margin-left:10px id="waiverReason" cols="30" rows="2">{{member.Monitor_Duty_Waiver_Reason}}</textarea>
                 </div>
 
                 <div class="row">
-                    <label class="control-label col-md-5 col-form-label-md">Exemption Expiration</label>
-                    <input type="date" class="form-control form-control-md datepick" style="margin-left:10px" name="waiverExpirationDate" value="{{member.Monitor_Duty_Waiver_Expiration_Date}}"> 
+                    <label class="control-label col-sm-5 col-form-label-sm">Exemption Expiration</label>
+                    <input type="date" class="form-control form-control-sm datepick" style="margin-left:10px" name="waiverExpirationDate" value="{{member.Monitor_Duty_Waiver_Expiration_Date}}"> 
                 </div>
                 
                 <div class="cancelSave" style=padding-left:100px>
