@@ -42,7 +42,7 @@
     text-align: center;
     background-color: var(--main-hdg-bg-color); 
     color:var(--main-hdg-txt-color);
-    border-bottom:1px solid red;
+    
 }
 
 .hdgTitle {
@@ -419,9 +419,9 @@ table th {
   #memberImgID {
       border:1px solid black;
   }
-  #imagemodal {
+  /* #imagemodal {
       border: 1px solid red;
-  }
+  } */
   .showPhoto {
       text-align: center;
   }

@@ -54,7 +54,12 @@
                 <label class="control-label col-md-3 col-form-label-md" for="memberID">ID</label>
                 <div class="col-md-9">
                     <input id='memberID' type="text" class="form-control-md" style="width:75px" name="memberID" value="{{member.Member_ID}}">
-                    <label class="control-label col-form-label-md" style="color:red;font-size:18px" >{{ expireMsg }}</label>
+                    {% if expireMsg == 'ID EXPIRED!' or expireMsg == '< 30 days' %}
+                        <label class="control-label col-form-label-md" style="color:red;font-size:12px;margin-left:20px" >{{ expireMsg }}</label>
+                    {%else%}
+                        <label class="control-label col-form-label-md" style="font-size:12px;margin-left:20px" >Temp ID</label>
+                    {%endif%}
+                    <input id='expireDt' type="date" class="datepick" name="expireDt" style=height:30px;width:125px value="{{member.Temporary_ID_Expiration_Date}}">
                 </div>
             </div>
             

@@ -83,11 +83,15 @@ def index(villageID):
     
     if member.Temporary_Village_ID is not None:
         if member.Temporary_ID_Expiration_Date is not None:
+
             minus30 = member.Temporary_ID_Expiration_Date - timedelta(days=30)
             if minus30 < todays_date:
-                expireMsg = 'Expires within 30 days'
+                expireMsg = '< 30 days'
             if member.Temporary_ID_Expiration_Date < todays_date:
                 expireMsg = 'ID EXPIRED!'
+    
+    print('expireMsg - ',expireMsg)
+    print('has temp id - ',member.Temporary_Village_ID)
 
     # SET BEGIN DATE TO 12 MONTHS PRIOR TO CURRENT DATE
     beginDateDAT = todays_date - timedelta(days=365)
@@ -193,6 +197,7 @@ def saveAddress():
     
     # GET DATA FROM FORM
     memberID = request.form['memberID']
+    tempIDexpirationDate = request.form.get('expireDt')
     staffID = request.form['staffID']
     street = request.form['street']
     city = request.form['city']
@@ -202,8 +207,9 @@ def saveAddress():
     cellPhone = request.form['cellPhone']
     eMail = request.form['eMail']
 
-    # print ('waiver - ',request.form.get('villagesWaiverSigned'))
-
+    print ('temp dt - ',request.form.get('expireDt'))
+    if tempIDexpirationDate == '':
+        print('is equal empty')
     if request.form.get('villagesWaiverSigned') == 'True':
         villagesWaiverSigned = True
     else:
@@ -218,6 +224,7 @@ def saveAddress():
     # GET MEMBER RECORD 
     member = db.session.query(Member).filter(Member.Member_ID == memberID).first()
     fieldsChanged = 0
+
 
     if member.Address != street :
         logChange(staffID,'Street',memberID,street,member.Address)
@@ -263,7 +270,16 @@ def saveAddress():
         else:
             member.Villages_Waiver_Date_Signed = villagesWaiverDateSigned
         fieldsChanged += 1
-        
+
+    if tempIDexpirationDate != member.Temporary_ID_Expiration_Date:
+        logChange(staffID,'Temp Expire Dt',memberID,tempIDexpirationDate,member.Temporary_ID_Expiration_Date)
+        member.Temporary_ID_Expiration_Date = tempIDexpirationDate
+        if tempIDexpirationDate == '':
+            member.Temporary_Village_ID = False
+        else:
+            member.Temporary_Village_ID = True
+        fieldsChanged += 1
+   
     if fieldsChanged > 0:
         try:
             db.session.commit()
@@ -1016,9 +1032,6 @@ def logChange(staffID,colName,memberID,newData,origData):
 
 @app.route("/newMemberApplication",methods=('GET', 'POST'))
 def newMemberApplication():
-    #form=NewMember()
-    #if form.validate_on_submit():
-    #    return redirect(url_for('success'))
 
     # GATHER DATA FOR NEW MEMBER FORM
     if request.method != 'POST':
@@ -1081,15 +1094,25 @@ def newMemberApplication():
         singleTotalFeeCUR=singleTotalFeeCUR,familyTotalFeeCUR=familyTotalFeeCUR)
 
     # POST REQUEST; PROCESS FORM DATA; IF OK SEND PAYMENT DATA, ADD TO MEMBER_DATA, INSERT TRANSACTION ('ADD'), DISPLAY MEMBER FORM
+    if request.form['newMember'] == 'CANCEL':
+        return redirect(url_for('newMemberApplication'))
+
     todays_date = datetime.today()
     todaySTR = todays_date.strftime('%m-%d-%Y')
     duesAmount = db.session.query(ControlVariables.Current_Dues_Amount).filter(ControlVariables.Shop_Number==1).scalar()
     memberInitiationFee = db.session.query(ControlVariables.Current_Initiation_Fee).filter(ControlVariables.Shop_Number==1).scalar()
+    
+    # for testing show all data being sent from page
     data = request.form
     for key, value in data.items():
         print("received", key, "with value", value)
 
     memberID = request.form.get('memberID')
+    member = Member.query.filter_by(Member_ID=memberID).first()
+    if member != None:
+        flash("Member ID "+ memberID + " is already on file.",'info')
+        return redirect(url_for('index',villageID=memberID,todaysDate=todaySTR))
+
     expireDate = request.form.get('expireDate')
     firstName = request.form.get('firstName')
     middleName = request.form.get('middleName')
@@ -1118,7 +1141,7 @@ def newMemberApplication():
     print('currentDuesYear - ',currentDuesYear)
 
     tempIDexpirationDate = request.form.get('expireDate')
-    if tempIDexpirationDate != None:
+    if tempIDexpirationDate != None and tempIDexpirationDate != '':
         hasTempID = True
     else:
         hasTempID = False
@@ -1131,6 +1154,7 @@ def newMemberApplication():
     newMember = Member(
         Member_ID = memberID,
         Temporary_ID_Expiration_Date = expireDate,
+        Temporary_Village_ID = hasTempID,
         First_Name = firstName,
         Middle_Name = middleName,
         Last_Name = lastName,
