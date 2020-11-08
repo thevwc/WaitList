@@ -59,7 +59,7 @@
     align-items: left;
 }
 .dropdown-item {
-    color:blue;
+    color:green;
 }
 
 .memberMenu {
@@ -77,6 +77,9 @@
     text-align: center;
     color:var(--main-panel-txt-color);
 }
+/* body {
+    font-size:10px;
+} */
 
 input {
     color:blue;
@@ -91,6 +94,7 @@ input {
     color:var(--main-panel-txt-color);
     border:var(--main-panel-border);
     border-radius: 10px;
+    font-size: 10px;
 }
 .localContactInfo form {
     padding-left: 20px;
@@ -442,3 +446,27 @@ table th {
       color:green;
       background-color: yellow;
   }
+@media (min-width: 544px) {
+      body {font-size:1rem}
+      .localContactInfo {
+          font-size:1rem;
+      }
+  }
+@media (min-width: 768px) {
+    body {font-size:1rem}
+    .localContactInfo {
+        font-size:1rem;
+    }
+}
+@media (min-width: 992px) {
+    body {font-size:1rem}
+    .localContactInfo {
+        font-size:1rem;
+    }
+}
+@media (min-width: 1200px) {
+    body {font-size:1rem}
+    .localContactInfo {
+        font-size:1rem;
+    }
+}

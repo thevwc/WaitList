@@ -27,6 +27,7 @@
                 <a id="linkToMember" style="display:none" href=""></a>
             </div>
         </div>
+        
         <div class="memberMenu">
             <div class="dropdown">
                 <button onclick="showMenu()" class="dropbtn">MEMBER MENU</button>
@@ -37,7 +38,7 @@
                     <a class='dropdown-item disabled' href="#classes">Class Signup</a>
                     <a class='dropdown-item disabled'href="#roles">Roles</a>
                     <a class='dropdown-item disabled'href="#monitorDuty">Schedule Monitor Duty</a>
-                    <a class='dropdown-item'href="#waitList">Wait List ({{ waitListCnt }})</a>
+                    <a class='dropdown-item'href="{{ url_for('waitList')}}">Wait List ({{ waitListCnt }})</a>
                 </div>
                 <button id='showPhotoBtn' onclick='showHidePhoto(this)' style=margin-left:50px>SHOW PHOTO</button>
             </div>
@@ -64,9 +65,9 @@
             </div>
             
             <div class="row">
-                <label class="control-label col-md-3 col-form-label-md" for="street">Street</label>
-                <div class="col-md-9">
-                    <input type="text" class="form-control-md" style="width:250px" name="street" value="{{member.Address}}">
+                <label class="control-label col-sm-3 col-form-label-md" for="street">Street</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control-sm" style="width:250px" name="street" value="{{member.Address}}">
                 </div>
             </div>
 
@@ -451,7 +452,7 @@
                 </ul>
             </div>
             
-            <div id = "monthCheckboxesID" class="monthCheckboxes" style="margin:0; padding:0">
+            <div id = "monthCheckboxesID" class="monthCheckboxes">
                 <ul>
                     <li>
                         <input type="checkbox" id='jan' style=margin-left:5px name='janResident' {% if member.Jan_resident %} checked {% endif %} value='janResidentValue'>

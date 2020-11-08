@@ -11,7 +11,7 @@ from flask_bootstrap import Bootstrap
 from werkzeug.urls import url_parse
 from app.models import ShopName, Member, MemberActivity, MonitorSchedule, MonitorScheduleTransaction,\
 MonitorWeekNote, CoordinatorsSchedule, ControlVariables, NotesToMembers, MemberTransactions,\
-DuesPaidYears
+DuesPaidYears, WaitList
 from app import app
 from app import db
 from sqlalchemy import func, case, desc, extract, select, update, text
@@ -51,10 +51,24 @@ def index(villageID):
         else:
             lastFirst = n.Last_Name + ', ' + n.First_Name + ' (' + n.Member_ID + ')'
         nameArray.append(lastFirst)
+
+    # COMPUTE NUMBER ON WAIT LIST
+    #print('before waitListCnt statement')
+    waitListCnt = db.session.query(func.count(WaitList.MemberID)).scalar()
+    # .filter(
+    #     WaitList.Notified != None,
+    #     WaitList.ApplicantAccepts != None,
+    #     WaitList.ApprovedToJoin != None,
+    #     WaitList.ApplicantAccepts != None,
+    #     WaitList.ApplicantDeclines != None,
+    #     WaitList.NoLongerInterested != None).scalar()
+    
+    #waitListCnt = '13'
+    print('waitListCnt - ',waitListCnt)
         
     # IF A VILLAGE ID WAS NOT PASSED IN, DISPLAY THE INDEX.HTML FORM TO PROMPT FOR AN ID
     if villageID == None:
-        return render_template("member.html",member="",nameArray=nameArray)
+        return render_template("member.html",member="",nameArray=nameArray,waitListCnt=waitListCnt)
         # return render_template("index.html",nameArray=nameArray)
 
 
@@ -90,8 +104,8 @@ def index(villageID):
             if member.Temporary_ID_Expiration_Date < todays_date:
                 expireMsg = 'ID EXPIRED!'
     
-    print('expireMsg - ',expireMsg)
-    print('has temp id - ',member.Temporary_Village_ID)
+    #print('expireMsg - ',expireMsg)
+    #print('has temp id - ',member.Temporary_Village_ID)
 
     # SET BEGIN DATE TO 12 MONTHS PRIOR TO CURRENT DATE
     beginDateDAT = todays_date - timedelta(days=365)
@@ -181,11 +195,8 @@ def index(villageID):
     
     # GET DATE TO ACCEPT DUES
     acceptDuesDate = db.session.query(ControlVariables.Date_To_Begin_New_Dues_Collection).filter(ControlVariables.Shop_Number == shopNumber).scalar()
-    print('acceptDuesDate - ',acceptDuesDate)
+    #print('acceptDuesDate - ',acceptDuesDate)
     
-    # COMPUTE NUMBER ON WAIT LIST
-    waitListCnt = '13'
-    print('waitListCnt - ',waitListCnt)
     
     return render_template("member.html",member=member,hdgName=hdgName,nameArray=nameArray,expireMsg=expireMsg,
     futureDuty=futureDuty,pastDuty=pastDuty,RAtrainingNeeded=RAtrainingNeeded,BWtrainingNeeded=BWtrainingNeeded,
@@ -1289,3 +1300,213 @@ def getShopNumber():
             flash ('Missing shop location, RA assumed.','info')
             shopNumber = 1
     return shopNumber
+
+@app.route("/waitList",defaults={'villageID':None})
+@app.route("/waitList/<villageID>")
+def waitList(villageID):
+    # GATHER DATA FOR NEW WAIT LIST APPLICATION FORM
+    todays_date = date.today()
+    todaySTR = todays_date.strftime('%m-%d-%Y')
+    # PREPARE LIST OF MEMBER NAMES AND VILLAGE IDs
+    # BUILD ARRAY OF NAMES FOR DROPDOWN LIST OF MEMBERS
+    applicantArray=[]
+    sqlSelect = "SELECT LastName, FirstName, MemberID FROM tblMembershipWaitingList "
+    sqlSelect += "ORDER BY LastName, FirstName "
+    try:
+        nameList = db.engine.execute(sqlSelect)
+    except Exception as e:
+        print('ERROR in retrieving member list.')
+        flash("Could not retrieve member list.","danger")
+        return 'ERROR in wait list function.'
+    position = 0
+    if nameList == None:
+        flash('There is no one on the waiting list.','info')
+        print('empty nameList')
+
+    # NEED TO PLACE NAME IN AN ARRAY BECAUSE OF NEED TO CONCATENATE 
+    for n in nameList:
+        position += 1
+        if n.FirstName == None:
+            lastFirst = n.LastName
+        else:
+            lastFirst = n.LastName + ', ' + n.FirstName + ' (' + n.MemberID + ')'
+        #print(lastFirst)
+        applicantArray.append(lastFirst)
+        
+    # IF A VILLAGE ID WAS NOT PASSED IN, DISPLAY THE waitList.HTML FORM WITHOUT DATA
+    if villageID == None:
+        return render_template("waitList.html",applicant="",applicantArray=applicantArray)
+    
+    # IF A VILLAGE ID WAS PASSED IN ...
+    # DISPLAY THE CORRESPONDING WAITLIST DATA FOR THAT VILLAGE ID
+    print('applicant village ID: ',villageID)
+    applicant = db.session.query(WaitList).filter(WaitList.MemberID == villageID).first()
+    if (applicant == None):
+        print('No record for applicant with village ID ', villageID )
+        msg = "No record for applicant with village ID " + villageID
+        flash(msg,"info")
+        return render_template("waitList.html",applicant='',applicantArray=applicantArray,todaySTR=todaySTR)
+    else:
+        print('returning selected applicant data')    
+        return render_template("waitList.html",applicant=applicant,applicantArray=applicantArray,todaySTR=todaySTR)
+    
+
+@app.route("/newwaitList", methods=('GET','POST'))
+def newwaitList():
+    # POST REQUEST; PROCESS WAIT LIST APPLICATION, ADD TO MEMBER_DATA, INSERT TRANSACTION ('ADD')
+    if request.form['newWaitList'] == 'CANCEL':
+        return redirect(url_for('waitList'))
+
+    # IS THIS PERSON ALREADY ON THE WAITLIST?
+    waitList = db.session.query(WaitList).filter(WaitList.MemberID == villageID).first()
+    if (waitList != None):
+        flash('This person is already on the wait list.','info')
+        return redirect(url_for('waitList'))
+    
+    # PROCESS ADDITION OF NEW WAIT LIST RECORD
+    todays_date = datetime.today()
+    todaySTR = todays_date.strftime('%m-%d-%Y')
+    # ====================================================
+    # for testing show all data being sent from page
+    data = request.form
+    for key, value in data.items():
+        print("received", key, "with value", value)
+    # ====================================================
+    memberID = request.form.get('memberID')
+    member = Member.query.filter_by(Member_ID=memberID).first()
+    if member != None:
+        flash("Member ID "+ memberID + " is already a member.",'info')
+        return redirect(url_for('index',villageID='',todaysDate=todaySTR))
+
+    expireDate = request.form.get('expireDate')
+    firstName = request.form.get('firstName')
+    middleName = request.form.get('middleName')
+    lastName = request.form.get('lastName')
+    nickname = request.form.get('nickname')
+    street = request.form.get('street')
+    city = request.form.get('city')
+    state = request.form.get('state')
+    zip = request.form.get('zip')
+    print('zip - ',zip)
+    cellPhone = request.form.get('cellPhone')
+    print('cellPhone - ',cellPhone, ' type - ',type(zip))
+    homePhone = request.form.get('homePhone')
+    eMail = request.form.get('eMail')
+   
+    tempIDexpirationDate = request.form.get('expireDate')
+    if tempIDexpirationDate != None and tempIDexpirationDate != '':
+        hasTempID = True
+    else:
+        hasTempID = False
+    print ('expire date - ',tempIDexpirationDate)
+    print ('hasTempID - ',hasTempID)
+
+    return redirect(url_for('waitList'))
+
+
+@app.route("/updatewaitList", methods=('GET','POST'))
+def updatewaitList():
+    # POST REQUEST; PROCESS WAIT LIST APPLICATION, ADD TO WAIT LIST, INSERT INTO MEMBER_TRANSACTION_DATA ('UPDATE')
+    if request.form['newWaitList'] == 'CANCEL':
+        return redirect(url_for('waitList'))
+
+    todays_date = datetime.today()
+    todaySTR = todays_date.strftime('%m-%d-%Y')
+    
+
+    # for testing show all data being sent from page
+    data = request.form
+    for key, value in data.items():
+        print("received", key, "with value", value)
+
+    memberID = request.form.get('memberID')
+    waitList = WaitList.query.filter_by(Member_ID=memberID).first()
+    if waitList == None:
+        flash("Member ID "+ memberID + " is not on the wait list.",'danger')
+        return redirect(url_for('waitList',villageID=memberID,todaysDate=todaySTR))
+
+    expireDate = request.form.get('expireDate')
+    firstName = request.form.get('firstName')
+    middleName = request.form.get('middleName')
+    lastName = request.form.get('lastName')
+    nickname = request.form.get('nickname')
+    street = request.form.get('street')
+    city = request.form.get('city')
+    state = request.form.get('state')
+    zip = request.form.get('zip')
+    print('zip - ',zip)
+    cellPhone = request.form.get('cellPhone')
+    print('cellPhone - ',cellPhone, ' type - ',type(zip))
+    homePhone = request.form.get('homePhone')
+    eMail = request.form.get('eMail')
+   
+    tempIDexpirationDate = request.form.get('expireDate')
+    if tempIDexpirationDate != None and tempIDexpirationDate != '':
+        hasTempID = True
+    else:
+        hasTempID = False
+    print ('expire date - ',tempIDexpirationDate)
+    print ('hasTempID - ',hasTempID)
+
+    # VALIDATE DATA
+    # COMPARE FORM DATA TO TABLE DATA
+
+    # UPDATE WAITLIST TABLE
+
+    # ADD RECORDS TO MEMBER_DATA_TRANSACTIONS
+
+    # SEND CHANGES TO LIGHTSPEED
+
+    # newWaitListApplicant = WaitList(
+    #     Member_ID = memberID,
+    #     Temporary_ID_Expiration_Date = expireDate,
+    #     Temporary_Village_ID = hasTempID,
+    #     First_Name = firstName,
+    #     Middle_Name = middleName,
+    #     Last_Name = lastName,
+    #     Nickname = nickname,
+    #     Address = street,
+    #     City = city,
+    #     State = state,
+    #     Zip = zip,
+    #     Cell_Phone = cellPhone,
+    #     Home_Phone = homePhone,
+    #     eMail = eMail,
+    #     Date_Joined = dateJoined,
+    #     Default_Type_Of_Work = typeOfWork,
+    #     Skill_Level = skillLevel,
+    #     Dues_Paid = 1
+    # )
+
+    # ADD TO tblMembershipWaitList TABLE
+    # try:
+    #     db.session.add(newwaitList)?????
+    #     db.session.commit()
+    # except SQLAlchemyError as e:
+    #     error = str(e.__dict__['orig'])
+    #     flash('ERROR - '+error,'danger')
+    #     print('error - ',error)
+    #     db.session.rollback()
+
+    # staffID = '123456'
+    # newTransaction = MemberTransactions(
+    #     Transaction_Date = datetime.now(),
+    #     Member_ID = memberID,
+    #     Staff_ID = staffID,
+    #     Original_Data = '',
+    #     Current_Data = memberID,
+    #     Data_Item = 'NEW MEMBER',
+    #     Action = 'NEW'
+    # )
+    # WRITE TO MEMBER_TRANSACTION TABLE
+    # try:
+    #     db.session.add(newTransaction)
+    #     db.session.commit() 
+    # except SQLAlchemyError as e:
+    #     error = str(e.__dict__['orig'])
+    #     flash('ERROR - '+error,'danger')
+    #     print('error - ',error)
+    #     db.session.rollback()
+
+    # return redirect(url_for('index',villageID='')
+    return redirect(url_for('waitList',villageID='',todaysDate=todaySTR))

@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+    {{super()}}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/waitList.css') }}">
+   
+{% endblock %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">   
+
+{% block content %}
+<div class="container">
+    <h2 class='title' style=text-align:center>WAIT LIST</h2>
+    <div class = 'wrapper'>
+        <div class="hdgBand">
+            <select id="selectpicker" class='selectpicker' title='Find an applicant ...' data-live-search=true data-live-search-style="contains" data-width='auto'>
+                <!-- <option  class="optName" value="NEW APPLICANT">NEW APPLICANT</option>
+                <option data-divider="true">----------------------------</option> -->
+                {% for nme in applicantArray %}
+                    <option  class="optName" value='{{nme}}'>{{ nme }}</option>
+                {% endfor %}
+            </select>
+            <a id="linkToWaitList" style="display:none" href=""></a>
+            <button class='btn btn-primary btn-sm'> NEW APPLICANT</button>
+            <div class="dropdown">
+                <button onclick="showMenu()" class='dropbtn btn btn-info btn-sm'>WAIT LIST MENU</button>
+                <div id="myDropdown" class="dropdown-content"style=text-align:left>
+                    <a class='dropdown-item' href="{{ url_for('waitList')}}">Clear Screen</a>
+                    <a class='dropdown-item' href="#">Alphabetical Wait List</a>
+                    <a class='dropdown-item disabled'href="#">Reprint confirmation</a>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div id='applicantID' class='applicant'>
+            <form method='POST' action="/newWaitListApplication"> 
+                <div class='form-row'>
+                    <label for='memberID' class='col-3' >Village ID</label>
+                    <input id='memberID' class='col-2' type="text" min-width=84px  placeholder='Member ID' name="memberID" value="{{applicant.MemberID}}">
+                </div>
+                
+                <div class='form-row'>
+                    <label for='expireDate' class="col-3" >Expiration date</label>
+                    <input id='expireDate' type="date" datepicker class="col-3" width=140px placeholder='Expiration date' name='expireDate' value="{{applicant.VillageIDExpirationDate}}">
+                </div>  
+                <br>
+                <div class='form-row'>
+                    <label for="firstName" class="col-3">Name</label>
+                    <input id="firstName" type='text' class='col-5' required name='firstName' placeholder="First name" value="{{applicant.FirstName}}">
+                </div>
+                
+                <div class='form-row'>
+                    <label for="lastName" class="col-3"></label>
+                    <input id="lastName"type='text' required class='col-5' name='lastName' placeholder="Last name" value="{{applicant.LastName}}"">
+                </div>
+                <br>
+                <div class='address'>
+                    <div class='form-row'>
+                        <label for="street" class="col-3">Address</label>
+                        <input id="street"type='text' class='col-5' name='street' placeholder="Street" value="{{applicant.StreetAddress}}">
+                    </div>
+                    <div class='form-row'>
+                        <label for="city" class="col-3"></label>
+                        <input id="city" type='text' class='col-5' name='city' placeholder="City" value="{{applicant.City}}">
+                    </div>
+                    <div class='form-row'>
+                        <label for="state" class="col-3"></label>
+                        <input id="state"type='text' class='col-1' style=min-width:25px name='state' placeholder= 'FL' value="{{applicant.State}}">
+                    </div> 
+                    <div class='form-row'>
+                        <label for="zip" class="col-3"></label>
+                        <input id="zip"type='text' class='col-2' style=width:95px name='zip' placeholder="Zip" value="{{applicant.Zipcode}}"> 
+                    </div>
+                </div>
+                <hr>
+
+                <div class='phones'>
+                    <div class='form-row'>
+                        <label for="cellPhone" class="col-3">Cell phone</label>
+                        <input id="cellPhone"type='text' class='col-3' name='cellPhone' placeholder="(xxx) xxx-xxxx" value="{{applicant.CellPhone}}" >
+                    </div>
+                    <div class='form-row'>
+                        <label for="homePhone" class="col-3">Home phone</label>
+                        <input id="homePhone"type='text' class='col-3' name='homePhone' placeholder="(xxx) xxx-xxxx" value="{{applicant.HomePhone}}" >
+                    </div>
+                </div> 
+                <div class='email'>
+                    <div class='form-row'>
+                        <label for="eMail" class="col-3">Email</label>
+                        <input id="eMail"type='email' required class='col-5' name='eMail' value="{{applicant.Email}}"  >
+                    </div>   
+                </div>
+
+                <br>
+                <div class="monthsInTheVillages">
+                    <h3>---- MONTHS IN THE VILLAGES ----</h3>
+                    <!--  MONTHS IN THE VILLAGES --> 
+                    <div class='form-row'> 
+                        <div class="monthNames col-11">
+                            <ul>
+                                <li></li>
+                                <li>Jan</li>
+                                <li>Feb</li>
+                                <li>Mar</li>
+                                <li>Apr</li>
+                                <li>May</li>
+                                <li>Jun</li>
+                                <li>Jul</li>
+                                <li>Aug</li>
+                                <li>Sep</li>
+                                <li>Oct</li>
+                                <li>Nov</li>
+                                <li>Dec</li>
+                            </ul>
+                        </div> <!-- End of month names-->
+                    </div> <!-- End of row declaration -->
+
+                    <div class='form-row'>
+                        <div id = "monthCheckboxesID" class="monthCheckboxes col-11">
+                            <ul>
+                                <li>
+                                    <input type="checkbox" id='jan' name='janResident' {% if applicant.Jan_resident %} checked {% endif %} value='janResidentValue'>
+                                    <input type="hidden" id='janResidentValue' name='jan' value="{{ applicant.Jan_resident }}">
+                                </li>
+                                <li>
+                                    <input type="checkbox" id='feb' name='febResident' {% if applicant.Feb_resident %} checked {% endif %}>
+                                    <input type="hidden" id='febResidentValue' name='feb' value="{{ applicant.Feb_resident }}">
+                                </li>
+                                <li>
+                                    <input type="checkbox" id='mar' name='marResident' {% if applicant.Mar_resident %} checked {% endif %} value='marResidentValue'>
+                                    <input type="hidden" id='marResidentValue' name='mar' value="{{ applicant.Mar_resident }}">
+                                </li>
+                                <li>
+                                    <input type="checkbox" id='apr' name='aprResident' {% if applicant.Apr_resident %} checked {% endif %} value='aprResidentValue'>
+                                    <input type="hidden" id='aprResidentValue' name='apr' value="{{ applicant.Apr_resident }}">
+                                </li>
+                                <li>
+                                    <input type="checkbox" id='may' name='mayResident' {% if applicant.May_resident %} checked {% endif %} value='mayResidentValue'>
+                                    <input type="hidden" id='mayResidentValue' name='may' value="{{ applicant.May_resident }}">
+                                </li>
+                                <li>
+                                    <input type="checkbox" id='jun' style=margin-left:4px name='junResident' {% if applicant.Jun_resident %} checked {% endif %} value='junResidentValue'>
+                                    <input type="hidden" id='junResidentValue' name='jun' value="{{ applicant.Jun_resident }}">
+                                </li>
+                                <li>
+                                    <input type="checkbox" id='jul' name='julResident' {% if applicant.Jul_resident %} checked {% endif %} value='julResidentValue'>
+                                    <input type="hidden" id='julResidentValue' name='jul' value="{{ applicant.Jul_resident }}">
+                                </li>
+                                <li>
+                                    <input type="checkbox" id='aug' name='augResident' {% if applicant.Aug_resident %} checked {% endif %} value='augResidentValue'>
+                                    <input type="hidden" id='augResidentValue' name='aug' value="{{ applicant.Aug_resident }}">
+                                </li>
+                                <li>
+                                    <input type="checkbox" id='sep' name='sepResident' {% if applicant.Sep_resident %} checked {% endif %} value='sepResidentValue'>
+                                    <input type="hidden" id='sepResidentValue' name='sep' value="{{ applicant.Sep_resident }}">
+                                </li>
+                                <li>
+                                    <input type="checkbox" id='oct' name='octResident' {% if applicant.Oct_resident %} checked {% endif %} value='octResidentValue'>
+                                    <input type="hidden" id='octResidentValue' name='oct' value="{{ applicant.Oct_resident }}">
+                                </li>
+                                <li>
+                                    <input type="checkbox" id='nov' name='novResident' {% if applicant.Nov_resident %} checked {% endif %} value='novResidentValue'>
+                                    <input type="hidden" id='novResidentValue' name='nov' value="{{ applicant.Nov_resident }}">
+                                </li>
+                                <li>
+                                    <input type="checkbox" id='dec' name='decResident' {% if applicant.Dec_resident %} checked {% endif %} value='decResidentValue'>
+                                    <input type="hidden" id='decResidentValue' name='dec' value="{{ applicant.Dec_resident }}">
+                                </li>
+                            </ul>
+                        </div> <!-- End of month check boxes -->
+                        
+                    </div> <!-- End of row declaration -->
+                </div> <!-- End of months in the villages -->
+                <br>
+                <div class='form-row'>
+                    <label for="notes" class="col-3">Notes</label>
+                    <textarea id="notes" class='col-8' rows="2" cols="25" name='notes'  value="{{ applicant.Notes}}"></textarea>
+                </div>
+
+                <div class='footerBtns'>
+                    <div class="cancelSave" >
+                        <label class='col'></label>
+                        <button id="cancelBtn" type="submit" formnovalidate name="newWaitMember" class="btn-default"  value="CANCEL">CANCEL</button>
+                        <button id="saveBtn" type="submit" name="newWaitMember" class=" saveBtn btn-primary"  value="ADD TO WAITLIST">SAVE</button>  
+                    </div>
+                </div>
+            </form> <!-- END OF FORM -->          
+        </div> <!-- END OF APPLICANT -->       
+    </div>  <!-- END OF WRAPPER  -->
+</div>  <!-- END OF CONTAINER  -->
+{% endblock %}
+
+{% block scripts %}
+    {{super()}}
+    <script src="{{ url_for('static', filename='js/waitList.js') }}"> </script>
+    <!-- <script type="text/javascript">
+        $(document).ready(function(){
+        $('.selectpicker').selectpicker('refresh');
+       });
+    </script> -->
+{% endblock %}
+        
