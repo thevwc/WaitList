@@ -8,10 +8,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">   
 
 {% block content %}
-<div class="container">
-    <h2 class='title' style=text-align:center>WAIT LIST</h2>
-    <div class = 'wrapper'>
-        <div class="hdgBand">
+<form method='POST' action="/newWaitListApplication"> 
+<div class="container parent">
+    
+        <div class="hdgBand justify-content-around"> <!-- HEADING BAND -->
+            <h2 class='title' style=text-align:center>WAIT LIST</h2>
             <select id="selectpicker" class='selectpicker' title='Find an applicant ...' data-live-search=true data-live-search-style="contains" data-width='auto'>
                 <!-- <option  class="optName" value="NEW APPLICANT">NEW APPLICANT</option>
                 <option data-divider="true">----------------------------</option> -->
@@ -30,15 +31,14 @@
                 </div>
             </div>
         </div>
-        <hr>
-        <div id='applicantID' class='applicant'>
-            <form method='POST' action="/newWaitListApplication"> 
-                <div class='form-row'>
+           
+        <div id='applicantID' class='applicant'> <!-- APPLICANT -->
+                <div class='row'>
                     <label for='memberID' class='col-3' >Village ID</label>
                     <input id='memberID' class='col-2' type="text" min-width=84px  placeholder='Member ID' name="memberID" value="{{applicant.MemberID}}">
                 </div>
                 
-                <div class='form-row'>
+                <div class='row'>
                     <label for='expireDate' class="col-3" >Expiration date</label>
                     <input id='expireDate' type="date" datepicker class="col-3" width=140px placeholder='Expiration date' name='expireDate' value="{{applicant.VillageIDExpirationDate}}">
                 </div>  
@@ -171,10 +171,6 @@
                     </div> <!-- End of row declaration -->
                 </div> <!-- End of months in the villages -->
                 <br>
-                <div class='form-row'>
-                    <label for="notes" class="col-3">Notes</label>
-                    <textarea id="notes" class='col-8' rows="2" cols="25" name='notes'  value="{{ applicant.Notes}}"></textarea>
-                </div>
 
                 <div class='footerBtns'>
                     <div class="cancelSave" >
@@ -183,10 +179,60 @@
                         <button id="saveBtn" type="submit" name="newWaitMember" class=" saveBtn btn-primary"  value="ADD TO WAITLIST">SAVE</button>  
                     </div>
                 </div>
-            </form> <!-- END OF FORM -->          
-        </div> <!-- END OF APPLICANT -->       
-    </div>  <!-- END OF WRAPPER  -->
-</div>  <!-- END OF CONTAINER  -->
+        </div> <!-- END OF APPLICANT --> 
+        
+        <div class='applicationStatus'>  <!-- STATUS OF APPLICATION -->
+            <div class='row'>
+                <label for="notes" class="col-3">Notes</label>
+                <textarea id="notes" class='col-8' rows="3" cols="35" name='notes'  value="{{ applicant.Notes}}"></textarea>
+            </div>
+            <br>
+            <hr>
+
+            <div class="row">
+                <div class="col">
+                    <label for='approvedToJoin' class="col-5" >Approved To Join</label>
+                    <input id='approvedToJoin' type="date" datepicker class="col-3" width=140px  name='expireDate' value="{{applicant.ApprovedToJoin}}">    
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label for='notified' class="col-5" >Notified</label>
+                    <input id='notified' type="date" datepicker class="col-3" width=140px name='notified' value="{{applicant.Notified}}">    
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label for='applicantAccepts' class="col-5" >Applicant Accepts</label>
+                    <input id='applicantAccepts' type="date" datepicker class="col-3" width=140px name='applicantAccepts' value="{{applicant.ApplicantAccepts}}">    
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label for='applicantDeclines' class="col-5" >Applicant Declined</label>
+                    <input id='applicantDeclines' type="date" datepicker class="col-3" width=140px name='applicantDeclines' value="{{applicant.ApplicantDeclines}}">    
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label for='noLongerInterested' class="col-5" >No Longer Interested</label>
+                    <input id='noLongerInterested' type="date" datepicker class="col-3" width=140px name='noLongerInterested' value="{{applicant.NoLongerInterested}}">    
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label for='plannedCertificationDate' class="col-5" >Planned Certification</label>
+                    <input id='plannedCertificationDate' type="date" datepicker class="col-3" width=140px name='plannedCertificationDate' value="{{applicant.PlannedCertificationDate}}">    
+                </div>
+            </div>
+        </div>   <!-- END OF STATUS OF APPLICATION -->           
+</div>  <!-- END OF PARENT  -->
+</form> <!-- END OF FORM -->  
 {% endblock %}
 
 {% block scripts %}

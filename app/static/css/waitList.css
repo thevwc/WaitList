@@ -23,11 +23,13 @@ label {
     color:black;
 }
 
-.section-one {
-    /* font-size: 20px; */
-    font-size: 2rem;
-}
 
+
+/* Typography */
+
+form {
+    border:2px solid navy;
+}
 ul {
     /*  1.5em = 150% */
     font-size: .5rem;
@@ -38,8 +40,6 @@ h2,
 strong {
     font-weight: 900;
 }
-
-/* Typography */
 
 h1 {
     font-size: 3rem;
@@ -56,62 +56,61 @@ a {
 hr {
     border:1px solid black;
 }
-.button {
-    display:inline-block;
-    background: #FFE600;
-    color: black;
-    padding: .5em 1.25em;
-    /* em is relative to the font-size of this element */
-    text-align: center;
-    text-decoration: none;
-    margin-bottom:50px;
-}
 
-.button:hover {
-    background: orange;
-}
-
-.btn-big {
-    font-size: 1.5rem;
-}
-
-.btn-small {
-    font-size: .75rem;
-}
-
-.accent-color {
-    color: #fffeff;
-}
-
-.links {
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-/* Layout */
-
-header {
-    background: #2e354f;
-    padding: 45px 0;
-    color: #fff;
-}
-
-section {
-    padding: 45px 0;
-}
+/* Layout for iPhone (small devices) */
+.parent {
+    display:grid;
+    max-width: 630px;
+    width:90%;
+    grid-template-columns: 1fr;
+    grid-template-areas: "hdgBandArea"
+                        "applicantArea"
+                        "statusArea"; 
+    border: 2px solid navy;
+    margin: 0 auto;
+    background-color: lightgray;
+    
+} 
 
 .container {
     max-width: 630px;
     width:90%;
-    border: 2px solid navy;
     margin: 0 auto;
     background-color: lightgray;
-}
+} 
 
-.section-two {
-    background: 32e354f;
-    color:#fff
+.container-fluid {
+    max-width: 630px;
+    width:90%;
+    margin: 0 auto;
+    background-color: lightgray;
+} 
+
+
+/* .wrapper {
+    display:grid;
+    grid-template-rows: repeat(3 1fr);
+    grid-template-areas:    "hdgbandArea  applicantArea  statusArea";
+    width:100%;
+    
+} */
+.hdgBand {
+    grid-area:hgdBandArea;
+    background-color:white;
+    color:navy;
+    border:2px solid white;
 }
+.applicant {
+    grid-area:applicantArea;
+    background-color: lightgray;
+    border:1px solid navy;
+}
+.applicationStatus {
+    grid-area:statusArea;
+    border:1px solid navy;
+    background-color: lightgray;
+    
+} 
 
 /* DROPDOWN MENU CSS FOLLOWS */
 .dropbtn {
@@ -134,7 +133,7 @@ section {
     display: inline-block;
   }
 .dropdown:disabled {
-      color:blue !important;
+      color:blue ;
   }
 .dropdown-content {
     display: none;
@@ -199,48 +198,106 @@ section {
 
 .show {display: block;}
 
+/* SPECIFICATIONS FOR LARGER SCREENS */
 @media (min-width: 768px) {
-    body {font-size:1rem}
-    .container {
-      font-size:1rem;
+    .parent {
+        display:grid;
+        width:90%;
+        grid-template-columns:  1fr 1fr;
+        grid-template-rows: 100px auto ;
+        grid-template-areas: "hdgBandArea   hdgBandArea"
+                            "applicantArea  statusArea";
+        max-width:1200px;
+        font-size:1rem;
+        
     }
+
+    .hdgBand {
+        grid-area:hdgBandArea;
+        background-color: navy;
+        color:white;
+    }
+    .applicant {
+        grid-area:applicantArea;
+        
+    }
+    .applicationStatus {
+        grid-area:statusArea;
+        border:1px solid navy;
+    }
+    body {font-size:1rem}
+    
     input {
         font-size:1rem;
     }
     label {
         font-size:1rem;
-    }
+    }   
 }
+    /* .container {
+        display: grid;
+        grid-template-columns:1fr 1fr;
+        max-width:1200;
+        width:90%;
+        font-size:1rem;
+        background-color: gray;
+      }
+    .container-fluid {
+        max-width:1200px;
+        width:90%;
+        font-size:1rem;
+        background-color: gray;
+      }  */
+
+    /* .wrapper {
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:    "hdgbandArea hdgbandArea"
+                                "applicantArea statusArea";
+    } */
+
+     
+    
+
 @media (min-width: 992px) {
-  body {font-size:1rem}
-  .container {
-      font-size:1rem;
-  }
+    .parent {
+        display:grid;
+        width:90%;
+        max-width:1200px;
+        font-size:1rem;
+    }
 
-  .monthsInTheVillages h3 {
-      font-size:1rem;
-  }
-  .monthNames {
-      text-align:center;
-  }
-
-  .monthNames li {
-      font-size:.75rem;
-  }
+    body {font-size:1rem}
   
-  .monthCheckboxes {
+
+    .monthsInTheVillages h3 {
+      font-size:1rem;
+    }
+    .monthNames {
+      text-align:center;
+    }
+
+    .monthNames li {
+      font-size:.75rem;
+    }
+  
+    .monthCheckboxes {
       text-align: center;
       margin-left:9px;
-  }
+    }
 
-  .monthCheckboxes li {
+    .monthCheckboxes li {
       font-size:.75rem;
       margin-right:1.15rem;
-  }
+    }
 }
-@media (min-width: 1200px) {
-  body {font-size:1rem}
-  .container {
+/* .container {
       font-size:1rem;
-  }
+  } */
+
+@media (min-width: 1200px) {
+    body {font-size:1rem}
+  /* .container {
+      font-size:1rem;
+  } */
 }

@@ -13,21 +13,7 @@
     --main-bg-fade:rgba(0,0,0,0.2);
      
   }  
-.parent {
-    display: grid;
-    grid-template-columns:1fr 1fr 1fr;
-    /* grid-template-rows:50px 1fr 1fr; */
-    grid-template-rows: repeat(3, minmax(50px, auto));
-    grid-template-areas: "hdgArea           hdgArea             hdgArea"
-                         "localInfo         altInfo             emergInfo"
-                         "memberStatus      certInfo            monitorDuty"
-                         ;
-    gap:0px;
-    background-color:var(--main-body-bg-color);
-    padding-left:5px;
-    padding-right:5px;
-    margin:0px; 
-}
+
 .hdg {
     grid-area: hdgArea; 
     display:grid;
@@ -447,23 +433,75 @@ table th {
       background-color: yellow;
   }
 @media (min-width: 544px) {
-      body {font-size:1rem}
+    .parent {
+        display: grid;
+        grid-template-columns:1fr;
+        /* grid-template-rows:50px 1fr 1fr; */
+        grid-template-rows: repeat(3, minmax(50px, auto));
+        grid-template-areas: "hdgArea"
+                             "localInfo"
+                             "altInfo"
+                             "emergInfo"
+                             "memberStatus"
+                             "certInfo"
+                             "monitorDuty";
+        gap:0px;
+        background-color:var(--main-body-bg-color);
+        padding-left:5px;
+        padding-right:5px;
+        margin:0px; 
+    }
+      body {font-size:.5rem}
       .localContactInfo {
-          font-size:1rem;
+          font-size:.5rem;
       }
   }
 @media (min-width: 768px) {
-    body {font-size:1rem}
+    .parent {
+        display: grid;
+        grid-template-columns:1fr 1fr;
+        /* grid-template-rows:50px 1fr 1fr; */
+        grid-template-rows: repeat(3, minmax(50px, auto));
+        grid-template-areas: "hdgArea           hdgArea"
+                             "localInfo         altInfo"
+                             "memberStatus      emergInfo
+                             "certInfo          monitorDuty"
+                             ;
+        gap:0px;
+        background-color:var(--main-body-bg-color);
+        padding-left:5px;
+        padding-right:5px;
+        margin:0px; 
+    }
+    body {font-size:.75rem}
     .localContactInfo {
-        font-size:1rem;
+        font-size:.75rem;
     }
 }
+
 @media (min-width: 992px) {
-    body {font-size:1rem}
+    .parent {
+        display: grid;
+        grid-template-columns:1fr 1fr 1fr;
+        /* grid-template-rows:50px 1fr 1fr; */
+        grid-template-rows: repeat(3, minmax(50px, auto));
+        grid-template-areas: "hdgArea           hdgArea             hdgArea"
+                             "localInfo         altInfo             emergInfo"
+                             "memberStatus      certInfo            monitorDuty"
+                             ;
+        gap:0px;
+        background-color:var(--main-body-bg-color);
+        padding-left:5px;
+        padding-right:5px;
+        margin:0px; 
+    }
+    body {font-size:.75rem}
     .localContactInfo {
-        font-size:1rem;
+        font-size:.75rem;
     }
 }
+
+
 @media (min-width: 1200px) {
     body {font-size:1rem}
     .localContactInfo {
