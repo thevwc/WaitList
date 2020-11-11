@@ -8,10 +8,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">   
 
 {% block content %}
-<form method='POST' action="/newWaitListApplication"> 
-<div class="container parent">
+<form method='POST' action="/updateWaitList"> 
+<div class="parent">
     
-        <div class="hdgBand justify-content-around"> <!-- HEADING BAND -->
+        <div class="hdgBand"> <!-- HEADING BAND -->
             <h2 class='title' style=text-align:center>WAIT LIST</h2>
             <select id="selectpicker" class='selectpicker' title='Find an applicant ...' data-live-search=true data-live-search-style="contains" data-width='auto'>
                 <!-- <option  class="optName" value="NEW APPLICANT">NEW APPLICANT</option>
@@ -21,12 +21,12 @@
                 {% endfor %}
             </select>
             <a id="linkToWaitList" style="display:none" href=""></a>
-            <button class='btn btn-primary btn-sm'> NEW APPLICANT</button>
+            <button class='btn btn-primary btn-sm' onclick="newApplicant()"> NEW APPLICANT</button>
+            
             <div class="dropdown">
-                <button onclick="showMenu()" class='dropbtn btn btn-info btn-sm'>WAIT LIST MENU</button>
-                <div id="myDropdown" class="dropdown-content"style=text-align:left>
+                <button type='button' class='dropdown-toggle btn btn-secondary btn-sm' data-toggle='dropdown' >WAIT LIST MENU</button>
+                <div id="myDropdown" class="dropdown-menu">
                     <a class='dropdown-item' href="{{ url_for('waitList')}}">Clear Screen</a>
-                    <a class='dropdown-item' href="#">Alphabetical Wait List</a>
                     <a class='dropdown-item disabled'href="#">Reprint confirmation</a>
                 </div>
             </div>
@@ -35,7 +35,7 @@
         <div id='applicantID' class='applicant'> <!-- APPLICANT -->
                 <div class='row'>
                     <label for='memberID' class='col-3' >Village ID</label>
-                    <input id='memberID' class='col-2' type="text" min-width=84px  placeholder='Member ID' name="memberID" value="{{applicant.MemberID}}">
+                    <input id='memberID' class='col-2' type="text" min-width=84px placeholder='Member ID' name="memberID" value="{{applicant.MemberID}}">
                 </div>
                 
                 <div class='row'>
@@ -118,52 +118,40 @@
                         <div id = "monthCheckboxesID" class="monthCheckboxes col-11">
                             <ul>
                                 <li>
-                                    <input type="checkbox" id='jan' name='janResident' {% if applicant.Jan_resident %} checked {% endif %} value='janResidentValue'>
-                                    <input type="hidden" id='janResidentValue' name='jan' value="{{ applicant.Jan_resident }}">
+                                    <input type="checkbox" id='jan' name='jan' {% if applicant.Jan %} checked {% endif %} value='{{applicant.Jan}}'>
                                 </li>
                                 <li>
-                                    <input type="checkbox" id='feb' name='febResident' {% if applicant.Feb_resident %} checked {% endif %}>
-                                    <input type="hidden" id='febResidentValue' name='feb' value="{{ applicant.Feb_resident }}">
+                                    <input type="checkbox" id='feb' name='feb' {% if applicant.Feb %} checked {% endif %} value='{{applicant.Feb}}'>
                                 </li>
                                 <li>
-                                    <input type="checkbox" id='mar' name='marResident' {% if applicant.Mar_resident %} checked {% endif %} value='marResidentValue'>
-                                    <input type="hidden" id='marResidentValue' name='mar' value="{{ applicant.Mar_resident }}">
+                                    <input type="checkbox" id='mar' name='mar' {% if applicant.Mar %} checked {% endif %} value='{{applicant.Mar}}'>
                                 </li>
                                 <li>
-                                    <input type="checkbox" id='apr' name='aprResident' {% if applicant.Apr_resident %} checked {% endif %} value='aprResidentValue'>
-                                    <input type="hidden" id='aprResidentValue' name='apr' value="{{ applicant.Apr_resident }}">
+                                    <input type="checkbox" id='apr' name='apr' {% if applicant.Apr %} checked {% endif %} value='{{applicant.Apr}}'>
                                 </li>
                                 <li>
-                                    <input type="checkbox" id='may' name='mayResident' {% if applicant.May_resident %} checked {% endif %} value='mayResidentValue'>
-                                    <input type="hidden" id='mayResidentValue' name='may' value="{{ applicant.May_resident }}">
+                                    <input type="checkbox" id='may' name='may' {% if applicant.May %} checked {% endif %} value='{{applicant.May}}'>
                                 </li>
                                 <li>
-                                    <input type="checkbox" id='jun' style=margin-left:4px name='junResident' {% if applicant.Jun_resident %} checked {% endif %} value='junResidentValue'>
-                                    <input type="hidden" id='junResidentValue' name='jun' value="{{ applicant.Jun_resident }}">
+                                    <input type="checkbox" id='jun' style=margin-left:4px name='jun' {% if applicant.Jun %} checked {% endif %} value='{{applicant.Jun}}'>
                                 </li>
                                 <li>
-                                    <input type="checkbox" id='jul' name='julResident' {% if applicant.Jul_resident %} checked {% endif %} value='julResidentValue'>
-                                    <input type="hidden" id='julResidentValue' name='jul' value="{{ applicant.Jul_resident }}">
+                                    <input type="checkbox" id='jul' name='jul' {% if applicant.Jul %} checked {% endif %} value='{{applicant.Jul}}'>
                                 </li>
                                 <li>
-                                    <input type="checkbox" id='aug' name='augResident' {% if applicant.Aug_resident %} checked {% endif %} value='augResidentValue'>
-                                    <input type="hidden" id='augResidentValue' name='aug' value="{{ applicant.Aug_resident }}">
+                                    <input type="checkbox" id='aug' name='aug' {% if applicant.Aug %} checked {% endif %} value='{{applicant.Aug}}'>
                                 </li>
                                 <li>
-                                    <input type="checkbox" id='sep' name='sepResident' {% if applicant.Sep_resident %} checked {% endif %} value='sepResidentValue'>
-                                    <input type="hidden" id='sepResidentValue' name='sep' value="{{ applicant.Sep_resident }}">
+                                    <input type="checkbox" id='sep' name='sep' {% if applicant.Sep %} checked {% endif %} value='{{applicant.Sep}}'>
                                 </li>
                                 <li>
-                                    <input type="checkbox" id='oct' name='octResident' {% if applicant.Oct_resident %} checked {% endif %} value='octResidentValue'>
-                                    <input type="hidden" id='octResidentValue' name='oct' value="{{ applicant.Oct_resident }}">
+                                    <input type="checkbox" id='oct' name='oct' {% if applicant.Oct %} checked {% endif %} value='{{applicant.Oct}}'>
                                 </li>
                                 <li>
-                                    <input type="checkbox" id='nov' name='novResident' {% if applicant.Nov_resident %} checked {% endif %} value='novResidentValue'>
-                                    <input type="hidden" id='novResidentValue' name='nov' value="{{ applicant.Nov_resident }}">
+                                    <input type="checkbox" id='nov' name='nov' {% if applicant.Nov %} checked {% endif %} value='{{applicant.Nov}}'>
                                 </li>
                                 <li>
-                                    <input type="checkbox" id='dec' name='decResident' {% if applicant.Dec_resident %} checked {% endif %} value='decResidentValue'>
-                                    <input type="hidden" id='decResidentValue' name='dec' value="{{ applicant.Dec_resident }}">
+                                    <input type="checkbox" id='dec' name='dec' {% if applicant.Dec %} checked {% endif %} value='{{applicant.Dec}}'>
                                 </li>
                             </ul>
                         </div> <!-- End of month check boxes -->
@@ -175,59 +163,65 @@
                 <div class='footerBtns'>
                     <div class="cancelSave" >
                         <label class='col'></label>
-                        <button id="cancelBtn" type="submit" formnovalidate name="newWaitMember" class="btn-default"  value="CANCEL">CANCEL</button>
-                        <button id="saveBtn" type="submit" name="newWaitMember" class=" saveBtn btn-primary"  value="ADD TO WAITLIST">SAVE</button>  
+                        <input type="hidden" id='waitListStaffID' name='staffID'>
+                        <button id="cancelBtn" type="submit" formnovalidate name="waitList" class="btn btn-secondary"  value="CANCEL">CANCEL</button>
+                        <button id="saveBtn" type="submit" name="waitList" class="btn btn-primary"  value="UPDATE WAITLIST">SAVE</button>  
                     </div>
                 </div>
         </div> <!-- END OF APPLICANT --> 
         
-        <div class='applicationStatus'>  <!-- STATUS OF APPLICATION -->
+        <div id='applicationStatusID' class='applicationStatus'>  <!-- STATUS OF APPLICATION -->
             <div class='row'>
                 <label for="notes" class="col-3">Notes</label>
-                <textarea id="notes" class='col-8' rows="3" cols="35" name='notes'  value="{{ applicant.Notes}}"></textarea>
+                <textarea id="notes" class='col-8' rows="3" cols="35" name='notes'  value="{{applicant.Notes}}"></textarea>
             </div>
             <br>
             <hr>
-
             <div class="row">
+                <div class="col" style=text-align:center>
+                    <span>Place on waiting list -&nbsp  {{ placeOnList }}</span>
+                </div>
+            </div>
+            <br>
+            <div class="row" style=margin-top:40px;>
                 <div class="col">
-                    <label for='approvedToJoin' class="col-5" >Approved To Join</label>
-                    <input id='approvedToJoin' type="date" datepicker class="col-3" width=140px  name='expireDate' value="{{applicant.ApprovedToJoin}}">    
+                    <label for='approvedToJoin' class="statusLabel col-5" >Approved To Join</label>
+                    <input id='approvedToJoin' type="date" datepicker class="col-4" width=140px  name='approvedToJoin' value="{{applicant.ApprovedToJoin}}">    
                 </div>
             </div>
 
             <div class="row">
                 <div class="col">
-                    <label for='notified' class="col-5" >Notified</label>
-                    <input id='notified' type="date" datepicker class="col-3" width=140px name='notified' value="{{applicant.Notified}}">    
+                    <label for='notified' class="statusLabel col-5" >Notified</label>
+                    <input id='notified' type="date" datepicker class="col-4" width=140px name='notified' value="{{applicant.Notified}}">    
                 </div>
             </div>
 
             <div class="row">
                 <div class="col">
-                    <label for='applicantAccepts' class="col-5" >Applicant Accepts</label>
-                    <input id='applicantAccepts' type="date" datepicker class="col-3" width=140px name='applicantAccepts' value="{{applicant.ApplicantAccepts}}">    
+                    <label for='applicantAccepts' class="statusLabel col-5" >Applicant Accepts</label>
+                    <input id='applicantAccepts' type="date" datepicker class="col-4" width=140px name='applicantAccepts' value="{{applicant.ApplicantAccepts}}">    
                 </div>
             </div>
 
             <div class="row">
                 <div class="col">
-                    <label for='applicantDeclines' class="col-5" >Applicant Declined</label>
-                    <input id='applicantDeclines' type="date" datepicker class="col-3" width=140px name='applicantDeclines' value="{{applicant.ApplicantDeclines}}">    
+                    <label for='applicantDeclines' class="statusLabel col-5" >Applicant Declined</label>
+                    <input id='applicantDeclines' type="date" datepicker class="col-4" width=140px name='applicantDeclines' value="{{applicant.ApplicantDeclines}}">    
                 </div>
             </div>
 
             <div class="row">
                 <div class="col">
-                    <label for='noLongerInterested' class="col-5" >No Longer Interested</label>
-                    <input id='noLongerInterested' type="date" datepicker class="col-3" width=140px name='noLongerInterested' value="{{applicant.NoLongerInterested}}">    
+                    <label for='noLongerInterested' class="statusLabel col-5" >No Longer Interested</label>
+                    <input id='noLongerInterested' type="date" datepicker class="col-4" width=140px name='noLongerInterested' value="{{applicant.NoLongerInterested}}">    
                 </div>
             </div>
 
             <div class="row">
                 <div class="col">
-                    <label for='plannedCertificationDate' class="col-5" >Planned Certification</label>
-                    <input id='plannedCertificationDate' type="date" datepicker class="col-3" width=140px name='plannedCertificationDate' value="{{applicant.PlannedCertificationDate}}">    
+                    <label for='plannedCertificationDate' class="statusLabel col-5" >Planned Certification</label>
+                    <input id='plannedCertificationDate' type="date" datepicker class="col-4" width=140px name='plannedCertificationDate' value="{{applicant.PlannedCertificationDate}}">    
                 </div>
             </div>
         </div>   <!-- END OF STATUS OF APPLICATION -->           

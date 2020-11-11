@@ -73,7 +73,7 @@ hr {
 } 
 
 .container {
-    max-width: 630px;
+    /* max-width: 630px; */
     width:90%;
     margin: 0 auto;
     background-color: lightgray;
@@ -95,23 +95,33 @@ hr {
     
 } */
 .hdgBand {
+    width:100%;
     grid-area:hgdBandArea;
     background-color:white;
     color:navy;
     border:2px solid white;
+    padding:0px;
+    margin:0px;
 }
+/* hdgBand2 {
+    justify-content:space-around;
+} */
 .applicant {
     grid-area:applicantArea;
     background-color: lightgray;
-    border:1px solid navy;
+    border-right:1px solid navy;
+    margin-left:20px;
+    min-width:630px;
 }
 .applicationStatus {
     grid-area:statusArea;
-    border:1px solid navy;
     background-color: lightgray;
-    
+    margin-left:20px;
+    margin-top:100px;
 } 
-
+.statusLabel {
+    margin-left:40px;
+}
 /* DROPDOWN MENU CSS FOLLOWS */
 .dropbtn {
     background-color: gray;
@@ -122,6 +132,7 @@ hr {
     height:30px;
     margin-top:0px;
     cursor: pointer;
+    float: right;
   }
   
 .dropbtn:hover, .dropbtn:focus {
@@ -159,6 +170,7 @@ hr {
 }
 .cancelSave {
     text-align:center;
+    margin-bottom: 20px;
 }
 .monthsInTheVillages {
       border:1px solid black;
@@ -219,11 +231,12 @@ hr {
     }
     .applicant {
         grid-area:applicantArea;
-        
+        margin-top:20px;
     }
     .applicationStatus {
         grid-area:statusArea;
-        border:1px solid navy;
+        margin-top:20px;
+        justify-content: space-evenly;
     }
     body {font-size:1rem}
     

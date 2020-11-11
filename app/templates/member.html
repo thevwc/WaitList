@@ -131,8 +131,8 @@
             <div class="cancelSave" style=padding-left:100px>
                 <input type="hidden" class='staffID' name='staffID'>
                 <!-- <input id='localSaveMemberID' type="hidden" class="memberID" name="memberID" value={{member.Member_ID}}> -->
-                <button id="localCancelBtn" type="submit" name="localAction" class="btn-default" style=display:none value="CANCEL">CANCEL</button>
-                <button id="localSaveBtn" type="submit" name="localAction" class="btn-primary saveBtn" style=display:none value="SAVE">SAVE</button>
+                <button id="localCancelBtn" type="submit" name="localAction" class="btn btn-secondary" style=display:none value="CANCEL">CANCEL</button>
+                <button id="localSaveBtn" type="submit" name="localAction" class="btn btn-primary" style=display:none value="SAVE">SAVE</button>
                 <br>
             </div>
         </form>     
@@ -459,7 +459,7 @@
                         <input type="hidden" id='janResidentValue' name='jan' value="{{ member.Jan_resident }}">
                     </li>
                     <li>
-                        <input type="checkbox" id='feb' name='febResident' {% if member.Feb_resident %} checked {% endif %}>
+                        <input type="checkbox" id='feb' name='febResident' {% if member.Feb_resident %} checked {% endif %} value='febResidentValue'>
                         <input type="hidden" id='febResidentValue' name='feb' value="{{ member.Feb_resident }}">
                     </li>
                     <li>

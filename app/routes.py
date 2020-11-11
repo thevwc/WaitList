@@ -1339,174 +1339,248 @@ def waitList(villageID):
     
     # IF A VILLAGE ID WAS PASSED IN ...
     # DISPLAY THE CORRESPONDING WAITLIST DATA FOR THAT VILLAGE ID
-    print('applicant village ID: ',villageID)
     applicant = db.session.query(WaitList).filter(WaitList.MemberID == villageID).first()
+    
     if (applicant == None):
         print('No record for applicant with village ID ', villageID )
         msg = "No record for applicant with village ID " + villageID
         flash(msg,"info")
         return render_template("waitList.html",applicant='',applicantArray=applicantArray,todaySTR=todaySTR)
     else:
-        print('returning selected applicant data')    
-        return render_template("waitList.html",applicant=applicant,applicantArray=applicantArray,todaySTR=todaySTR)
+        # DETERMINE APPLICANTS PLACE ON WAITING LIST
+        # RETURN COUNT OF # OF RECORDS BEFORE THEIR ID WHEN ORDERED BY ID AND FILTERED BY PlannedCertificationDate is null and NoLongerInterested isnull 
+        placeOnList = 0 
+        placeOnList = db.session.query(func.count(WaitList.MemberID)).filter(WaitList.PlannedCertificationDate == None) \
+            .filter(WaitList.NoLongerInterested == None) \
+            .filter(WaitList.id < applicant.id) \
+            .scalar() 
+        return render_template("waitList.html",applicant=applicant,applicantArray=applicantArray,todaySTR=todaySTR,placeOnList=placeOnList)
     
 
-@app.route("/newwaitList", methods=('GET','POST'))
-def newwaitList():
+@app.route("/updateWaitList", methods=('GET','POST'))
+def updateWaitList():
     # POST REQUEST; PROCESS WAIT LIST APPLICATION, ADD TO MEMBER_DATA, INSERT TRANSACTION ('ADD')
-    if request.form['newWaitList'] == 'CANCEL':
-        return redirect(url_for('waitList'))
+    memberID = request.form.get('memberID')
+    print('memberID - ',memberID)
+    if request.form.get('waitList') == 'CANCEL':
+        return redirect(url_for('waitList',villageID=memberID))
+
+    # ====================================================
+    # for testing show all data being sent from page
+    data = request.form
+    for key, value in data.items():
+        print("received", key, "with value", value)
+    # ====================================================
+    
+    expireDate = request.form.get('expireDate')
+    firstName = request.form.get('firstName')
+    lastName = request.form.get('lastName')
+    street = request.form.get('street')
+    city = request.form.get('city')
+    state = request.form.get('state')
+    zip = request.form.get('zip')
+    cellPhone = request.form.get('cellPhone')
+    homePhone = request.form.get('homePhone')
+    eMail = request.form.get('eMail')
+    if request.form.get('jan') == 'True':
+        jan = True
+    else:
+        jan = False
+
+    if request.form.get('feb') == 'True':
+        feb = True
+    else:
+        feb = False
+
+    if request.form.get('mar') == 'True':
+        mar = True
+    else:
+        mar = False
+
+    if request.form.get('apr') == 'True':
+        apr = True
+    else:
+        apr = False
+
+    if request.form.get('may') == 'True':
+        may = True
+    else:
+        may = False
+
+    if request.form.get('jun') == 'True':
+        jun = True
+    else:
+        jun = False
+    
+    if request.form.get('jul') == 'True':
+        jul = True
+    else:
+        jul = False
+
+    if request.form.get('aug') == 'True':
+        aug = True
+    else:
+        aug = False
+
+    if request.form.get('sep') == 'True':
+        sep = True
+    else:
+        sep = False
+
+    if request.form.get('oct') == 'True':
+        oct = True
+    else:
+        oct = False
+
+    if request.form.get('nov') == 'True':
+        nov = True
+    else:
+        nov = False
+
+    if request.form.get('dec') == 'True':
+        dec = True
+    else:
+        dec = False
+    
+    notes = request.form.get('notes')
+    approvedToJoin = request.form.get('approvedToJoin')
+    notified = request.form.get('notified')
+    applicantAccepts = request.form.get('applicantAccepts')
+    applicantDeclines = request.form.get('applicantDeclines')
+    noLongerInterested = request.form.get('noLongerInterested')
+    plannedCertificationDate = request.form.get('plannedCertificationDate')
+    staffID = request.form.get('staffID')
+
+    # GET ID OF STAFF MEMBER 
+    staffID = '123456'
+    # GET CURRENT DATE AND TIME
+    todays_date = datetime.today()
+    todaySTR = todays_date.strftime('%m-%d-%Y')
+    print ('1. process new applicant')
 
     # IS THIS PERSON ALREADY ON THE WAITLIST?
-    waitList = db.session.query(WaitList).filter(WaitList.MemberID == villageID).first()
-    if (waitList != None):
-        flash('This person is already on the wait list.','info')
+    waitListRecord = db.session.query(WaitList).filter(WaitList.MemberID == memberID).first()
+    if (waitListRecord == None):
+        # ADD NEW RECORD TO tblMembershipWaitingList
+        print ('2. process new applicant')
+        try:
+            newWaitListRecord = WaitList( 
+                MemberID = memberID,
+                VillageIDexpirationDate = expireDate,
+                FirstName = firstName,
+                LastName = lastName, 
+                StreetAddress = street,
+                City = city,
+                State = state,
+                Zipcode = zip,
+                CellPhone = cellPhone,
+                HomePhone = homePhone,
+                Email = eMail,
+                Notes = notes,
+                PlannedCertificationDate = plannedCertificationDate,
+                AddedByStaffMemberID = staffID,
+                Jan = jan,
+                Feb = feb,
+                Mar = mar,
+                Apr = apr,
+                May = may,
+                Jun = jun,
+                Jul = jul,
+                Aug = aug,
+                Sep = sep,
+                Oct = oct,
+                Nov = nov,
+                Dec = dec,
+                DateTimeEntered = todaySTR
+            ) 
+            print ('3. process new applicant')
+            db.session.add(newWaitListRecord)
+            db.session.commit()
+
+        except SQLAlchemyError as e:
+            print ('4. process new applicant')
+            error = str(e.__dict__['orig'])
+            flash('ERROR - Record not added.'+error,'danger')
+            print('error - ',error)
+            db.session.rollback()
+        
         return redirect(url_for('waitList'))
     
-    # PROCESS ADDITION OF NEW WAIT LIST RECORD
-    todays_date = datetime.today()
-    todaySTR = todays_date.strftime('%m-%d-%Y')
-    # ====================================================
-    # for testing show all data being sent from page
-    data = request.form
-    for key, value in data.items():
-        print("received", key, "with value", value)
-    # ====================================================
-    memberID = request.form.get('memberID')
-    member = Member.query.filter_by(Member_ID=memberID).first()
-    if member != None:
-        flash("Member ID "+ memberID + " is already a member.",'info')
-        return redirect(url_for('index',villageID='',todaysDate=todaySTR))
-
-    expireDate = request.form.get('expireDate')
-    firstName = request.form.get('firstName')
-    middleName = request.form.get('middleName')
-    lastName = request.form.get('lastName')
-    nickname = request.form.get('nickname')
-    street = request.form.get('street')
-    city = request.form.get('city')
-    state = request.form.get('state')
-    zip = request.form.get('zip')
-    print('zip - ',zip)
-    cellPhone = request.form.get('cellPhone')
-    print('cellPhone - ',cellPhone, ' type - ',type(zip))
-    homePhone = request.form.get('homePhone')
-    eMail = request.form.get('eMail')
-   
-    tempIDexpirationDate = request.form.get('expireDate')
-    if tempIDexpirationDate != None and tempIDexpirationDate != '':
-        hasTempID = True
-    else:
-        hasTempID = False
-    print ('expire date - ',tempIDexpirationDate)
-    print ('hasTempID - ',hasTempID)
-
-    return redirect(url_for('waitList'))
-
-
-@app.route("/updatewaitList", methods=('GET','POST'))
-def updatewaitList():
-    # POST REQUEST; PROCESS WAIT LIST APPLICATION, ADD TO WAIT LIST, INSERT INTO MEMBER_TRANSACTION_DATA ('UPDATE')
-    if request.form['newWaitList'] == 'CANCEL':
-        return redirect(url_for('waitList'))
-
-    todays_date = datetime.today()
-    todaySTR = todays_date.strftime('%m-%d-%Y')
+    # PROCESS UPDATE OF EXISTING WAIT LIST RECORD
+    flash ('processing update of wait list record','SUCCESS')
+    print('update existing record')
+    if waitListRecord.FirstName != firstName :
+        waitListRecord.FirstName = firstName
+    if waitListRecord.LastName != lastName :
+        waitListRecord.LastName = lastName
+    if waitListRecord.HomePhone != homePhone :
+        waitListRecord.HomePhone = homePhone
+    if waitListRecord.CellPhone != cellPhone :
+        waitListRecord.CellPhone = cellPhone
+       
+    if waitListRecord.StreetAddress != street :
+        waitListRecord.StreetAddress = street
+    
+    if waitListRecord.City != city :
+        waitListRecord.City = city
+    if waitListRecord.State != state :
+        waitListRecord.State = state
+    if waitListRecord.Zipcode != zip :
+        waitListRecord.Zipcode = zip
+    if waitListRecord.Email != eMail :
+        waitListRecord.Email = eMail
+    if waitListRecord.Notes != notes :
+        waitListRecord.Notes = notes
+    if waitListRecord.ApprovedToJoin != approvedToJoin :
+        waitListRecord.ApprovedToJoin = approvedToJoin
+    if waitListRecord.Notified != notified :
+        waitListRecord.Notified = notified
+    
     
 
-    # for testing show all data being sent from page
-    data = request.form
-    for key, value in data.items():
-        print("received", key, "with value", value)
 
-    memberID = request.form.get('memberID')
-    waitList = WaitList.query.filter_by(Member_ID=memberID).first()
-    if waitList == None:
-        flash("Member ID "+ memberID + " is not on the wait list.",'danger')
-        return redirect(url_for('waitList',villageID=memberID,todaysDate=todaySTR))
+    if waitListRecord.Jan != jan:
+        waitListRecord.Jan = jan
+    if waitListRecord.Feb != feb :
+        waitListRecord.Feb = feb
+    if waitListRecord.Mar != mar:
+        waitListRecord.Mar = mar
+    if waitListRecord.Apr != apr:
+        waitListRecord.Apr = apr
+    if waitListRecord.May != may:
+        waitListRecord.May = may
+    if waitListRecord.Jun != jun:
+        waitListRecord.Jun = jun
+    if waitListRecord.Jul != jul:
+        waitListRecord.Jul = jul
+    if waitListRecord.Aug != aug:
+        waitListRecord.Aug = aug
+    if waitListRecord.Sep != sep:
+        waitListRecord.Sep = sep
+    if waitListRecord.Oct != oct:
+        waitListRecord.Oct = oct
+    if waitListRecord.Nov != nov:
+        waitListRecord.Nov = nov
+    if waitListRecord.Dec != dec:
+        waitListRecord.Dec = dec
+    
+    if waitListRecord.ApplicantAccepts != applicantAccepts :
+        waitListRecord.ApplicantAccepts = applicantAccepts
+    if waitListRecord.ApplicantDeclines != applicantDeclines :
+        waitListRecord.ApplicantDeclines = applicantDeclines
+    if waitListRecord.NoLongerInterested != noLongerInterested :
+        waitListRecord.NoLongerInterested = noLongerInterested
+    if waitListRecord.PlannedCertificationDate != plannedCertificationDate :
+        waitListRecord.PlannedCertificationDate = plannedCertificationDate
+    
+    try:
+        db.session.commit()
+        print ("Changes to wait list successful")
+        flash("Changes to wait list successful","success")
+    except Exception as e:
+        print ("Changes to wait list NOT successful\n",e)
+        flash("Could not update Wait List data.","danger")
+        db.session.rollback()
 
-    expireDate = request.form.get('expireDate')
-    firstName = request.form.get('firstName')
-    middleName = request.form.get('middleName')
-    lastName = request.form.get('lastName')
-    nickname = request.form.get('nickname')
-    street = request.form.get('street')
-    city = request.form.get('city')
-    state = request.form.get('state')
-    zip = request.form.get('zip')
-    print('zip - ',zip)
-    cellPhone = request.form.get('cellPhone')
-    print('cellPhone - ',cellPhone, ' type - ',type(zip))
-    homePhone = request.form.get('homePhone')
-    eMail = request.form.get('eMail')
-   
-    tempIDexpirationDate = request.form.get('expireDate')
-    if tempIDexpirationDate != None and tempIDexpirationDate != '':
-        hasTempID = True
-    else:
-        hasTempID = False
-    print ('expire date - ',tempIDexpirationDate)
-    print ('hasTempID - ',hasTempID)
-
-    # VALIDATE DATA
-    # COMPARE FORM DATA TO TABLE DATA
-
-    # UPDATE WAITLIST TABLE
-
-    # ADD RECORDS TO MEMBER_DATA_TRANSACTIONS
-
-    # SEND CHANGES TO LIGHTSPEED
-
-    # newWaitListApplicant = WaitList(
-    #     Member_ID = memberID,
-    #     Temporary_ID_Expiration_Date = expireDate,
-    #     Temporary_Village_ID = hasTempID,
-    #     First_Name = firstName,
-    #     Middle_Name = middleName,
-    #     Last_Name = lastName,
-    #     Nickname = nickname,
-    #     Address = street,
-    #     City = city,
-    #     State = state,
-    #     Zip = zip,
-    #     Cell_Phone = cellPhone,
-    #     Home_Phone = homePhone,
-    #     eMail = eMail,
-    #     Date_Joined = dateJoined,
-    #     Default_Type_Of_Work = typeOfWork,
-    #     Skill_Level = skillLevel,
-    #     Dues_Paid = 1
-    # )
-
-    # ADD TO tblMembershipWaitList TABLE
-    # try:
-    #     db.session.add(newwaitList)?????
-    #     db.session.commit()
-    # except SQLAlchemyError as e:
-    #     error = str(e.__dict__['orig'])
-    #     flash('ERROR - '+error,'danger')
-    #     print('error - ',error)
-    #     db.session.rollback()
-
-    # staffID = '123456'
-    # newTransaction = MemberTransactions(
-    #     Transaction_Date = datetime.now(),
-    #     Member_ID = memberID,
-    #     Staff_ID = staffID,
-    #     Original_Data = '',
-    #     Current_Data = memberID,
-    #     Data_Item = 'NEW MEMBER',
-    #     Action = 'NEW'
-    # )
-    # WRITE TO MEMBER_TRANSACTION TABLE
-    # try:
-    #     db.session.add(newTransaction)
-    #     db.session.commit() 
-    # except SQLAlchemyError as e:
-    #     error = str(e.__dict__['orig'])
-    #     flash('ERROR - '+error,'danger')
-    #     print('error - ',error)
-    #     db.session.rollback()
-
-    # return redirect(url_for('index',villageID='')
-    return redirect(url_for('waitList',villageID='',todaysDate=todaySTR))
+    
+    return redirect(url_for('waitList',villageID=memberID,todaysDate=todaySTR))

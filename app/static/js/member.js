@@ -49,11 +49,6 @@ acceptDuesBtn = document.getElementById('acceptDuesID')
 if (todaysDateSTR  < acceptDuesDate) {
     acceptDuesBtn.style.display='none'
 }
-//     acceptDuesBtn.setAttribute(disabled,False)    
-// }
-// else {
-//     acceptDuesBtn.setAttribute(disabled,True)   
-// }
 
 // SET OPTIONS IN SELECT ELEMENTS BASED ON TEXT VALUES
 typeOfWorkText = document.getElementById('typeOfWorkTextID').value
@@ -83,8 +78,9 @@ var staffID = getCookie('staffID')
 
 // SET STAFF ID IN EACH PANEL
 var staffIDelements = document.getElementsByClassName('staffID')
-for (var i = 0; i < staffIDelements.length; i++) {
-   staffIDelements[i].setAttribute("value", staffID);
+for (var i = 0; i > staffIDelements.length; i++) {
+    console.log(staffIDelements[i].name)
+    staffIDelements[i].setAttribute("value", staffID);
 }
 
 // IF clientLocation IS NOT FOUND, PROMPT FOR LOCATION
@@ -285,16 +281,6 @@ document.getElementById('BWwillSub').onclick = function(ev) {
         document.getElementById('BWwillSub').value='False' 
     }
 }
-// SELECT CONTROL LISTENERS
-// typeOfWork = document.getElementById('typeOfWorkSelect')
-// typeOfWork.onchange = function(ev) {
-//     alert('selected value - '+ target.value)
-// }
-
-// document.getElementById('typeOfWorkSelect').onclick = function(ev) {
-//     alert('selected item - ' + target.value)
-//     document.getElementById('typeOfWorkText').value=target.value
-// }
 
 
 // ------------------------------------------------------------------------------------------------------
@@ -451,7 +437,6 @@ function findAllVariables() {
 /* When the user clicks on the button, 
 toggle between hiding and showing the dropdown content */
 function showMenu() {
-    //alert('showMenu')
     document.getElementById("myDropdown").classList.toggle("show");
   }
   
@@ -610,7 +595,6 @@ function setCookie(cname, cvalue, exdays) {
   function checkStaffCookie() {
     var staffID = getCookie("staffID");
     if (staffID != "") {
-    //   alert("Welcome again " + staffID);
     } else {
       staffID = prompt("Please enter your village ID:", "");
       if (staffID != "" && staffID != null) {
@@ -621,7 +605,6 @@ function setCookie(cname, cvalue, exdays) {
   function checkLocationCookie() {
     var clientLocation = getCookie("clientLocation");
     if (clientLocation != "") {
-      //alert("Welcome again " + clientLocation);
     } else {
       clientLocation = prompt("Please enter your location (RA/BW):", "");
       if (clientLocation != "" && clientLocation != null) {
@@ -629,18 +612,7 @@ function setCookie(cname, cvalue, exdays) {
       }
     }
   }
-// SAMPLE CODE TO CHECK FOR EXISTENCE OF A COOKIE
-//   function checkCookie() {
-//     var user = getCookie("username");
-//     if (user != "") {
-//       alert("Welcome again " + user);
-//     } else {
-//       user = prompt("Please enter your name:", "");
-//       if (user != "" && user != null) {
-//         setCookie("username", user, 365);
-//       }
-//     }
-//   }
+
 
 function acceptDues() {
     var memberID = document.getElementById('memberID').value

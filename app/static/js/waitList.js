@@ -2,7 +2,18 @@
 cancelBtn = document.getElementById('cancelBtn')
 saveBtn = document.getElementById('saveBtn')
 applicant = document.getElementById('applicantID')
+applicationStatus = document.getElementById('applicationStatusID')
+memberIDelement = document.getElementById('memberID')
 
+// SET INTIAL VALUES 
+if (memberIDelement.value.length > 0) {
+  memberIDelement.readonly = true
+}
+else {
+  memberIDelement.readonly = false
+}
+
+// HIDE CANCEL AND SAVE BUTTONS
 cancelBtn.style.display='none'
 saveBtn.style.display='none'
 
@@ -10,12 +21,8 @@ saveBtn.style.display='none'
 document.getElementById("selectpicker").addEventListener("change",memberSelectedRtn)
 document.getElementById("selectpicker").addEventListener("click",memberSelectedRtn)
 applicant.addEventListener("change",applicantDataChanged)
-$.fn.selectpicker.Constructor.BootstrapVersion = '4';
-// $(document).ready(function() {
-//     $('select').selectpicker();
-// })
-
-
+applicationStatus.addEventListener("change",applicantStatusDataChanged)
+//$.fn.selectpicker.Constructor.BootstrapVersion = '4';
 
 
 
@@ -25,17 +32,13 @@ function memberSelectedRtn() {
     lastEight = selectedMember.slice(-8)
     currentMemberID= lastEight.slice(1,7)
     document.getElementById('selectpicker').value=''
-    
-
-    // if (selectedMember == 'NEW APPLICANT') {
-    //     alert('New applicant')
-    // }
 
     // SET UP LINK TO waitList FORM 
     var linkToWaitListBtn = document.getElementById('linkToWaitList');
     link='/waitList/' + currentMemberID 
     linkToWaitListBtn.setAttribute('href', link)
     linkToWaitListBtn.click()
+
 }
 
 
@@ -43,21 +46,42 @@ function showMenu() {
     document.getElementById("myDropdown").classList.toggle("show");
   }
 
-  // Close the dropdown if the user clicks outside of it
-  window.onclick = function(event) {
-    if (!event.target.matches('.dropbtn')) {
-      var dropdowns = document.getElementsByClassName("dropdown-content");
-      var i;
-      for (i = 0; i < dropdowns.length; i++) {
-        var openDropdown = dropdowns[i];
-        if (openDropdown.classList.contains('show')) {
-          openDropdown.classList.remove('show');
-        }
-      }
-    }
-  }
-
 function applicantDataChanged() {
+    if (memberIDelement.value != "") {
+      document.getElementById('cancelBtn').style.display='inline'
+      document.getElementById('saveBtn').style.display='inline'
+    }
+    else {
+      alert("Please enter a member ID.")
+    }   
+}
+
+function applicantStatusDataChanged() {
+  if (memberIDelement.value != '' ) {
     document.getElementById('cancelBtn').style.display='inline'
     document.getElementById('saveBtn').style.display='inline'
+  }
+  else {
+    alert("Please enter a member ID.")
+  }
+}
+
+document.querySelector('#monthCheckboxesID').onclick = function(ev) {
+  inputID = ev.target.id
+  console.log('inputID - '+ inputID)
+  if (ev.target.checked) {
+      document.getElementById(inputID).value='True'
+  }
+  else {
+      document.getElementById(inputID).value='False' 
+  }
+}
+
+function newApplicant() {
+  // SET UP LINK TO waitList FORM 
+  var linkToWaitListBtn = document.getElementById('linkToWaitList');
+  link='/waitList'  
+  linkToWaitListBtn.setAttribute('href', link)
+  linkToWaitListBtn.click()
+
 }
