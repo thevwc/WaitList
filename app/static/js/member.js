@@ -48,6 +48,7 @@ acceptDuesDate = document.getElementById('acceptDuesDateID').value
 acceptDuesBtn = document.getElementById('acceptDuesID')
 if (todaysDateSTR  < acceptDuesDate) {
     acceptDuesBtn.style.display='none'
+    //acceptDuesBtn.setAttribute('disabled','disabled')
 }
 
 // SET OPTIONS IN SELECT ELEMENTS BASED ON TEXT VALUES
@@ -121,6 +122,13 @@ if (memberID.value == 'undefined' | memberID.value == ''){
     for (i = 0; i < panels.length; i++) {
         panels[i].style.display='none'
     }
+}
+else
+{
+    // SHOW roles and notes buttons in member menu
+    document.getElementById('noteBtnID').classList.remove('disabled')
+    document.getElementById('classSignUpBtnID').classList.remove('disabled')
+    document.getElementById('rolesBtnID').classList.remove('disabled')
 }   
            
 
@@ -314,6 +322,7 @@ function memberSelectedRtn() {
     imgLink.link = "{{ url_for('static', filename='memberPhotos/" + currentMemberID + ".jpg') }}"
     localStorage.setItem('currentMemberID',currentMemberID)
     
+
     // SET UP LINK TO MEMBER FORM 
     var linkToMemberBtn = document.getElementById('linkToMember');
     link='/index/' + currentMemberID 
@@ -536,6 +545,82 @@ function processNote() {
 // $('#noteModalID').on('shown.bs.modal', function () {
 //     $('#msgID').focus();
 // }) 
+
+function rolesRoutine() {
+    alert('rolesRoutine')
+    // CHECK FOR EXISTING role
+    // IF FOUND, DISPLAY IN MSG
+    memberID = document.getElementById('memberID').value
+    $.ajax({
+        url : "/getRoles",
+        type: "GET",
+        data : {
+            memberID:memberID,
+            },
+ 
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.msg) {
+                memberRoles = data.memberRoles
+            }
+        },
+        error: function(result){
+            alert("Error ..."+result)
+        }
+    })
+    alert('show role modal')    
+    $('#roleModalID').modal('show')
+}
+function cancelRole() {
+    $('#roleModalID').modal('hide')
+}
+function updateRoles() {
+    
+    memberID = document.getElementById('memberID').value
+    show = document.getElementById('showAtCheckIn')
+    send = document.getElementById('sendEmail')
+    msg = document.getElementById('msgID').value
+    eMailAddr = document.getElementById('eMailID').value
+    //console.log('memberID - '+memberID + '\nshow - '+show.checked+'\nsend - '
+    //+send.checked+'\nmsg - '+msg+'\neMailAddr - '+eMailAddr)
+    
+    if (show.checked) {
+        showAtCheckIn='true'
+    }
+    else {
+        showAtCheckIn='false'
+    }
+    if (send.checked) {
+        //console.log('send routine ...')
+        sendEmail = 'true'
+        
+        //console.log ('eMailAddr - ' + eMailAddr)
+        //alert ('emailAddress - '+eMailAddr)
+    }
+    else {
+        sendEmail = 'false' 
+    } 
+      
+    $.ajax({
+        url : "/processNoteToMember",
+        type: "GET",
+        data : {
+            showAtCheckIn: showAtCheckIn,
+            sendEmail: sendEmail,
+            memberID:memberID,
+            eMailAddr:'hartl1r@gmail.com',
+            msg:msg},
+
+        success: function(data, textStatus, jqXHR)
+        {
+            alert(data)
+        },
+        error: function(result){
+            alert("Error ..."+result)
+        }
+    }) 
+}
+    $('#noteModalID').modal('hide')
 
 function setPhotoSrc() {
     photo = document.getElementsByClassName('memberImgID')

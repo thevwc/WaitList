@@ -270,3 +270,12 @@ class WaitList(db.Model):
     NoLongerInterested = db.Column(db.Date)
     PlannedCertificationDate = db.Column(db.Date)
     fullName = column_property(FirstName + " " + LastName)
+
+class KeysTable(db.Model):
+    __tablename__ = 'tblKeys'
+    __table_args__ = {"schema": "dbo"}
+    Number = db.Column(db.Integer, primary_key=True,autoincrement=True)
+    KeyType = db.Column(db.String(10))
+    DateAssigned = db.Column(db.Date)
+    MemberID = db.Column(db.String(6))
+    Reason = db.Column(db.String(45))

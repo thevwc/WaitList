@@ -45,12 +45,12 @@
     align-items: left;
 }
 .dropdown-item {
-    color:green;
+    color:black;
 }
 
 .memberMenu {
     grid-area:menuArea;
-    color:blue;
+    /* color:blue; */
 }
 .memberMenu  a:hover {
     background-color: #0099cc;
@@ -197,9 +197,7 @@ input {
     font-size:16px;
     color:var(--main-panel-txt-color);
 }
-/* .membershipInfo label{
-    text-align:right;
-} */
+
 .memberStatus {
     display:grid;
     grid-template-columns: .5fr 1fr;
@@ -357,12 +355,13 @@ table th {
     display: inline-block;
   }
   .dropdown:disabled {
-      color:blue !important;
-  }
+      color:lightgray !important;
+  } 
   .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f1f1f1;
+    background-color: lightgray;
+    color:black;
     min-width: 160px;
     /* overflow: auto; */
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
@@ -370,13 +369,16 @@ table th {
   }
   
   .dropdown-content a {
-    color: black;
+    /* color: black; */
     padding: 12px 16px;
     text-decoration: none;
-    display: block;
+    display: block-inline;
   }
   
-  .dropdown a:hover {background-color: #ddd;}
+.dropdown a:hover {
+    background-color: green;
+    color:white !important;
+}
   
   .show {display: block;}
 
@@ -431,6 +433,14 @@ table th {
   input:disabled {
       color:green;
       background-color: yellow;
+  }
+  .acceptDuesBtn {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin-top:40px;
+      width:220px;
+      color:white;
   }
 @media (min-width: 544px) {
     .parent {

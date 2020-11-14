@@ -4,10 +4,12 @@ saveBtn = document.getElementById('saveBtn')
 applicant = document.getElementById('applicantID')
 applicationStatus = document.getElementById('applicationStatusID')
 memberIDelement = document.getElementById('memberID')
+waitListForm = document.getElementById('waitListFormID')
 
 // SET INTIAL VALUES 
 if (memberIDelement.value.length > 0) {
   memberIDelement.readonly = true
+  document.getElementById('printConfirmationBtn').setAttribute('disabled',false)
 }
 else {
   memberIDelement.readonly = false
@@ -16,6 +18,13 @@ else {
 // HIDE CANCEL AND SAVE BUTTONS
 cancelBtn.style.display='none'
 saveBtn.style.display='none'
+
+//document.getElementById("backBtnID").onclick = function () {
+//  location.href = "/index/";
+//};
+
+// DISABLE FORM UNTIL USER CLICKS ON NAME OR NEW BUTTON
+//waitListForm.setAttribute('disabled',true)
 
 // DEFINE EVENT LISTENERS
 document.getElementById("selectpicker").addEventListener("change",memberSelectedRtn)
@@ -32,6 +41,7 @@ function memberSelectedRtn() {
     lastEight = selectedMember.slice(-8)
     currentMemberID= lastEight.slice(1,7)
     document.getElementById('selectpicker').value=''
+
 
     // SET UP LINK TO waitList FORM 
     var linkToWaitListBtn = document.getElementById('linkToWaitList');
@@ -50,6 +60,7 @@ function applicantDataChanged() {
     if (memberIDelement.value != "") {
       document.getElementById('cancelBtn').style.display='inline'
       document.getElementById('saveBtn').style.display='inline'
+      
     }
     else {
       alert("Please enter a member ID.")
@@ -81,6 +92,17 @@ function newApplicant() {
   // SET UP LINK TO waitList FORM 
   var linkToWaitListBtn = document.getElementById('linkToWaitList');
   link='/waitList'  
+  linkToWaitListBtn.setAttribute('href', link)
+  linkToWaitListBtn.click()
+
+}
+
+function printConfirmation() {
+  alert('print confirmation')
+  // SET UP LINK TO waitList FORM 
+  var linkToWaitListBtn = document.getElementById('linkToWaitList');
+  link='/printConfirmation/' + document.getElementById('memberID').value 
+  alert('link - '+ link)
   linkToWaitListBtn.setAttribute('href', link)
   linkToWaitListBtn.click()
 

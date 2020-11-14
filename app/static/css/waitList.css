@@ -210,7 +210,17 @@ hr {
 
 .show {display: block;}
 
-/* SPECIFICATIONS FOR LARGER SCREENS */
+.placeOnWaitList {
+    font-size:2rem;
+    color:blue;
+    text-align:center;
+}
+.waitListStatus {
+    font: size 1.5rem;
+    text-align:center;
+}
+
+/* SPECIFICATIONS FOR SCREENS LARGER THAN MOBILE */
 @media (min-width: 768px) {
     .parent {
         display:grid;
