@@ -7,13 +7,13 @@
 
 body {
     margin: 0;
-    font-size: .75rem;
+    font-size: 1rem;
     font-family:'Lato', sans-serif;
     color: #2e354f;
 }
 
 input {
-    font-size: .75rem;
+    font-size: 1rem;
     color:green;
     border:1px solid navy;
 }
@@ -51,7 +51,7 @@ h2 {
 }
 
 a {
-    color:#ef5839;
+    color:blue;
 }
 hr {
     border:1px solid black;
@@ -60,67 +60,65 @@ hr {
 /* Layout for iPhone (small devices) */
 .parent {
     display:grid;
-    max-width: 630px;
-    width:90%;
+    max-width: 600px;
+    width:100%;
     grid-template-columns: 1fr;
-    grid-template-areas: "hdgBandArea"
+    grid-template-areas:"hdgBandArea"
                         "applicantArea"
-                        "statusArea"; 
+                        "statusArea"
+                        "footerArea"; 
     border: 2px solid navy;
     margin: 0 auto;
     background-color: lightgray;
     
 } 
 
-.container {
-    /* max-width: 630px; */
-    width:90%;
-    margin: 0 auto;
-    background-color: lightgray;
-} 
-
-.container-fluid {
-    max-width: 630px;
-    width:90%;
-    margin: 0 auto;
-    background-color: lightgray;
-} 
-
-
-/* .wrapper {
-    display:grid;
-    grid-template-rows: repeat(3 1fr);
-    grid-template-areas:    "hdgbandArea  applicantArea  statusArea";
-    width:100%;
-    
-} */
 .hdgBand {
-    width:100%;
-    grid-area:hgdBandArea;
-    background-color:white;
-    color:navy;
-    border:2px solid white;
+    grid-area:hdgBandArea;
+    width:75%;
+    background-color:navy;
+    color:white;
+    border:1px solid white;
     padding:0px;
     margin:0px;
 }
-/* hdgBand2 {
-    justify-content:space-around;
-} */
+.selectApplicant {
+    margin:0 auto;
+}
+.hdgLinks {
+    margin:0 auto;
+}
 .applicant {
+    width:100%;
     grid-area:applicantArea;
-    background-color: lightgray;
-    border-right:1px solid navy;
-    margin-left:20px;
+    padding-left:20px;
     min-width:630px;
+}
+.monthsInTheVillages {
+    justify-content: center;
+    width:55%;
+}
+.monthNames {
+    padding-left:0px;
+}
+.monthCheckboxes {
+    padding-left:100px;
+}
+.footerBtns {
+    width:100%;
+    grid-area:footerArea;
 }
 .applicationStatus {
     grid-area:statusArea;
-    background-color: lightgray;
-    margin-left:20px;
-    margin-top:100px;
+    margin-left:0px;
+    margin-top:5px;
 } 
+.placeOnWaitList {
+    width:60%;
+    text-align: center;
+}
 .statusLabel {
-    margin-left:40px;
+    margin-left:35px;
 }
 /* DROPDOWN MENU CSS FOLLOWS */
 .dropbtn {
@@ -173,8 +171,10 @@ hr {
     margin-bottom: 20px;
 }
 .monthsInTheVillages {
-      border:1px solid black;
-      line-height:1 !important;
+    margin-left:20px;
+    width:60%;
+    border:1px solid black;
+    line-height:1 !important;
   }
 .monthsInTheVillages h3 {
       font-size:0.5rem;
@@ -212,7 +212,7 @@ hr {
 
 .placeOnWaitList {
     font-size:2rem;
-    color:blue;
+    color:navy;
     text-align:center;
 }
 .waitListStatus {
@@ -220,76 +220,109 @@ hr {
     text-align:center;
 }
 
-/* SPECIFICATIONS FOR SCREENS LARGER THAN MOBILE */
+/* SPECIFICATIONS FOR iPad SCREENS */
 @media (min-width: 768px) {
-    .parent {
-        display:grid;
-        width:90%;
-        grid-template-columns:  1fr 1fr;
-        grid-template-rows: 100px auto ;
-        grid-template-areas: "hdgBandArea   hdgBandArea"
-                            "applicantArea  statusArea";
-        max-width:1200px;
-        font-size:1rem;
-        
-    }
-
-    .hdgBand {
-        grid-area:hdgBandArea;
-        background-color: navy;
-        color:white;
-    }
-    .applicant {
-        grid-area:applicantArea;
-        margin-top:20px;
-    }
-    .applicationStatus {
-        grid-area:statusArea;
-        margin-top:20px;
-        justify-content: space-evenly;
-    }
-    body {font-size:1rem}
-    
-    input {
-        font-size:1rem;
-    }
-    label {
-        font-size:1rem;
-    }   
+.parent {
+    display:grid;
+    width:100%;
+    grid-template-rows: 100px 1fr 100px;
+    grid-template-columns: 1fr 2fr;
+    grid-template-areas:    "hdgBandArea    hdgBandArea"
+                            "applicantArea  statusArea"
+                            "footerArea     footerArea";
+                           
+    max-width:920px;
+    font-size:1rem;
+    background-color:yellow;
 }
-    /* .container {
-        display: grid;
-        grid-template-columns:1fr 1fr;
-        max-width:1200;
-        width:90%;
-        font-size:1rem;
-        background-color: gray;
-      }
-    .container-fluid {
-        max-width:1200px;
-        width:90%;
-        font-size:1rem;
-        background-color: gray;
-      }  */
 
-    /* .wrapper {
-        display:grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-areas:    "hdgbandArea hdgbandArea"
-                                "applicantArea statusArea";
-    } */
+.hdgBand {
+    grid-area:hdgBandArea;
+    width:100%;
+    background-color:blue;
+    color:white;
+    border:1px solid white;
+    padding:0px;
+    margin:0px;
+}
+.applicant {
+    grid-area:applicantArea;
+    margin-top:20px;
+    background-color:violet;
+}
+.applicationStatus {
+    grid-area:statusArea;
+    margin-top:20px;
+    background-color:lightcoral
+}
+.monthsInTheVillages {
+    margin-left:0px;
+    width:80%;
+    border:1px solid black;
+  }
+.footerBtns {
+    width:100%;
+    grid-area:footerArea;
+    background-color:lightblue;
+}
 
-     
+body {font-size:1rem}
+
+input {
+    font-size:1rem;
+}
+label {
+    font-size:1rem;
+}   
+}
+   
     
 
 @media (min-width: 992px) {
     .parent {
         display:grid;
-        width:90%;
+        width:100%;
+        grid-template-rows: 100px auto 100px;
+        grid-template-columns:  1fr 1fr;
+        grid-template-areas:    "hdgBandArea    hdgBandArea"
+                                "applicantArea  statusArea"
+                                "footerArea     footerArea";
         max-width:1200px;
         font-size:1rem;
+        background-color:lightgray;
     }
+    .hdgBand {
+        grid-area:hdgBandArea;
+        width:100%;
+        background-color:navy;
+        color:white;
+        border:1px solid white;
+        padding:0px;
+        margin:0px;
+    }
+    .applicant {
+        grid-area:applicantArea;
+        margin-top:20px;
+        background-color:lightgray;
+        border:1px solid black;
+    }
+    .applicationStatus {
+        width:100%;
+        grid-area:statusArea;
+        margin-top:20px;
+        justify-content: space-evenly;
+        background-color:lightgrey;
+        border:1px solid black;
+    }
+    /* .statusLabel {
 
+    } */
+        
+    .footerBtns {
+        width:100%;
+        grid-area:footerArea;
+        background-color:gray;
+    }
     body {font-size:1rem}
   
 
@@ -318,9 +351,4 @@ hr {
       font-size:1rem;
   } */
 
-@media (min-width: 1200px) {
-    body {font-size:1rem}
-  /* .container {
-      font-size:1rem;
-  } */
-}
+

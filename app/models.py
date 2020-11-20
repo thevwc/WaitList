@@ -38,7 +38,7 @@ class ControlVariables(db.Model):
     AcceptingNewMembers = db.Column(db.Boolean)
     Dues_Account = db.Column(db.String(10))
     Initiation_Fee_Account = db.Column(db.String(10))
-
+    WaitingListApplicantNote = db.Column(db.String(255))
 
 class Member(db.Model):
     __tablename__ = 'tblMember_Data'
@@ -124,6 +124,23 @@ class Member(db.Model):
     Monitor_Sub = db.Column(db.Boolean)
     Monitor_Sub_2 = db.Column(db.Boolean)
     
+    isAskMe = db.Column(db.Boolean)
+    Mentor = db.Column(db.Boolean)
+    isBODmember = db.Column(db.Boolean)
+    canSellMdse = db.Column(db.Boolean)
+    Certification_Staff = db.Column(db.Boolean)
+    Office_Staff = db.Column(db.Boolean)
+    DBA = db.Column(db.Boolean)
+    Monitor_Coordinator = db.Column(db.Boolean)
+    Instructor = db.Column(db.Boolean)
+    isPresident = db.Column(db.Boolean)
+    canSellLumber = db.Column(db.Boolean)
+    isSafetyCommittee = db.Column(db.Boolean)
+    Maintenance = db.Column(db.Boolean)
+    isSpecialProjects = db.Column(db.Boolean)
+    Manager = db.Column(db.Boolean)
+    isVP = db.Column(db.Boolean)
+
     fullName = column_property(First_Name + " " + Last_Name)
     # Relationships
     #activities = db.relationship('MemberActivity', backref='member')
@@ -243,7 +260,7 @@ class WaitList(db.Model):
     VillageIDexpirationDate = db.Column(db.Date)
     HomePhone = db.Column(db.String(14))
     CellPhone = db.Column(db.String(14))
-    DateTimeEntered = db.Column(db.DateTime)
+    DateTimeEntered = db.Column(db.Date)
     StreetAddress = db.Column(db.String(30))
     City = db.Column(db.String(25))
     State = db.Column(db.String(2))
