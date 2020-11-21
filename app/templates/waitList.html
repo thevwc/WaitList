@@ -100,7 +100,13 @@
                     <label for="cellPhone" >Cell phone</label>
                 </div>
                 <div class="col-8">
-                    <input id="cellPhone"type='text' name='cellPhone' style=width:120px placeholder="(xxx) xxx-xxxx" value="{{applicant.CellPhone}}" >
+                    <input id="phoneNumber"
+                        class="cellPhone"
+                        type='tel'
+                        maxlength="14"
+                        name='cellPhone' 
+                        style=width:120px 
+                        value="{{applicant.CellPhone}}" >
                 </div>
                 
             </div>
@@ -109,7 +115,11 @@
                     <label for="homePhone">Home phone</label>
                 </div>
                 <div class='col-8'>
-                    <input id="homePhone"type='text' name='homePhone' style=width:120px placeholder="(xxx) xxx-xxxx" value="{{applicant.HomePhone}}" ></div>
+                    <input id="homePhone"
+                    type='tel' 
+                    name='homePhone' 
+                    style=width:120px 
+                    placeholder="xxx-xxx-xxxx" value="{{applicant.HomePhone}}" ></div>
                 </div>
             </div> 
         </div> <!-- END OF PHONES -->
