@@ -14,12 +14,11 @@
 <div class="parent">
 
     <div class="hdgBand"> <!-- HEADING BAND -->
-        <div class="row title">
-            <div class="col-12" style=text-align:center>
+        <div class="row hdgRow">
+            <div class="title">
                 <h2>WAIT LIST</h2>
-            </div>    
-        </div>
-        <div class="row">
+            </div>
+            
             <div class="selectApplicant">
                 <select id="selectpicker" class='selectpicker' title='Find an applicant ...' data-live-search=true data-live-search-style="contains" data-width='auto'>
                     {% for nme in applicantArray %}
@@ -32,11 +31,10 @@
                 <a id="linkToPrintConfirmation" style="display:none" href=""></a>
                 <button class='btn btn-primary btn-sm' onclick="newApplicant()">Clear Screen</button>
                 <button id='printConfirmBtnID' class='btn btn-info btn-sm' disabled onclick="printConfirmation()">Print Confirmation</button>
-                
-                <!-- <button onclick="location.href='/printConfirmation/{{applicant.MemberID}}'">Test Link</button>
-                <a id=printConfirmBtnID class='btn btn-success btn-sm' href="/printConfirmation/{{applicant.MemberID}}" >Print Confirmation</a>
-                <a href="/printConfirmation/{{applicant.MemberID}}"><button id='prtConfirmBtnID' class='btn btn-success btn-sm' disabled >PRINT</button></a> -->
             </div> <!-- End of hdgLinks -->
+            <div class="version">
+                <p>ver. 11/22/20</p> 
+            </div>
         </div>
     </div> <!-- End of hdgBand -->
 
@@ -88,7 +86,7 @@
             </div>
             <div class='row'>
                 <div class="col-10 offset-2">
-                    <input id="state"type='text' style=min-width:25px name='state' size=2 placeholder= 'FL' value="{{applicant.State}}">
+                    <input id="state"type='text' style=min-width:25px name='state' size=2 placeholder="FL" value="{{applicant.State}}">
                     <input id="zip"type='text'  style=width:95px name='zip' placeholder="Zip" value="{{applicant.Zipcode}}"> 
             </div>
         </div>
@@ -104,6 +102,7 @@
                         class="cellPhone"
                         type='tel'
                         maxlength="14"
+                        placeholder="(xxx) xxx-xxxx"
                         name='cellPhone' 
                         style=width:120px 
                         value="{{applicant.CellPhone}}" >
@@ -119,7 +118,7 @@
                     type='tel' 
                     name='homePhone' 
                     style=width:120px 
-                    placeholder="xxx-xxx-xxxx" value="{{applicant.HomePhone}}" ></div>
+                    placeholder="(xxx) xxx-xxxx" value="{{applicant.HomePhone}}" ></div>
                 </div>
             </div> 
         </div> <!-- END OF PHONES -->
@@ -221,7 +220,7 @@
         <div class="row">
             <div class="col">
                 <label for='dtEntered' class="statusLabel col-4" >Date Added</label>
-                <input id='dtEntered' type="date"  width=140px name='entered' value="{{applicant.DateTimeEntered}}">    
+                <input id='dtEntered' type="date"  width=140px name='entered' readonly value="{{applicant.DateTimeEntered}}">    
             </div>
         </div>
         <div class="row">
@@ -235,7 +234,6 @@
             <div class="col">
                 <label for='applicantAccepts' class="statusLabel col-4" >Applicant Accepts</label>
                 <input id='applicantAccepts' type="date" datepicker  width=140px name='applicantAccepts' value={{applicant.ApplicantAccepts}}>    
-                <!-- <input id='applicantAccepts' type="date" datepicker  width=140px name='applicantAccepts' {% if applicant.ApplicantAccepts != '1900-01-01' %} value={{applicant.ApplicantAccepts}} {% endif %}>     -->
             </div>
         </div>
 
@@ -261,7 +259,7 @@
         </div>
 
         <div class="row">
-            <div class="col">
+            <div class="col" style=margin-bottom:20px>
                 <label for='plannedCertificationDate' class="statusLabel col-4" >Planned Certification</label>
                 <input id='plannedCertificationDate' type="date" datepicker width=140px name='plannedCertificationDate' value="{{applicant.PlannedCertificationDate}}">    
             </div>

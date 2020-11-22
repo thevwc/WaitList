@@ -1,13 +1,7 @@
 # routes.py
 from flask import session, render_template, flash, redirect, url_for, request, jsonify, json, make_response, after_this_request
 from flask_wtf import FlaskForm
-#from wtforms import StringField, PasswordField, TextAreaField, SubmitField, DateField, SelectField
-#from wtforms.validators import ValidationError, DataRequired, Length, Email, EqualTo
-
-# from app.forms import LocalAddressPhone, NewMember
 from flask_bootstrap import Bootstrap
-#Bootstrap(app)
-
 from werkzeug.urls import url_parse
 from app.models import ShopName, Member, MemberActivity, MonitorSchedule, MonitorScheduleTransaction,\
 MonitorWeekNote, CoordinatorsSchedule, ControlVariables, NotesToMembers, MemberTransactions,\
@@ -29,7 +23,6 @@ def logChange(staffID,colName,memberID,newData,origData):
         staffID = '111111'
 
     # Write data changes to tblMember_Data_Transactions
-    #print('log - ',staffID,"|",colName,"|",memberID,"|New- ",newData,"|Orig-",origData),"|"
     newTransaction = MemberTransactions(
         Transaction_Date = datetime.now(),
         Member_ID = memberID,
@@ -60,13 +53,12 @@ def waitList(villageID):
     try:
         nameList = db.engine.execute(sqlSelect)
     except Exception as e:
-        print('ERROR in retrieving member list.')
         flash("Could not retrieve member list.","danger")
         return 'ERROR in wait list function.'
     position = 0
     if nameList == None:
         flash('There is no one on the waiting list.','info')
-        print('empty nameList')
+        return render_template("waitlist.html",applicant="",applicantArray="")
 
     # NEED TO PLACE NAME IN AN ARRAY BECAUSE OF NEED TO CONCATENATE 
     for n in nameList:
@@ -75,7 +67,6 @@ def waitList(villageID):
             lastFirst = n.LastName
         else:
             lastFirst = n.LastName + ', ' + n.FirstName + ' (' + n.MemberID + ')'
-        #print(lastFirst)
         applicantArray.append(lastFirst)
         
     # IF A VILLAGE ID WAS NOT PASSED IN, DISPLAY THE waitlist.html FORM WITHOUT DATA
@@ -87,7 +78,6 @@ def waitList(villageID):
     applicant = db.session.query(WaitList).filter(WaitList.MemberID == villageID).first()
     
     if (applicant == None):
-        print('No record for applicant with village ID ', villageID )
         msg = "No record for applicant with village ID " + villageID
         flash(msg,"info")
         return render_template("waitlist.html",applicant='',applicantArray=applicantArray,todaySTR=todaySTR)
@@ -99,8 +89,6 @@ def waitList(villageID):
             .filter(WaitList.NoLongerInterested == None) \
             .filter(WaitList.id < applicant.id) \
             .scalar() 
-
-
         return render_template("waitlist.html",applicant=applicant,applicantArray=applicantArray,todaySTR=todaySTR,placeOnList=placeOnList)
     
 
@@ -108,17 +96,10 @@ def waitList(villageID):
 def updateWaitList():
     # POST REQUEST; PROCESS WAIT LIST APPLICATION, ADD TO MEMBER_DATA, INSERT TRANSACTION ('ADD')
     memberID = request.form.get('memberID')
-    print('memberID - ',memberID)
     if request.form.get('waitList') == 'CANCEL':
         return redirect(url_for('waitList',villageID=memberID))
 
-    # ====================================================
-    # for testing show all data being sent from page
-    data = request.form
-    for key, value in data.items():
-        print("received", key, "with value", value)
-    # ====================================================
-    
+   # RETRIEVE FORM VALUES
     expireDate = request.form.get('expireDate')
     firstName = request.form.get('firstName')
     lastName = request.form.get('lastName')
@@ -203,18 +184,14 @@ def updateWaitList():
     # GET CURRENT DATE AND TIME
     todays_date = datetime.today()
     todaySTR = todays_date.strftime('%m-%d-%Y')
-    print ('1. process new applicant')
 
     # IS THIS PERSON ALREADY ON THE WAITLIST?
     waitListRecord = db.session.query(WaitList).filter(WaitList.MemberID == memberID).first()
     if (waitListRecord == None):
         # ADD NEW RECORD TO tblMembershipWaitingList
-        print ('2. process new applicant')
-        print('plannedCertificationDate (before test) - ',plannedCertificationDate)
         if plannedCertificationDate == '':
             plannedCertificationDate = None
-        print('plannedCertificationDate (after test) - ',plannedCertificationDate)
-
+        
         try:
             newWaitListRecord = WaitList( 
                 MemberID = memberID,
@@ -245,15 +222,13 @@ def updateWaitList():
                 Dec = dec,
                 DateTimeEntered = todaySTR
             ) 
-            print ('3. process new applicant')
+        
             db.session.add(newWaitListRecord)
             db.session.commit()
 
         except SQLAlchemyError as e:
-            print ('4. process new applicant')
             error = str(e.__dict__['orig'])
             flash('ERROR - Record not added.'+error,'danger')
-            print('error - ',error)
             db.session.rollback()
         
         return redirect(url_for('waitList'))
@@ -327,10 +302,8 @@ def updateWaitList():
     
     try:
         db.session.commit()
-        print ("Changes to wait list successful")
         flash("Changes to wait list successful","success")
     except Exception as e:
-        print ("Changes to wait list NOT successful\n",e)
         flash("Could not update Wait List data.","danger")
         db.session.rollback()
 
@@ -352,4 +325,3 @@ def printConfirmation(memberID):
     # Using include statement in html file for included text 'WaitListConfirmation.html' in Template folder
     return render_template("rptAppConfirm.html",displayName=displayName,applicant=applicant,
     applicationDate=applicationDate,todays_date=todays_dateSTR)
-

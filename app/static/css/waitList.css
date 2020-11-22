@@ -62,6 +62,7 @@ hr {
     display:grid;
     max-width: 600px;
     width:100%;
+    grid-template-rows: 110px auto 100px;
     grid-template-columns: 1fr;
     grid-template-areas:"hdgBandArea"
                         "applicantArea"
@@ -81,6 +82,16 @@ hr {
     border:1px solid white;
     padding:0px;
     margin:0px;
+}
+.hdgRow {
+    margin-top:10px;
+}
+.title {
+    margin-left:20px;
+}
+.version {
+    font-size: small;
+    margin-right:40px;
 }
 .selectApplicant {
     margin:0 auto;
@@ -282,7 +293,7 @@ label {
     .parent {
         display:grid;
         width:100%;
-        grid-template-rows: 100px auto 100px;
+        grid-template-rows: 50px auto 50px;
         grid-template-columns:  1fr 1fr;
         grid-template-areas:    "hdgBandArea    hdgBandArea"
                                 "applicantArea  statusArea"
@@ -299,6 +310,10 @@ label {
         border:1px solid white;
         padding:0px;
         margin:0px;
+    }
+    .version {
+        font-size: small;
+        margin-right:20px;
     }
     .applicant {
         grid-area:applicantArea;
