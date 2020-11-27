@@ -25,7 +25,7 @@ params = urllib.parse.quote_plus('DRIVER=' +  os.getenv('Driver') + ';'
 conn_str = 'mssql+pyodbc:///?odbc_connect={}'.format(params)
 
 class Config(object):
-    SECRET_KEY = os.environ.get('Secret_key') or 'juniorbr549wells'
+    SECRET_KEY = os.environ.get('Secret_key')
     SQLALCHEMY_DATABASE_URI = conn_str 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     TEMPLATES_AUTO_RELOAD=True 
