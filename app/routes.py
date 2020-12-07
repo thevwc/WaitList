@@ -13,8 +13,9 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError, DBAPIError
 
 import datetime as dt
 from datetime import date, datetime, timedelta
-
+from pytz import timezone
 from flask_mail import Mail, Message
+
 mail=Mail(app)
 def logChange(staffID,colName,memberID,newData,origData):
     if staffID == None:
@@ -23,8 +24,9 @@ def logChange(staffID,colName,memberID,newData,origData):
         staffID = '111111'
 
     # Write data changes to tblMember_Data_Transactions
+    est = timezone('EST')
     newTransaction = MemberTransactions(
-        Transaction_Date = datetime.now(),
+        Transaction_Date = datetime.now(est),
         Member_ID = memberID,
         Staff_ID = staffID,
         Original_Data = origData,
