@@ -14,6 +14,7 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError, DBAPIError
 import datetime as dt
 from datetime import date, datetime, timedelta
 from pytz import timezone
+
 from flask_mail import Mail, Message
 
 mail=Mail(app)
