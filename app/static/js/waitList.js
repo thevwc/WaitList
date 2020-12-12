@@ -40,7 +40,7 @@ function memberSelectedRtn() {
 
     // SET UP LINK TO waitList FORM 
     var linkToWaitListBtn = document.getElementById('linkToWaitList');
-    link='/waitList/' + currentMemberID 
+    link='/waitlist/' + currentMemberID 
     linkToWaitListBtn.setAttribute('href', link)
     linkToWaitListBtn.click()
 }
@@ -85,7 +85,7 @@ document.querySelector('#monthCheckboxesID').onclick = function(ev) {
 function newApplicant() {
   // SET UP LINK TO waitList FORM 
   var linkToWaitListBtn = document.getElementById('linkToWaitList');
-  link='/waitList'  
+  link='/waitlist'  
   linkToWaitListBtn.setAttribute('href', link)
   linkToWaitListBtn.click()
 }

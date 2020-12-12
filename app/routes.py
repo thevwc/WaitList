@@ -42,9 +42,9 @@ def logChange(staffID,colName,memberID,newData,origData):
 @app.route('/', defaults={'villageID':None})
 @app.route('/index/', defaults={'villageID':None})
 @app.route('/index/<villageID>/')
-@app.route("/waitList",defaults={'villageID':None})
-@app.route("/waitList/<villageID>")
-def waitList(villageID):
+@app.route("/waitlist",defaults={'villageID':None})
+@app.route("/waitlist/<villageID>")
+def waitlist(villageID):
     # GATHER DATA FOR NEW WAIT LIST APPLICATION FORM
     todays_date = date.today()
     todaySTR = todays_date.strftime('%m-%d-%Y')
@@ -99,8 +99,8 @@ def waitList(villageID):
 def updateWaitList():
     # POST REQUEST; PROCESS WAIT LIST APPLICATION, ADD TO MEMBER_DATA, INSERT TRANSACTION ('ADD')
     memberID = request.form.get('memberID')
-    if request.form.get('waitList') == 'CANCEL':
-        return redirect(url_for('waitList',villageID=memberID))
+    if request.form.get('waitlist') == 'CANCEL':
+        return redirect(url_for('waitlist',villageID=memberID))
 
    # RETRIEVE FORM VALUES
     expireDate = request.form.get('expireDate')
@@ -234,7 +234,7 @@ def updateWaitList():
             flash('ERROR - Record not added.'+error,'danger')
             db.session.rollback()
         
-        return redirect(url_for('waitList'))
+        return redirect(url_for('waitlist'))
     
     # PROCESS UPDATE OF EXISTING WAIT LIST RECORD
     if waitListRecord.FirstName != firstName :
@@ -311,7 +311,7 @@ def updateWaitList():
         db.session.rollback()
 
     
-    return redirect(url_for('waitList',villageID=memberID,todaysDate=todaySTR))
+    return redirect(url_for('waitlist',villageID=memberID,todaysDate=todaySTR))
 
 @app.route("/printConfirmation/<memberID>")
 def printConfirmation(memberID):
