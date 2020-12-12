@@ -42,9 +42,9 @@ def logChange(staffID,colName,memberID,newData,origData):
 @app.route('/', defaults={'villageID':None})
 @app.route('/index/', defaults={'villageID':None})
 @app.route('/index/<villageID>/')
-@app.route("/waitlist",defaults={'villageID':None})
-@app.route("/waitlist/<villageID>")
-def waitlist(villageID):
+@app.route("/waitList",defaults={'villageID':None})
+@app.route("/waitList/<villageID>")
+def waitList(villageID):
     # GATHER DATA FOR NEW WAIT LIST APPLICATION FORM
     todays_date = date.today()
     todaySTR = todays_date.strftime('%m-%d-%Y')
@@ -61,7 +61,7 @@ def waitlist(villageID):
     position = 0
     if nameList == None:
         flash('There is no one on the waiting list.','info')
-        return render_template("waitlist.html",applicant="",applicantArray="")
+        return render_template("waitList.html",applicant="",applicantArray="")
 
     # NEED TO PLACE NAME IN AN ARRAY BECAUSE OF NEED TO CONCATENATE 
     for n in nameList:
@@ -72,9 +72,9 @@ def waitlist(villageID):
             lastFirst = n.LastName + ', ' + n.FirstName + ' (' + n.MemberID + ')'
         applicantArray.append(lastFirst)
         
-    # IF A VILLAGE ID WAS NOT PASSED IN, DISPLAY THE waitlist.html FORM WITHOUT DATA
+    # IF A VILLAGE ID WAS NOT PASSED IN, DISPLAY THE waitList.html FORM WITHOUT DATA
     if villageID == None:
-        return render_template("waitlist.html",applicant="",applicantArray=applicantArray)
+        return render_template("waitList.html",applicant="",applicantArray=applicantArray)
     
     # IF A VILLAGE ID WAS PASSED IN ...
     # DISPLAY THE CORRESPONDING WAITLIST DATA FOR THAT VILLAGE ID
@@ -83,7 +83,7 @@ def waitlist(villageID):
     if (applicant == None):
         msg = "No record for applicant with village ID " + villageID
         flash(msg,"info")
-        return render_template("waitlist.html",applicant='',applicantArray=applicantArray,todaySTR=todaySTR)
+        return render_template("waitList.html",applicant='',applicantArray=applicantArray,todaySTR=todaySTR)
     else:
         # DETERMINE APPLICANTS PLACE ON WAITING LIST
         # RETURN COUNT OF # OF RECORDS BEFORE THEIR ID WHEN ORDERED BY ID AND FILTERED BY PlannedCertificationDate is null and NoLongerInterested isnull 
@@ -92,15 +92,15 @@ def waitlist(villageID):
             .filter(WaitList.NoLongerInterested == None) \
             .filter(WaitList.id < applicant.id) \
             .scalar() 
-        return render_template("waitlist.html",applicant=applicant,applicantArray=applicantArray,todaySTR=todaySTR,placeOnList=placeOnList)
+        return render_template("waitList.html",applicant=applicant,applicantArray=applicantArray,todaySTR=todaySTR,placeOnList=placeOnList)
     
 
 @app.route("/updateWaitList", methods=('GET','POST'))
 def updateWaitList():
     # POST REQUEST; PROCESS WAIT LIST APPLICATION, ADD TO MEMBER_DATA, INSERT TRANSACTION ('ADD')
     memberID = request.form.get('memberID')
-    if request.form.get('waitlist') == 'CANCEL':
-        return redirect(url_for('waitlist',villageID=memberID))
+    if request.form.get('waitList') == 'CANCEL':
+        return redirect(url_for('waitList',villageID=memberID))
 
    # RETRIEVE FORM VALUES
     expireDate = request.form.get('expireDate')
@@ -234,10 +234,10 @@ def updateWaitList():
             flash('ERROR - Record not added.'+error,'danger')
             db.session.rollback()
         
-        return redirect(url_for('waitlist'))
+        return redirect(url_for('waitList'))
     
     # PROCESS UPDATE OF EXISTING WAIT LIST RECORD
-    if waitListRecord.FirstName != firstName :
+    if Record.FirstName != firstName :
         waitListRecord.FirstName = firstName
     if waitListRecord.LastName != lastName :
         waitListRecord.LastName = lastName
@@ -311,7 +311,7 @@ def updateWaitList():
         db.session.rollback()
 
     
-    return redirect(url_for('waitlist',villageID=memberID,todaysDate=todaySTR))
+    return redirect(url_for('waitList',villageID=memberID,todaysDate=todaySTR))
 
 @app.route("/printConfirmation/<memberID>")
 def printConfirmation(memberID):
