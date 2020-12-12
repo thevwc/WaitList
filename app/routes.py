@@ -1,0 +1,330 @@
+# routes.py
+from flask import session, render_template, flash, redirect, url_for, request, jsonify, json, make_response, after_this_request
+from flask_wtf import FlaskForm
+from flask_bootstrap import Bootstrap
+from werkzeug.urls import url_parse
+from app.models import ShopName, Member, MemberActivity, MonitorSchedule, MonitorScheduleTransaction,\
+MonitorWeekNote, CoordinatorsSchedule, ControlVariables, NotesToMembers, MemberTransactions,\
+DuesPaidYears, WaitList, KeysTable
+from app import app
+from app import db
+from sqlalchemy import func, case, desc, extract, select, update, text
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError, DBAPIError
+
+import datetime as dt
+from datetime import date, datetime, timedelta
+from pytz import timezone
+
+from flask_mail import Mail, Message
+
+mail=Mail(app)
+def logChange(staffID,colName,memberID,newData,origData):
+    if staffID == None:
+        staffID = '111111'
+    if staffID == '':
+        staffID = '111111'
+
+    # Write data changes to tblMember_Data_Transactions
+    est = timezone('EST')
+    newTransaction = MemberTransactions(
+        Transaction_Date = datetime.now(est),
+        Member_ID = memberID,
+        Staff_ID = staffID,
+        Original_Data = origData,
+        Current_Data = newData,
+        Data_Item = colName,
+        Action = 'UPDATE'
+    )
+    db.session.add(newTransaction)
+    return
+    db.session.commit()
+
+@app.route('/', defaults={'villageID':None})
+@app.route('/index/', defaults={'villageID':None})
+@app.route('/index/<villageID>/')
+@app.route("/waitList",defaults={'villageID':None})
+@app.route("/waitList/<villageID>")
+def waitList(villageID):
+    # GATHER DATA FOR NEW WAIT LIST APPLICATION FORM
+    todays_date = date.today()
+    todaySTR = todays_date.strftime('%m-%d-%Y')
+    # PREPARE LIST OF MEMBER NAMES AND VILLAGE IDs
+    # BUILD ARRAY OF NAMES FOR DROPDOWN LIST OF MEMBERS
+    applicantArray=[]
+    sqlSelect = "SELECT LastName, FirstName, MemberID FROM tblMembershipWaitingList "
+    sqlSelect += "ORDER BY LastName, FirstName "
+    try:
+        nameList = db.engine.execute(sqlSelect)
+    except Exception as e:
+        flash("Could not retrieve member list.","danger")
+        return 'ERROR in wait list function.'
+    position = 0
+    if nameList == None:
+        flash('There is no one on the waiting list.','info')
+        return render_template("waitList.html",applicant="",applicantArray="")
+
+    # NEED TO PLACE NAME IN AN ARRAY BECAUSE OF NEED TO CONCATENATE 
+    for n in nameList:
+        position += 1
+        if n.FirstName == None:
+            lastFirst = n.LastName
+        else:
+            lastFirst = n.LastName + ', ' + n.FirstName + ' (' + n.MemberID + ')'
+        applicantArray.append(lastFirst)
+        
+    # IF A VILLAGE ID WAS NOT PASSED IN, DISPLAY THE waitList.html FORM WITHOUT DATA
+    if villageID == None:
+        return render_template("waitList.html",applicant="",applicantArray=applicantArray)
+    
+    # IF A VILLAGE ID WAS PASSED IN ...
+    # DISPLAY THE CORRESPONDING WAITLIST DATA FOR THAT VILLAGE ID
+    applicant = db.session.query(WaitList).filter(WaitList.MemberID == villageID).first()
+    
+    if (applicant == None):
+        msg = "No record for applicant with village ID " + villageID
+        flash(msg,"info")
+        return render_template("waitList.html",applicant='',applicantArray=applicantArray,todaySTR=todaySTR)
+    else:
+        # DETERMINE APPLICANTS PLACE ON WAITING LIST
+        # RETURN COUNT OF # OF RECORDS BEFORE THEIR ID WHEN ORDERED BY ID AND FILTERED BY PlannedCertificationDate is null and NoLongerInterested isnull 
+        placeOnList = 0 
+        placeOnList = db.session.query(func.count(WaitList.MemberID)).filter(WaitList.PlannedCertificationDate == None) \
+            .filter(WaitList.NoLongerInterested == None) \
+            .filter(WaitList.id < applicant.id) \
+            .scalar() 
+        return render_template("waitList.html",applicant=applicant,applicantArray=applicantArray,todaySTR=todaySTR,placeOnList=placeOnList)
+    
+
+@app.route("/updateWaitList", methods=('GET','POST'))
+def updateWaitList():
+    # POST REQUEST; PROCESS WAIT LIST APPLICATION, ADD TO MEMBER_DATA, INSERT TRANSACTION ('ADD')
+    memberID = request.form.get('memberID')
+    if request.form.get('waitList') == 'CANCEL':
+        return redirect(url_for('waitList',villageID=memberID))
+
+   # RETRIEVE FORM VALUES
+    expireDate = request.form.get('expireDate')
+    firstName = request.form.get('firstName')
+    lastName = request.form.get('lastName')
+    street = request.form.get('street')
+    city = request.form.get('city')
+    state = request.form.get('state')
+    zip = request.form.get('zip')
+    cellPhone = request.form.get('cellPhone')
+    homePhone = request.form.get('homePhone')
+    eMail = request.form.get('eMail')
+    if request.form.get('jan') == 'True':
+        jan = True
+    else:
+        jan = False
+
+    if request.form.get('feb') == 'True':
+        feb = True
+    else:
+        feb = False
+
+    if request.form.get('mar') == 'True':
+        mar = True
+    else:
+        mar = False
+
+    if request.form.get('apr') == 'True':
+        apr = True
+    else:
+        apr = False
+
+    if request.form.get('may') == 'True':
+        may = True
+    else:
+        may = False
+
+    if request.form.get('jun') == 'True':
+        jun = True
+    else:
+        jun = False
+    
+    if request.form.get('jul') == 'True':
+        jul = True
+    else:
+        jul = False
+
+    if request.form.get('aug') == 'True':
+        aug = True
+    else:
+        aug = False
+
+    if request.form.get('sep') == 'True':
+        sep = True
+    else:
+        sep = False
+
+    if request.form.get('oct') == 'True':
+        oct = True
+    else:
+        oct = False
+
+    if request.form.get('nov') == 'True':
+        nov = True
+    else:
+        nov = False
+
+    if request.form.get('dec') == 'True':
+        dec = True
+    else:
+        dec = False
+    
+    notes = request.form.get('notes')
+    approvedToJoin = request.form.get('approvedToJoin')
+    notified = request.form.get('notified')
+    applicantAccepts = request.form.get('applicantAccepts')
+    applicantDeclines = request.form.get('applicantDeclines')
+    noLongerInterested = request.form.get('noLongerInterested')
+    plannedCertificationDate = request.form.get('plannedCertificationDate')
+    staffID = request.form.get('staffID')
+
+    # GET ID OF STAFF MEMBER 
+    staffID = '123456'
+    # GET CURRENT DATE AND TIME
+    todays_date = datetime.today()
+    todaySTR = todays_date.strftime('%m-%d-%Y')
+
+    # IS THIS PERSON ALREADY ON THE WAITLIST?
+    waitListRecord = db.session.query(WaitList).filter(WaitList.MemberID == memberID).first()
+    if (waitListRecord == None):
+        # ADD NEW RECORD TO tblMembershipWaitingList
+        if plannedCertificationDate == '':
+            plannedCertificationDate = None
+        
+        try:
+            newWaitListRecord = WaitList( 
+                MemberID = memberID,
+                VillageIDexpirationDate = expireDate,
+                FirstName = firstName,
+                LastName = lastName, 
+                StreetAddress = street,
+                City = city,
+                State = state,
+                Zipcode = zip,
+                CellPhone = cellPhone,
+                HomePhone = homePhone,
+                Email = eMail,
+                Notes = notes,
+                PlannedCertificationDate = plannedCertificationDate,
+                AddedByStaffMemberID = staffID,
+                Jan = jan,
+                Feb = feb,
+                Mar = mar,
+                Apr = apr,
+                May = may,
+                Jun = jun,
+                Jul = jul,
+                Aug = aug,
+                Sep = sep,
+                Oct = oct,
+                Nov = nov,
+                Dec = dec,
+                DateTimeEntered = todaySTR
+            ) 
+        
+            db.session.add(newWaitListRecord)
+            db.session.commit()
+
+        except SQLAlchemyError as e:
+            error = str(e.__dict__['orig'])
+            flash('ERROR - Record not added.'+error,'danger')
+            db.session.rollback()
+        
+        return redirect(url_for('waitList'))
+    
+    # PROCESS UPDATE OF EXISTING WAIT LIST RECORD
+    if Record.FirstName != firstName :
+        waitListRecord.FirstName = firstName
+    if waitListRecord.LastName != lastName :
+        waitListRecord.LastName = lastName
+    if waitListRecord.HomePhone != homePhone :
+        waitListRecord.HomePhone = homePhone
+    if waitListRecord.CellPhone != cellPhone :
+        waitListRecord.CellPhone = cellPhone
+       
+    if waitListRecord.StreetAddress != street :
+        waitListRecord.StreetAddress = street
+    
+    if waitListRecord.City != city :
+        waitListRecord.City = city
+    if waitListRecord.State != state :
+        waitListRecord.State = state
+    if waitListRecord.Zipcode != zip :
+        waitListRecord.Zipcode = zip
+    if waitListRecord.Email != eMail :
+        waitListRecord.Email = eMail
+
+    if waitListRecord.Notes != notes :
+        waitListRecord.Notes = notes
+    
+    if waitListRecord.ApprovedToJoin != approvedToJoin :
+        waitListRecord.ApprovedToJoin = approvedToJoin
+    if waitListRecord.Notified != notified :
+        waitListRecord.Notified = notified
+    
+    
+
+
+    if waitListRecord.Jan != jan:
+        waitListRecord.Jan = jan
+    if waitListRecord.Feb != feb :
+        waitListRecord.Feb = feb
+    if waitListRecord.Mar != mar:
+        waitListRecord.Mar = mar
+    if waitListRecord.Apr != apr:
+        waitListRecord.Apr = apr
+    if waitListRecord.May != may:
+        waitListRecord.May = may
+    if waitListRecord.Jun != jun:
+        waitListRecord.Jun = jun
+    if waitListRecord.Jul != jul:
+        waitListRecord.Jul = jul
+    if waitListRecord.Aug != aug:
+        waitListRecord.Aug = aug
+    if waitListRecord.Sep != sep:
+        waitListRecord.Sep = sep
+    if waitListRecord.Oct != oct:
+        waitListRecord.Oct = oct
+    if waitListRecord.Nov != nov:
+        waitListRecord.Nov = nov
+    if waitListRecord.Dec != dec:
+        waitListRecord.Dec = dec
+    
+    if waitListRecord.ApplicantAccepts != applicantAccepts :
+        waitListRecord.ApplicantAccepts = applicantAccepts
+    if waitListRecord.ApplicantDeclines != applicantDeclines :
+        waitListRecord.ApplicantDeclines = applicantDeclines
+    if waitListRecord.NoLongerInterested != noLongerInterested :
+        waitListRecord.NoLongerInterested = noLongerInterested
+    if waitListRecord.PlannedCertificationDate != plannedCertificationDate :
+        waitListRecord.PlannedCertificationDate = plannedCertificationDate
+    
+    try:
+        db.session.commit()
+        flash("Changes to wait list successful","success")
+    except Exception as e:
+        flash("Could not update Wait List data.","danger")
+        db.session.rollback()
+
+    
+    return redirect(url_for('waitList',villageID=memberID,todaysDate=todaySTR))
+
+@app.route("/printConfirmation/<memberID>")
+def printConfirmation(memberID):
+    # GET MEMBER NAME
+    applicant = db.session.query(WaitList).filter(WaitList.MemberID == memberID).first()
+    if applicant == None:
+        flash ("Error in printing confirmation letter.",'danger')
+        return
+
+    displayName = applicant.FirstName + ' ' + applicant.LastName
+    todays_date = date.today()
+    todays_dateSTR = todays_date.strftime('%m-%d-%Y')
+    applicationDate = applicant.DateTimeEntered.strftime('%A, %B %-d, %Y')
+    # Using include statement in html file for included text 'WaitListConfirmation.html' in Template folder
+    return render_template("rptAppConfirm.html",displayName=displayName,applicant=applicant,
+    applicationDate=applicationDate,todays_date=todays_dateSTR)
