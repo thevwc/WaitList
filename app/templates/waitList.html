@@ -33,7 +33,7 @@
                 <button id='printConfirmBtnID' class='btn btn-info btn-sm' disabled onclick="printConfirmation()">Print Confirmation</button>
             </div> <!-- End of hdgLinks -->
             <div class="version">
-                <h3><scan>ver. Dec 13, 2020</scan></h3> 
+                <h3><scan>ver. Dec 25, 2020</scan></h3> 
             </div>
         </div>
     </div> <!-- End of hdgBand -->
@@ -45,7 +45,7 @@
         <div class="row">
             <label class='col-2' >Village ID</label>
             <div class="col-2">
-                <input id='memberID' type="text" maxlength=6 size=6 placeholder='Member ID' name="memberID" value="{{applicant.MemberID}}">
+                <input id='memberID' type="text" maxlength=6 size=6 required placeholder='Member ID' name="memberID" value="{{applicant.MemberID}}">
             </div>
             <div class="col-5">
                 <label>Expiration date</label>
@@ -81,12 +81,22 @@
             </div>
             <div class='row'>
                 <div class="col-10 offset-2">
-                    <input id="city" type='text' name='city' size=35 placeholder="City" value="{{applicant.City}}">
+                    <input id="city" type='text' name='city' size=35 
+                    {% if (applicant == '') %}
+                        value = 'The Villages' 
+                    {% else %} 
+                        value="{{applicant.City}}"
+                    {% endif %}>
                 </div>  
             </div>
             <div class='row'>
                 <div class="col-10 offset-2">
-                    <input id="state"type='text' style=min-width:25px name='state' size=2 placeholder="FL" value="{{applicant.State}}">
+                    <input id="state"type='text' style=min-width:25px name='state' size=2 
+                    {% if (applicant.State == '') %}
+                        value = 'FL' 
+                    {% else %} 
+                        value="{{applicant.State}}"
+                    {% endif %}>
                     <input id="zip"type='text'  style=width:95px name='zip' placeholder="Zip" value="{{applicant.Zipcode}}"> 
             </div>
         </div>
@@ -98,13 +108,11 @@
                     <label for="cellPhone" >Cell phone</label>
                 </div>
                 <div class="col-8">
-                    <input id="phoneNumber"
+                    <input id="cellPhone"
                         class="cellPhone"
-                        type='tel'
-                        maxlength="14"
-                        placeholder="(xxx) xxx-xxxx"
+                        type='text'
                         name='cellPhone' 
-                        style=width:120px 
+                        style=width:130px 
                         value="{{applicant.CellPhone}}" >
                 </div>
                 
@@ -115,10 +123,10 @@
                 </div>
                 <div class='col-8'>
                     <input id="homePhone"
-                    type='tel' 
+                    type='text' 
                     name='homePhone' 
-                    style=width:120px 
-                    placeholder="(xxx) xxx-xxxx" value="{{applicant.HomePhone}}" ></div>
+                    style=width:130px 
+                    value="{{applicant.HomePhone}}" ></div>
                 </div>
             </div> 
         </div> <!-- END OF PHONES -->
@@ -267,8 +275,7 @@
     </div>   <!-- END OF STATUS OF APPLICATION STATUS -->
 
     <div class='footerBtns'>
-        <div class="cancelSave" >
-            <label class='col'></label>
+        <div class="col cancelSave" >
             <input type="hidden" id='waitListStaffID' name='staffID'>
             <button id="cancelBtn" type="submit" formnovalidate name="waitList" class="btn btn-secondary"  value="CANCEL">CANCEL</button>
             <button id="saveBtn" type="submit" name="waitList" class="btn btn-primary"  value="UPDATE WAITLIST">SAVE</button>  

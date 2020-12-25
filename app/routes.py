@@ -88,10 +88,11 @@ def waitList(villageID):
         # DETERMINE APPLICANTS PLACE ON WAITING LIST
         # RETURN COUNT OF # OF RECORDS BEFORE THEIR ID WHEN ORDERED BY ID AND FILTERED BY PlannedCertificationDate is null and NoLongerInterested isnull 
         placeOnList = 0 
-        placeOnList = db.session.query(func.count(WaitList.MemberID)).filter(WaitList.PlannedCertificationDate == None) \
-            .filter(WaitList.NoLongerInterested == None) \
-            .filter(WaitList.id < applicant.id) \
-            .scalar() 
+        placeOnList = db.session.query(func.count(WaitList.MemberID))\
+        .filter((WaitList.PlannedCertificationDate == None) | (WaitList.PlannedCertificationDate == ''))\
+        .filter((WaitList.NoLongerInterested == None) | (WaitList.NoLongerInterested == ''))\
+        .filter(WaitList.id <= applicant.id) \
+        .scalar() 
         return render_template("waitList.html",applicant=applicant,applicantArray=applicantArray,todaySTR=todaySTR,placeOnList=placeOnList)
     
 
@@ -237,7 +238,7 @@ def updateWaitList():
         return redirect(url_for('waitList'))
     
     # PROCESS UPDATE OF EXISTING WAIT LIST RECORD
-    if Record.FirstName != firstName :
+    if waitListRecord.FirstName != firstName :
         waitListRecord.FirstName = firstName
     if waitListRecord.LastName != lastName :
         waitListRecord.LastName = lastName

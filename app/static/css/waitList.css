@@ -117,6 +117,7 @@ hr {
 .footerBtns {
     width:100%;
     grid-area:footerArea;
+    background-color: lightgray;
 }
 .applicationStatus {
     grid-area:statusArea;
@@ -178,7 +179,7 @@ hr {
 }
 .cancelSave {
     text-align:center;
-    margin-bottom: 20px;
+    margin-top: .5em;
 }
 .monthsInTheVillages {
     margin-left:20px;

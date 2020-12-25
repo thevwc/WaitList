@@ -21,13 +21,15 @@ else {
 }
 
 // HIDE CANCEL AND SAVE BUTTONS
-cancelBtn.style.display='none'
+//cancelBtn.style.display='none'
 saveBtn.style.display='none'
 
 // DEFINE EVENT LISTENERS
 document.getElementById("selectpicker").addEventListener("change",memberSelectedRtn)
 document.getElementById("selectpicker").addEventListener("click",memberSelectedRtn)
+applicant.addEventListener("click",applicantDataChanged)
 applicant.addEventListener("change",applicantDataChanged)
+applicationStatus.addEventListener("click",applicantStatusDataChanged)
 applicationStatus.addEventListener("change",applicantStatusDataChanged)
 
 
@@ -51,23 +53,16 @@ function memberSelectedRtn() {
 //   }
 
 function applicantDataChanged() {
-    if (memberIDelement.value != "") {
-      document.getElementById('cancelBtn').style.display='inline'
-      document.getElementById('saveBtn').style.display='inline'
-      
-    }
-    else {
-      alert("Please enter a member ID.")
-    }   
+    // if (memberIDelement.value == "") {
+    //   alert('Please enter a member ID.')
+    //   return
+    // }
+    document.getElementById('saveBtn').style.display='inline' 
 }
 
 function applicantStatusDataChanged() {
   if (memberIDelement.value != '' ) {
-    document.getElementById('cancelBtn').style.display='inline'
     document.getElementById('saveBtn').style.display='inline'
-  }
-  else {
-    alert("Please enter a member ID.")
   }
 }
 
@@ -98,62 +93,69 @@ function printConfirmation() {
   linkToPrintConfirmationBtn.setAttribute('href', link)
   linkToPrintConfirmationBtn.click()
 }
+$('#homePhone').usPhoneFormat({
+  format:"(xxx) xxx-xxxx",
+})
 
-$('input[type="tel"]')
-	.keydown(function (e) {
-		var key = e.which || e.charCode || e.keyCode || 0;
-		$phone = $(this);
+$('#cellPhone').usPhoneFormat({
+  format:"(xxx) xxx-xxxx",
+})
 
-    // Don't let them remove the starting '('
-    if ($phone.val().length === 1 && (key === 8 || key === 46)) {
-			$phone.val('('); 
-      return false;
-		} 
-    // Reset if they highlight and type over first char.
-    else if ($phone.val().charAt(0) !== '(') {
-			$phone.val('('+String.fromCharCode(e.keyCode)+''); 
-		}
+// $('input[type="tel"]')
+// 	.keydown(function (e) {
+// 		var key = e.which || e.charCode || e.keyCode || 0;
+// 		$phone = $(this);
 
-		// Auto-format- do not expose the mask as the user begins to type
-		if (key !== 8 && key !== 9) {
-			if ($phone.val().length === 4) {
-				$phone.val($phone.val() + ')');
-			}
-			if ($phone.val().length === 5) {
-				$phone.val($phone.val() + ' ');
-			}			
-			if ($phone.val().length === 9) {
-				$phone.val($phone.val() + '-');
-			}
-		}
+//     // Don't let them remove the starting '('
+//     if ($phone.val().length === 1 && (key === 8 || key === 46)) {
+// 			$phone.val('('); 
+//       return false;
+// 		} 
+//     // Reset if they highlight and type over first char.
+//     else if ($phone.val().charAt(0) !== '(') {
+// 			$phone.val('('+String.fromCharCode(e.keyCode)+''); 
+// 		}
 
-		// Allow numeric (and tab, backspace, delete) keys only
-		return (key == 8 || 
-				key == 9 ||
-				key == 46 ||
-				(key >= 48 && key <= 57) ||
-				(key >= 96 && key <= 105));	
-	})
+// 		// Auto-format- do not expose the mask as the user begins to type
+// 		if (key !== 8 && key !== 9) {
+// 			if ($phone.val().length === 4) {
+// 				$phone.val($phone.val() + ')');
+// 			}
+// 			if ($phone.val().length === 5) {
+// 				$phone.val($phone.val() + ' ');
+// 			}			
+// 			if ($phone.val().length === 9) {
+// 				$phone.val($phone.val() + '-');
+// 			}
+// 		}
+
+// 		// Allow numeric (and tab, backspace, delete) keys only
+// 		return (key == 8 || 
+// 				key == 9 ||
+// 				key == 46 ||
+// 				(key >= 48 && key <= 57) ||
+// 				(key >= 96 && key <= 105));	
+// 	})
 	
-	.bind('focus click', function () {
-		$phone = $(this);
+// 	.bind('focus click', function () {
+// 		$phone = $(this);
 		
-		if ($phone.val().length === 0) {
-			$phone.val('(');
-		}
-		else {
-			var val = $phone.val();
-			$phone.val('').val(val); // Ensure cursor remains at the end
-		}
-	})
+// 		if ($phone.val().length === 0) {
+// 			$phone.val('(');
+// 		}
+// 		else {
+// 			var val = $phone.val();
+// 			$phone.val('').val(val); // Ensure cursor remains at the end
+// 		}
+// 	})
 	
-	.blur(function () {
-		$phone = $(this);
+// 	.blur(function () {
+// 		$phone = $(this);
 		
-		if ($phone.val() === '(') {
-			$phone.val('');
-		}
-  });
+// 		if ($phone.val() === '(') {
+// 			$phone.val('');
+// 		}
+//   });
   
   function selectAllMonths() {
     jan=document.getElementById('jan')
