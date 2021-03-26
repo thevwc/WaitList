@@ -5,7 +5,7 @@ from flask_bootstrap import Bootstrap
 from werkzeug.urls import url_parse
 from app.models import ShopName, Member, MemberActivity, MonitorSchedule, MonitorScheduleTransaction,\
 MonitorWeekNote, CoordinatorsSchedule, ControlVariables, NotesToMembers, MemberTransactions,\
-DuesPaidYears, WaitList, KeysTable
+DuesPaidYears, WaitList, KeysTable, ZipCode
 from app import app
 from app import db
 from sqlalchemy import func, case, desc, extract, select, update, text
@@ -71,10 +71,19 @@ def waitList(villageID):
         else:
             lastFirst = n.LastName + ', ' + n.FirstName + ' (' + n.MemberID + ')'
         applicantArray.append(lastFirst)
+
+    # GET ZIPCODES
+    zipCodes = db.session.query(ZipCode).order_by(ZipCode.Zipcode).all()
+
+    # COMPUTER NUMBER ACTIVE ON WAIT LIST
+    numberActive=db.session.query(func.count(WaitList.MemberID))\
+            .filter((WaitList.PlannedCertificationDate == None) | (WaitList.PlannedCertificationDate == ''))\
+            .filter((WaitList.NoLongerInterested == None) | (WaitList.NoLongerInterested == '')).scalar()
         
     # IF A VILLAGE ID WAS NOT PASSED IN, DISPLAY THE waitList.html FORM WITHOUT DATA
     if villageID == None:
-        return render_template("waitList.html",applicant="",applicantArray=applicantArray)
+        return render_template("waitList.html",applicant="",applicantArray=applicantArray,zipCodes=zipCodes,\
+        numberActive=numberActive)
     
     # IF A VILLAGE ID WAS PASSED IN ...
     # DISPLAY THE CORRESPONDING WAITLIST DATA FOR THAT VILLAGE ID
@@ -83,7 +92,8 @@ def waitList(villageID):
     if (applicant == None):
         msg = "No record for applicant with village ID " + villageID
         flash(msg,"info")
-        return render_template("waitList.html",applicant='',applicantArray=applicantArray,todaySTR=todaySTR)
+        return render_template("waitList.html",applicant='',applicantArray=applicantArray,\
+        todaySTR=todaySTR,zipCodes=zipCodes,numberActive=numberActive)
     else:
         # DETERMINE APPLICANTS PLACE ON WAITING LIST
         # RETURN COUNT OF # OF RECORDS BEFORE THEIR ID WHEN ORDERED BY ID AND FILTERED BY PlannedCertificationDate is null and NoLongerInterested isnull 
@@ -93,7 +103,11 @@ def waitList(villageID):
         .filter((WaitList.NoLongerInterested == None) | (WaitList.NoLongerInterested == ''))\
         .filter(WaitList.id <= applicant.id) \
         .scalar() 
-        return render_template("waitList.html",applicant=applicant,applicantArray=applicantArray,todaySTR=todaySTR,placeOnList=placeOnList)
+        
+        dateTimeAdded = applicant.DateTimeEntered.strftime('%m-%d-%Y %I:%M %p')
+        return render_template("waitList.html",applicant=applicant,applicantArray=applicantArray,\
+        todaySTR=todaySTR,placeOnList=placeOnList,zipCodes=zipCodes,dateTimeAdded=dateTimeAdded,\
+        numberActive=numberActive)
     
 
 @app.route("/updateWaitList", methods=('GET','POST'))
@@ -105,6 +119,8 @@ def updateWaitList():
 
    # RETRIEVE FORM VALUES
     expireDate = request.form.get('expireDate')
+    print('expireDate - ',expireDate)
+    
     firstName = request.form.get('firstName')
     lastName = request.form.get('lastName')
     street = request.form.get('street')
@@ -181,14 +197,18 @@ def updateWaitList():
     applicantDeclines = request.form.get('applicantDeclines')
     noLongerInterested = request.form.get('noLongerInterested')
     plannedCertificationDate = request.form.get('plannedCertificationDate')
-    staffID = request.form.get('staffID')
 
     # GET ID OF STAFF MEMBER 
-    staffID = '123456'
+    if ('staffID' in session):
+        staffID = session['staffID']
+    else:
+        staffID = ''
+
     # GET CURRENT DATE AND TIME
+    est = timezone('EST')
     todays_date = datetime.today()
     todaySTR = todays_date.strftime('%m-%d-%Y')
-
+    
     # IS THIS PERSON ALREADY ON THE WAITLIST?
     waitListRecord = db.session.query(WaitList).filter(WaitList.MemberID == memberID).first()
     if (waitListRecord == None):
@@ -224,7 +244,7 @@ def updateWaitList():
                 Oct = oct,
                 Nov = nov,
                 Dec = dec,
-                DateTimeEntered = todaySTR
+                DateTimeEntered = datetime.now(est)
             ) 
         
             db.session.add(newWaitListRecord)
@@ -329,3 +349,17 @@ def printConfirmation(memberID):
     # Using include statement in html file for included text 'WaitListConfirmation.html' in Template folder
     return render_template("rptAppConfirm.html",displayName=displayName,applicant=applicant,
     applicationDate=applicationDate,todays_date=todays_dateSTR)
+
+@app.route("/checkVillageID/")
+def checkVillageID():
+    memberID = request.args.get("memberID")
+  
+    applicant = db.session.query(WaitList).filter(WaitList.MemberID == memberID).first()
+    #applicant = db.session.query(WaitList).filter(WaitList.MemberID == memberID).first()
+    if applicant:
+        name=applicant.FirstName + " " + applicant.LastName
+        msg=name + " is already on the wait list."
+    else:
+        msg="NOT FOUND"
+
+    return jsonify(msg=msg)

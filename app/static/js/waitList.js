@@ -7,6 +7,8 @@ memberIDelement = document.getElementById('memberID')
 waitListForm = document.getElementById('waitListFormID')
 memberIDbtn = document.getElementById('memberID')
 
+numberActive=document.getElementById('numberActive').innerHTML
+document.title = "WAIT LIST " + numberActive 
 
 // SET INTIAL VALUES 
 if (memberIDelement.value.length > 0) {
@@ -20,6 +22,12 @@ else {
   document.getElementById('dtEntered').style.display='none'
 }
 
+$('#datepicker').datepicker({
+  format: "yy-mm-dd",
+  startDate: new Date(),
+  endDate: new Date()
+});
+
 // HIDE CANCEL AND SAVE BUTTONS
 //cancelBtn.style.display='none'
 saveBtn.style.display='none'
@@ -31,7 +39,45 @@ applicant.addEventListener("click",applicantDataChanged)
 applicant.addEventListener("change",applicantDataChanged)
 applicationStatus.addEventListener("click",applicantStatusDataChanged)
 applicationStatus.addEventListener("change",applicantStatusDataChanged)
+document.getElementById("zipcodeSelecterID").addEventListener("change",zipCodeChangeRtn)
+document.getElementById("memberID").addEventListener("change",checkVillageID)
+// SET INITIAL VALUES FOR SELECT STATEMENTS
+curZipcode = document.getElementById('zipcodeTextID').value
 
+selectZipcode = document.getElementById('zipcodeSelecterID')
+if (curZipcode != '') {
+	selectZipcode.value = curZipcode
+}
+else{
+	selectZipcode.value = ''
+}
+
+function checkVillageID() {
+  var memberID = document.getElementById('memberID').value
+  $.ajax({
+      url : "/checkVillageID",
+      type: "GET",
+      data : {
+          memberID:memberID
+      },
+      success: function(data, textStatus, jqXHR)
+      {
+          if (data.msg != 'NOT FOUND'){
+            window.location.href = "/waitList/" + memberID
+          }
+    
+          
+      },
+      error: function(result){
+          alert("Error ..."+result)
+      }
+  }) 
+}
+
+function zipCodeChangeRtn() {
+	newZip = this.value
+	document.getElementById("zipcodeTextID").value = newZip
+}
 
 // FUNCTIONS 
 function memberSelectedRtn() {
@@ -53,10 +99,6 @@ function memberSelectedRtn() {
 //   }
 
 function applicantDataChanged() {
-    // if (memberIDelement.value == "") {
-    //   alert('Please enter a member ID.')
-    //   return
-    // }
     document.getElementById('saveBtn').style.display='inline' 
 }
 
@@ -68,7 +110,6 @@ function applicantStatusDataChanged() {
 
 document.querySelector('#monthCheckboxesID').onclick = function(ev) {
   inputID = ev.target.id
-  console.log('inputID - '+ inputID)
   if (ev.target.checked) {
       document.getElementById(inputID).value='True'
   }
@@ -101,6 +142,12 @@ $('#cellPhone').usPhoneFormat({
   format:"(xxx) xxx-xxxx",
 })
 
+$('.phones').keypress(function(event){
+  if(event.which != 8 && isNaN(String.fromCharCode(event.which))){
+  event.preventDefault(); //stop character from entering input
+  }
+  });
+  
 // $('input[type="tel"]')
 // 	.keydown(function (e) {
 // 		var key = e.which || e.charCode || e.keyCode || 0;

@@ -7,24 +7,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import select, func, Column, extract, ForeignKey
 from sqlalchemy.orm import column_property, relationship
 from sqlalchemy.ext.hybrid import hybrid_property
-#from flask_login import UserMixin
-#import jwt
+
 from app import app
-
-#@login.user_loader
-#def load_user(id):
-#    return User.query.get(int(id))
-
     
-
-# @staticmethod
-# def verify_reset_password_token(token):
-#     try:
-#         id = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['reset_password']
-#     except:
-#         return
-#     return User.query.get(id)
-
 class ControlVariables(db.Model):
     __tablename__ = 'tblControl_Variables'
     __table_args__ = {"schema": "dbo"}
@@ -260,7 +245,7 @@ class WaitList(db.Model):
     VillageIDexpirationDate = db.Column(db.Date)
     HomePhone = db.Column(db.String(14))
     CellPhone = db.Column(db.String(14))
-    DateTimeEntered = db.Column(db.Date)
+    DateTimeEntered = db.Column(db.DateTime)
     StreetAddress = db.Column(db.String(30))
     City = db.Column(db.String(25))
     State = db.Column(db.String(2))
@@ -296,3 +281,8 @@ class KeysTable(db.Model):
     DateAssigned = db.Column(db.Date)
     MemberID = db.Column(db.String(6))
     Reason = db.Column(db.String(45))
+
+class ZipCode(db.Model):
+	__tablename__ = 'tblVillagesZipcodes'
+	__table_args__ = {"schema": "dbo"}
+	Zipcode = db.Column(db.String(5), primary_key=True)

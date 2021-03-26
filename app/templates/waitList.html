@@ -16,7 +16,8 @@
     <div class="hdgBand"> <!-- HEADING BAND -->
         <div class="row hdgRow">
             <div class="title">
-                <h2>WAIT LIST</h2>
+                <h2>WAIT LIST
+                <span id="numberActive"> ({{numberActive}})</span></h2>
             </div>
             
             <div class="selectApplicant">
@@ -33,7 +34,7 @@
                 <button id='printConfirmBtnID' class='btn btn-info btn-sm' disabled onclick="printConfirmation()">Print Confirmation</button>
             </div> <!-- End of hdgLinks -->
             <div class="version">
-                <h3><scan>ver. Dec 25, 2020</scan></h3> 
+                <h3><scan>ver. Mar 25, 2021</scan></h3> 
             </div>
         </div>
     </div> <!-- End of hdgBand -->
@@ -49,7 +50,7 @@
             </div>
             <div class="col-5">
                 <label>Expiration date</label>
-                <input id='expireDate' type="date" datepicker width=140px placeholder='Expiration date' name='expireDate' value="{{applicant.VillageIDExpirationDate}}">
+                <input id='expireDate' type="date" datepicker width=140px placeholder='Expiration date' name='expireDate' value="{{applicant.VillageIDexpirationDate}}">
             </div> 
         </div>  
 
@@ -81,7 +82,7 @@
             </div>
             <div class='row'>
                 <div class="col-10 offset-2">
-                    <input id="city" type='text' name='city' size=35 
+                    <input id="city" type='text' name='city' readonly size=35 
                     {% if (applicant == '') %}
                         value = 'The Villages' 
                     {% else %} 
@@ -91,13 +92,20 @@
             </div>
             <div class='row'>
                 <div class="col-10 offset-2">
-                    <input id="state"type='text' style=min-width:25px name='state' size=2 
+                    <input id="state"type='text' style=min-width:25px readonly name='state' size=2 
                     {% if (applicant.State == '') %}
                         value = 'FL' 
                     {% else %} 
                         value="{{applicant.State}}"
                     {% endif %}>
-                    <input id="zip"type='text'  style=width:95px name='zip' placeholder="Zip" value="{{applicant.Zipcode}}"> 
+                    <input type="hidden" id="zipcodeTextID" name="zip" style=width:50px; value='{{applicant.Zipcode}}'>
+                    <select id="zipcodeSelecterID" name="zipcodeSelecterName" style=padding-bottom:3px;height:28px;width:95px;color:navy;font-family:inherit required placeholder="Zipcode">
+                    <option disabled selected value="">Select ..</option>
+                    {% for z in zipCodes %}
+                        <option value="{{z.Zipcode}}" class="optZipcode" style=color:navy >{{z.Zipcode}}</option>
+                    {% endfor %}
+            </select>
+                    <!-- <input id="zip"type='text'  style=width:95px name='zip' placeholder="Zip" value="{{applicant.Zipcode}}">  -->
             </div>
         </div>
         <hr>
@@ -228,7 +236,7 @@
         <div class="row">
             <div class="col">
                 <label for='dtEntered' class="statusLabel col-4" >Date Added</label>
-                <input id='dtEntered' type="date"  width=140px name='entered' readonly value="{{applicant.DateTimeEntered}}">    
+                <input id='dtEntered' type="datetime"  width=140px name='entered' readonly value="{{dateTimeAdded}}">    
             </div>
         </div>
         <div class="row">
