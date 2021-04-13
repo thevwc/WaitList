@@ -34,7 +34,7 @@
                 <button id='printConfirmBtnID' class='btn btn-info btn-sm' disabled onclick="printConfirmation()">Print Confirmation</button>
             </div> <!-- End of hdgLinks -->
             <div class="version">
-                <h3><scan>ver. Mar 25, 2021</scan></h3> 
+                <h3><scan>ver. Apr 13, 2021</scan></h3> 
             </div>
         </div>
     </div> <!-- End of hdgBand -->
@@ -117,7 +117,8 @@
                 </div>
                 <div class="col-8">
                     <input id="cellPhone"
-                        class="cellPhone"
+                        class="phones form-control-md"
+                        maxlength="14"
                         type='text'
                         name='cellPhone' 
                         style=width:130px 
@@ -131,8 +132,10 @@
                 </div>
                 <div class='col-8'>
                     <input id="homePhone"
+                    class='phones form-control-md'
                     type='text' 
-                    name='homePhone' 
+                    name='homePhone'
+                    maxlength='14' 
                     style=width:130px 
                     value="{{applicant.HomePhone}}" ></div>
                 </div>

@@ -115,11 +115,13 @@ def updateWaitList():
     # POST REQUEST; PROCESS WAIT LIST APPLICATION, ADD TO MEMBER_DATA, INSERT TRANSACTION ('ADD')
     memberID = request.form.get('memberID')
     if request.form.get('waitList') == 'CANCEL':
-        return redirect(url_for('waitList',villageID=memberID))
+        #print(request.form.get('waitList'))
+        #return redirect(url_for('waitList',villageID=memberID))
+        return redirect(url_for('waitList'))
 
    # RETRIEVE FORM VALUES
     expireDate = request.form.get('expireDate')
-    print('expireDate - ',expireDate)
+    #print('expireDate - ',expireDate)
     
     firstName = request.form.get('firstName')
     lastName = request.form.get('lastName')

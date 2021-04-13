@@ -22,11 +22,6 @@ else {
   document.getElementById('dtEntered').style.display='none'
 }
 
-$('#datepicker').datepicker({
-  format: "yy-mm-dd",
-  startDate: new Date(),
-  endDate: new Date()
-});
 
 // HIDE CANCEL AND SAVE BUTTONS
 //cancelBtn.style.display='none'
@@ -41,6 +36,7 @@ applicationStatus.addEventListener("click",applicantStatusDataChanged)
 applicationStatus.addEventListener("change",applicantStatusDataChanged)
 document.getElementById("zipcodeSelecterID").addEventListener("change",zipCodeChangeRtn)
 document.getElementById("memberID").addEventListener("change",checkVillageID)
+
 // SET INITIAL VALUES FOR SELECT STATEMENTS
 curZipcode = document.getElementById('zipcodeTextID').value
 
@@ -93,11 +89,6 @@ function memberSelectedRtn() {
     linkToWaitListBtn.click()
 }
 
-
-// function showMenu() {
-//     document.getElementById("myDropdown").classList.toggle("show");
-//   }
-
 function applicantDataChanged() {
     document.getElementById('saveBtn').style.display='inline' 
 }
@@ -134,13 +125,11 @@ function printConfirmation() {
   linkToPrintConfirmationBtn.setAttribute('href', link)
   linkToPrintConfirmationBtn.click()
 }
-$('#homePhone').usPhoneFormat({
-  format:"(xxx) xxx-xxxx",
-})
 
-$('#cellPhone').usPhoneFormat({
-  format:"(xxx) xxx-xxxx",
-})
+$('.phones').usPhoneFormat({
+  format: '(xxx) xxx-xxxx',
+  });
+
 
 $('.phones').keypress(function(event){
   if(event.which != 8 && isNaN(String.fromCharCode(event.which))){
@@ -148,104 +137,48 @@ $('.phones').keypress(function(event){
   }
   });
   
-// $('input[type="tel"]')
-// 	.keydown(function (e) {
-// 		var key = e.which || e.charCode || e.keyCode || 0;
-// 		$phone = $(this);
-
-//     // Don't let them remove the starting '('
-//     if ($phone.val().length === 1 && (key === 8 || key === 46)) {
-// 			$phone.val('('); 
-//       return false;
-// 		} 
-//     // Reset if they highlight and type over first char.
-//     else if ($phone.val().charAt(0) !== '(') {
-// 			$phone.val('('+String.fromCharCode(e.keyCode)+''); 
-// 		}
-
-// 		// Auto-format- do not expose the mask as the user begins to type
-// 		if (key !== 8 && key !== 9) {
-// 			if ($phone.val().length === 4) {
-// 				$phone.val($phone.val() + ')');
-// 			}
-// 			if ($phone.val().length === 5) {
-// 				$phone.val($phone.val() + ' ');
-// 			}			
-// 			if ($phone.val().length === 9) {
-// 				$phone.val($phone.val() + '-');
-// 			}
-// 		}
-
-// 		// Allow numeric (and tab, backspace, delete) keys only
-// 		return (key == 8 || 
-// 				key == 9 ||
-// 				key == 46 ||
-// 				(key >= 48 && key <= 57) ||
-// 				(key >= 96 && key <= 105));	
-// 	})
-	
-// 	.bind('focus click', function () {
-// 		$phone = $(this);
-		
-// 		if ($phone.val().length === 0) {
-// 			$phone.val('(');
-// 		}
-// 		else {
-// 			var val = $phone.val();
-// 			$phone.val('').val(val); // Ensure cursor remains at the end
-// 		}
-// 	})
-	
-// 	.blur(function () {
-// 		$phone = $(this);
-		
-// 		if ($phone.val() === '(') {
-// 			$phone.val('');
-// 		}
-//   });
-  
-  function selectAllMonths() {
-    jan=document.getElementById('jan')
-    feb=document.getElementById('feb')
-    mar=document.getElementById('mar')
-    apr=document.getElementById('apr')
-    may=document.getElementById('may')
-    jun=document.getElementById('jun')
-    jul=document.getElementById('jul')
-    aug=document.getElementById('aug')
-    sep=document.getElementById('sep')
-    oct=document.getElementById('oct')
-    nov=document.getElementById('nov')
-    dec=document.getElementById('dec')
-    jan.setAttribute('checked','checked')
-    jan.value = 'True'
-    feb.setAttribute('checked','checked')
-    feb.value = 'True'
-    mar.setAttribute('checked','checked')
-    mar.value = 'True'
-    apr.setAttribute('checked','checked')
-    apr.value = 'True'
-    may.setAttribute('checked','checked')
-    may.value = 'True'
-    jun.setAttribute('checked','checked')
-    jun.value = 'True'
-    jul.setAttribute('checked','checked')
-    jul.value = 'True'
-    aug.setAttribute('checked','checked')
-    aug.value = 'True'
-    sep.setAttribute('checked','checked')
-    sep.value = 'True'
-    oct.setAttribute('checked','checked')
-    oct.value = 'True'
-    nov.setAttribute('checked','checked')
-    nov.value = 'True'
-    dec.setAttribute('checked','checked')
-    dec.value = 'True'
-    
-    // THE FOLLOWING CODE SHOULD WORK!
-    // var monthBoxes = document.querySelectorAll('.monthCheckboxes input')
-    // for (var i = 0; i > monthBoxes.length; i++) {
-    //   monthBoxes[i].setAttribute('checked','checked')
-    //   monthBoxes[i].value = 'True'
-    // }   
+function selectAllMonths() {
+  jan=document.getElementById('jan')
+  feb=document.getElementById('feb')
+  mar=document.getElementById('mar')
+  apr=document.getElementById('apr')
+  may=document.getElementById('may')
+  jun=document.getElementById('jun')
+  jul=document.getElementById('jul')
+  aug=document.getElementById('aug')
+  sep=document.getElementById('sep')
+  oct=document.getElementById('oct')
+  nov=document.getElementById('nov')
+  dec=document.getElementById('dec')
+  jan.setAttribute('checked','checked')
+  jan.value = 'True'
+  feb.setAttribute('checked','checked')
+  feb.value = 'True'
+  mar.setAttribute('checked','checked')
+  mar.value = 'True'
+  apr.setAttribute('checked','checked')
+  apr.value = 'True'
+  may.setAttribute('checked','checked')
+  may.value = 'True'
+  jun.setAttribute('checked','checked')
+  jun.value = 'True'
+  jul.setAttribute('checked','checked')
+  jul.value = 'True'
+  aug.setAttribute('checked','checked')
+  aug.value = 'True'
+  sep.setAttribute('checked','checked')
+  sep.value = 'True'
+  oct.setAttribute('checked','checked')
+  oct.value = 'True'
+  nov.setAttribute('checked','checked')
+  nov.value = 'True'
+  dec.setAttribute('checked','checked')
+  dec.value = 'True'   
   }
+
+  // $('#datepicker').datepicker({
+  //   format: "yy-mm-dd",
+  //   startDate: new Date(),
+  //   endDate: new Date()
+  // });
+  
