@@ -105,7 +105,6 @@ def waitList(villageID):
         # applicant is no longer interested
             placeOnList = 0
         else:
-            print(applicant.LastName,' ... Compute place on list ...')
             placeOnList = db.session.query(func.count(WaitList.MemberID))\
             .filter((WaitList.PlannedCertificationDate == None) | (WaitList.PlannedCertificationDate == ''))\
             .filter((WaitList.NoLongerInterested == None) | (WaitList.NoLongerInterested == ''))\
@@ -123,14 +122,12 @@ def updateWaitList():
     # POST REQUEST; PROCESS WAIT LIST APPLICATION, ADD TO MEMBER_DATA, INSERT TRANSACTION ('ADD')
     memberID = request.form.get('memberID')
     if request.form.get('waitList') == 'CANCEL':
-        #print(request.form.get('waitList'))
         #return redirect(url_for('waitList',villageID=memberID))
         return redirect(url_for('waitList'))
 
    # RETRIEVE FORM VALUES
     expireDate = request.form.get('expireDate')
-    #print('expireDate - ',expireDate)
-    
+   
     firstName = request.form.get('firstName')
     lastName = request.form.get('lastName')
     street = request.form.get('street')
@@ -215,7 +212,7 @@ def updateWaitList():
         staffID = ''
 
     # GET CURRENT DATE AND TIME
-    est = timezone('EST')
+    est = timezone('US/Eastern')
     todays_date = datetime.today()
     todaySTR = todays_date.strftime('%m-%d-%Y')
     
@@ -265,7 +262,9 @@ def updateWaitList():
             flash('ERROR - Record not added.'+error,'danger')
             db.session.rollback()
         
-        return redirect(url_for('waitList'))
+        return redirect(url_for('waitList',villageID=memberID,todaysDate=todaySTR))
+        # END OF ADDING NEW APPLICANT
+        
     
     # PROCESS UPDATE OF EXISTING WAIT LIST RECORD
     if waitListRecord.FirstName != firstName :
@@ -341,6 +340,7 @@ def updateWaitList():
         flash("Could not update Wait List data.","danger")
         db.session.rollback()
 
+    print('memberID - '+memberID)
     
     return redirect(url_for('waitList',villageID=memberID,todaysDate=todaySTR))
 

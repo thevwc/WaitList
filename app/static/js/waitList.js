@@ -22,7 +22,6 @@ else {
   document.getElementById('dtEntered').style.display='none'
 }
 
-
 // HIDE CANCEL AND SAVE BUTTONS
 //cancelBtn.style.display='none'
 saveBtn.style.display='none'
@@ -95,6 +94,7 @@ function applicantDataChanged() {
 
 function applicantStatusDataChanged() {
   if (memberIDelement.value != '' ) {
+    console.log('applicantStatusDataChanged')
     document.getElementById('saveBtn').style.display='inline'
   }
 }
