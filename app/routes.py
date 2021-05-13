@@ -25,7 +25,7 @@ def logChange(staffID,colName,memberID,newData,origData):
         staffID = '111111'
 
     # Write data changes to tblMember_Data_Transactions
-    est = timezone('EST')
+    est = timezone('America/New_York')
     newTransaction = MemberTransactions(
         Transaction_Date = datetime.now(est),
         Member_ID = memberID,
