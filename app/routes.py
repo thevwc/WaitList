@@ -98,11 +98,22 @@ def waitList(villageID):
         # DETERMINE APPLICANTS PLACE ON WAITING LIST
         # RETURN COUNT OF # OF RECORDS BEFORE THEIR ID WHEN ORDERED BY ID AND FILTERED BY PlannedCertificationDate is null and NoLongerInterested isnull 
         placeOnList = 0 
-       
-        if ((applicant.PlannedCertificationDate != None and applicant.PlannedCertificationDate != '')
-        # applicant has been certified
-        or (applicant.NoLongerInterested != None and applicant.NoLongerInterested != '')):
-        # applicant is no longer interested
+        if (applicant.PlannedCertificationDate == None\
+        or applicant.PlannedCertificationDate == '' \
+        or applicant.PlannedCertificationDate == '1900-01-01'):
+            PlannedCertification = False
+        else:
+            # applicant has been scheduled to be certified
+            PlannedCertification = True
+        if (applicant.NoLongerInterested == None \
+        or applicant.NoLongerInterested == '' \
+        or applicant.NoLongerInterested == '1900-01-01'):
+            NoLongerInterested = False
+        else:
+            # applicant is no longer interested
+            NoLongerInterested = True
+
+        if (PlannedCertification == False and NoLongerInterested == False):
             placeOnList = 0
         else:
             placeOnList = db.session.query(func.count(WaitList.MemberID))\
@@ -110,7 +121,7 @@ def waitList(villageID):
             .filter((WaitList.NoLongerInterested == None) | (WaitList.NoLongerInterested == ''))\
             .filter(WaitList.id <= applicant.id)\
             .scalar() 
-        
+           
         dateTimeAdded = applicant.DateTimeEntered.strftime('%m-%d-%Y %I:%M %p')
         return render_template("waitList.html",applicant=applicant,applicantArray=applicantArray,\
         todaySTR=todaySTR,placeOnList=placeOnList,zipCodes=zipCodes,dateTimeAdded=dateTimeAdded,\
@@ -340,9 +351,39 @@ def updateWaitList():
         flash("Could not update Wait List data.","danger")
         db.session.rollback()
 
-    print('memberID - '+memberID)
-    
-    return redirect(url_for('waitList',villageID=memberID,todaysDate=todaySTR))
+    # DETERMINE APPLICANTS PLACE ON WAITING LIST
+    # RETURN COUNT OF # OF RECORDS BEFORE THEIR ID WHEN ORDERED BY ID AND FILTERED BY PlannedCertificationDate is null and NoLongerInterested isnull 
+    placeOnList = 0 
+    applicant = db.session.query(WaitList).filter(WaitList.MemberID == memberID).first()
+    if (applicant != None):
+        if (applicant.PlannedCertificationDate == None\
+        or applicant.PlannedCertificationDate == '' \
+        or applicant.PlannedCertificationDate == '1900-01-01'):
+            PlannedCertification = False
+        else:
+            # applicant has been scheduled to be certified
+            PlannedCertification = True
+
+        if (applicant.NoLongerInterested == None \
+        or applicant.NoLongerInterested == '' \
+        or applicant.NoLongerInterested == '1900-01-01'):
+            NoLongerInterested = False
+        else:
+            # applicant is no longer interested
+            NoLongerInterested = True
+
+        if (PlannedCertification == False and NoLongerInterested == False):
+            placeOnList = 0
+        else:
+            placeOnList = db.session.query(func.count(WaitList.MemberID))\
+            .filter((WaitList.PlannedCertificationDate == None) | (WaitList.PlannedCertificationDate == ''))\
+            .filter((WaitList.NoLongerInterested == None) | (WaitList.NoLongerInterested == ''))\
+            .filter(WaitList.id <= applicant.id)\
+            .scalar() 
+    else:
+        placeOnList = 0
+
+    return redirect(url_for('waitList',villageID=memberID,todaysDate=todaySTR,placeOnList=placeOnList))
 
 @app.route("/printConfirmation/<memberID>")
 def printConfirmation(memberID):
