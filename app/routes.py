@@ -16,6 +16,7 @@ from datetime import date, datetime, timedelta
 from pytz import timezone
 
 from flask_mail import Mail, Message
+from sqlalchemy.sql import text as SQLQuery
 
 mail=Mail(app)
 def logChange(staffID,colName,memberID,newData,origData):
@@ -86,46 +87,16 @@ def waitList(villageID):
         numberActive=numberActive)
     
     # IF A VILLAGE ID WAS PASSED IN ...
+   
+
     # DISPLAY THE CORRESPONDING WAITLIST DATA FOR THAT VILLAGE ID
     applicant = db.session.query(WaitList).filter(WaitList.MemberID == villageID).first()
-    
-    if (applicant == None):
-        msg = "No record for applicant with village ID " + villageID
-        flash(msg,"info")
-        return render_template("waitList.html",applicant='',applicantArray=applicantArray,\
-        todaySTR=todaySTR,zipCodes=zipCodes,numberActive=numberActive)
-    else:
-        # DETERMINE APPLICANTS PLACE ON WAITING LIST
-        # RETURN COUNT OF # OF RECORDS BEFORE THEIR ID WHEN ORDERED BY ID AND FILTERED BY PlannedCertificationDate is null and NoLongerInterested isnull 
-        placeOnList = 0 
-        if (applicant.PlannedCertificationDate == None\
-        or applicant.PlannedCertificationDate == '' \
-        or applicant.PlannedCertificationDate == '1900-01-01'):
-            PlannedCertification = False
-        else:
-            # applicant has been scheduled to be certified
-            PlannedCertification = True
-        if (applicant.NoLongerInterested == None \
-        or applicant.NoLongerInterested == '' \
-        or applicant.NoLongerInterested == '1900-01-01'):
-            NoLongerInterested = False
-        else:
-            # applicant is no longer interested
-            NoLongerInterested = True
 
-        if (PlannedCertification == False and NoLongerInterested == False):
-            placeOnList = 0
-        else:
-            placeOnList = db.session.query(func.count(WaitList.MemberID))\
-            .filter((WaitList.PlannedCertificationDate == None) | (WaitList.PlannedCertificationDate == ''))\
-            .filter((WaitList.NoLongerInterested == None) | (WaitList.NoLongerInterested == ''))\
-            .filter(WaitList.id <= applicant.id)\
-            .scalar() 
-           
-        dateTimeAdded = applicant.DateTimeEntered.strftime('%m-%d-%Y %I:%M %p')
-        return render_template("waitList.html",applicant=applicant,applicantArray=applicantArray,\
-        todaySTR=todaySTR,placeOnList=placeOnList,zipCodes=zipCodes,dateTimeAdded=dateTimeAdded,\
-        numberActive=numberActive)
+    placeOnList = findPlaceOnList(villageID)
+    dateTimeAdded = applicant.DateTimeEntered.strftime('%m-%d-%Y %I:%M %p')
+    return render_template("waitList.html",applicant=applicant,applicantArray=applicantArray,\
+    todaySTR=todaySTR,placeOnList=placeOnList,zipCodes=zipCodes,dateTimeAdded=dateTimeAdded,\
+    numberActive=numberActive)
     
 
 @app.route("/updateWaitList", methods=('GET','POST'))
@@ -353,35 +324,45 @@ def updateWaitList():
 
     # DETERMINE APPLICANTS PLACE ON WAITING LIST
     # RETURN COUNT OF # OF RECORDS BEFORE THEIR ID WHEN ORDERED BY ID AND FILTERED BY PlannedCertificationDate is null and NoLongerInterested isnull 
-    placeOnList = 0 
-    applicant = db.session.query(WaitList).filter(WaitList.MemberID == memberID).first()
-    if (applicant != None):
-        if (applicant.PlannedCertificationDate == None\
-        or applicant.PlannedCertificationDate == '' \
-        or applicant.PlannedCertificationDate == '1900-01-01'):
-            PlannedCertification = False
-        else:
-            # applicant has been scheduled to be certified
-            PlannedCertification = True
+    placeOnList = findPlaceOnList(memberID)
+    # applicant = db.session.query(WaitList).filter(WaitList.MemberID == memberID).first()
+    # if (applicant != None):
+    #     placeOnList = findPlaceOnList(memberID)
 
-        if (applicant.NoLongerInterested == None \
-        or applicant.NoLongerInterested == '' \
-        or applicant.NoLongerInterested == '1900-01-01'):
-            NoLongerInterested = False
-        else:
-            # applicant is no longer interested
-            NoLongerInterested = True
+    #     sp = "EXEC placeOnList '" + applicant.ID + "'"
+    #     print('sp - ',sp)
 
-        if (PlannedCertification == False and NoLongerInterested == False):
-            placeOnList = 0
-        else:
-            placeOnList = db.session.query(func.count(WaitList.MemberID))\
-            .filter((WaitList.PlannedCertificationDate == None) | (WaitList.PlannedCertificationDate == ''))\
-            .filter((WaitList.NoLongerInterested == None) | (WaitList.NoLongerInterested == ''))\
-            .filter(WaitList.id <= applicant.id)\
-            .scalar() 
-    else:
-        placeOnList = 0
+    #     sql = SQLQuery(sp)
+    #     placeNumber = db.engine.execute(sql)
+    #     print('placeNumber - ',placeNumber)
+            
+    #     if (applicant.PlannedCertificationDate == None\
+    #     or applicant.PlannedCertificationDate == '' \
+    #     or applicant.PlannedCertificationDate == '1900-01-01'):
+    #         PlannedCertification = False
+    #     else:
+    #         # applicant has been scheduled to be certified
+    #         PlannedCertification = True
+
+    #     if (applicant.NoLongerInterested == None \
+    #     or applicant.NoLongerInterested == '' \
+    #     or applicant.NoLongerInterested == '1900-01-01'):
+    #         NoLongerInterested = False
+    #     else:
+    #         # applicant is no longer interested
+    #         NoLongerInterested = True
+
+    #     if (PlannedCertification == False and NoLongerInterested == False):
+    #         placeOnList = 0
+    #     else:
+            
+    #         placeOnList = db.session.query(func.count(WaitList.MemberID))\
+    #         .filter((WaitList.PlannedCertificationDate == None) | (WaitList.PlannedCertificationDate == ''))\
+    #         .filter((WaitList.NoLongerInterested == None) | (WaitList.NoLongerInterested == ''))\
+    #         .filter(WaitList.id <= applicant.id)\
+    #         .scalar() 
+    # else:
+    #     placeOnList = 0
 
     return redirect(url_for('waitList',villageID=memberID,todaysDate=todaySTR,placeOnList=placeOnList))
 
@@ -414,3 +395,54 @@ def checkVillageID():
         msg="NOT FOUND"
 
     return jsonify(msg=msg)
+
+
+def findPlaceOnList(memberID):
+    applicant = db.session.query(WaitList).filter(WaitList.MemberID == memberID).first()
+    
+    if (applicant == None):
+        return 0
+        # msg = "No record for applicant with village ID " + villageID
+        # flash(msg,"info")
+        # return render_template("waitList.html",applicant='',applicantArray=applicantArray,\
+        # todaySTR=todaySTR,zipCodes=zipCodes,numberActive=numberActive)
+    else:
+        # DETERMINE APPLICANTS PLACE ON WAITING LIST
+        # RETURN COUNT OF # OF RECORDS BEFORE THEIR ID WHEN ORDERED BY ID AND FILTERED BY PlannedCertificationDate is null and NoLongerInterested isnull 
+        earliestDate = datetime.strptime("19000101","%Y%m%d").date()
+
+        if (applicant.PlannedCertificationDate != None and applicant.PlannedCertificationDate > earliestDate):
+            PlannedCertification = True
+        else:
+            PlannedCertification = False
+        
+        if (applicant.NoLongerInterested != None and applicant.NoLongerInterested > earliestDate):
+            NoLongerInterested = True
+        else:
+            NoLongerInterested = False
+
+        if (PlannedCertification == True or NoLongerInterested == True):
+            placeOnList = 0 
+        else:
+        
+            sqlPlaceInList = "SELECT memberID FROM tblMembershipWaitingList "
+            sqlPlaceInList += "WHERE NoLongerInterested is null and PlannedCertificationDate is null "
+            sqlPlaceInList += "AND ID < " + str(applicant.id)
+
+            result = db.engine.execute(sqlPlaceInList)
+            if (result == None):
+                placeOnList = 0
+            else:
+                cnt = 0
+                for r in result:
+                    cnt += 1
+                placeOnList = cnt
+
+            # ALTERNATE SOLUTION THAT WORKS
+            # sp = "EXEC placeOnList '" + str(applicant.id) + "'"
+            # sql = SQLQuery(sp)
+            # result = db.engine.execute(sql)
+            # for row in result:
+            #     placeOnList = row[0]
+    return placeOnList    
+    
