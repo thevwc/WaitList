@@ -34,7 +34,7 @@
                 <button id='printConfirmBtnID' class='btn btn-info btn-sm' disabled onclick="printConfirmation()">Print Confirmation</button>
             </div> <!-- End of hdgLinks -->
             <div class="version">
-                <h3><scan>ver. Jun 4, 2021</scan></h3> 
+                <h3><scan>ver. Jun 10, 2021</scan></h3> 
             </div>
         </div>
     </div> <!-- End of hdgBand -->
@@ -48,9 +48,9 @@
             <div class="col-2">
                 <input id='memberID' type="text" maxlength=6 size=6 required placeholder='Member ID' name="memberID" value="{{applicant.MemberID}}">
             </div>
-            <div class="col-5">
-                <label>Expiration date</label>
-                <input id='expireDate' type="date" datepicker width=140px placeholder='Expiration date' name='expireDate' value="{{applicant.VillageIDexpirationDate}}">
+            <div class="col-6">
+                <label for='expireDate'>Expiration date</label>
+                <input id='expireDate' type="date" datepicker width=130px placeholder='Expiration date' name='expireDate' value="{{applicant.VillageIDexpirationDate}}">
             </div> 
         </div>  
 

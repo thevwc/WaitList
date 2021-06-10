@@ -345,11 +345,13 @@ label {
       font-size:1rem;
     }
     .monthNames {
-      text-align:center;
+        margin-left:4px;
+        text-align:center;
     }
 
     .monthNames li {
       font-size:.75rem;
+      padding-left:2px;
     }
   
     .monthCheckboxes {
