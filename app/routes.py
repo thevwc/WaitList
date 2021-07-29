@@ -202,6 +202,8 @@ def updateWaitList():
     waitListRecord = db.session.query(WaitList).filter(WaitList.MemberID == memberID).first()
     if (waitListRecord == None):
         # ADD NEW RECORD TO tblMembershipWaitingList
+        if expireDate == '':
+            expireDate = None
         if plannedCertificationDate == '':
             plannedCertificationDate = None
         
@@ -312,6 +314,8 @@ def updateWaitList():
         waitListRecord.ApplicantDeclines = applicantDeclines
     if waitListRecord.NoLongerInterested != noLongerInterested :
         waitListRecord.NoLongerInterested = noLongerInterested
+    if plannedCertificationDate == '':
+        plannedCertificationDate = None
     if waitListRecord.PlannedCertificationDate != plannedCertificationDate :
         waitListRecord.PlannedCertificationDate = plannedCertificationDate
     

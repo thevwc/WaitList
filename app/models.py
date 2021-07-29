@@ -267,10 +267,10 @@ class WaitList(db.Model):
     Oct = db.Column(db.Boolean)
     Nov = db.Column(db.Boolean)
     Dec = db.Column(db.Boolean)
-    ApplicantAccepts = db.Column(db.Date)
-    ApplicantDeclines = db.Column(db.Date)
-    NoLongerInterested = db.Column(db.Date)
-    PlannedCertificationDate = db.Column(db.Date)
+    ApplicantAccepts = db.Column(db.Date,nullable=True)
+    ApplicantDeclines = db.Column(db.Date, nullable=True)
+    NoLongerInterested = db.Column(db.Date, nullable=True)
+    PlannedCertificationDate = db.Column(db.Date,nullable=True)
     fullName = column_property(FirstName + " " + LastName)
 
 class KeysTable(db.Model):
