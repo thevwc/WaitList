@@ -58,7 +58,8 @@ def waitList(villageID):
         nameList = db.engine.execute(sqlSelect)
     except Exception as e:
         flash("Could not retrieve member list.","danger")
-        return 'ERROR in wait list function.'
+        msg = "ERROR in retrieving wait list.\nPlease reload page."
+        return msg
     position = 0
     if nameList == None:
         flash('There is no one on the waiting list.','info')
